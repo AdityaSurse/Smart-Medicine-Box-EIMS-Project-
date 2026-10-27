@@ -83,7 +83,12 @@ fun SmartMedBoxAppScreen(navController: NavHostController = rememberNavControlle
             }
 
             composable<Screen.History> {
-                HistoryScreen()
+                val viewModel: com.aditya.smartmedbox.feature.history.ui.HistoryViewModel = hiltViewModel()
+                val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+                com.aditya.smartmedbox.feature.history.ui.HistoryScreen(
+                    uiState = uiState,
+                    onEvent = viewModel::onEvent
+                )
             }
 
             composable<Screen.Alerts> {
