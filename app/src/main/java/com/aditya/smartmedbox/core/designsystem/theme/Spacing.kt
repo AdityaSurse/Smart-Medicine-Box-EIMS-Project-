@@ -10,10 +10,19 @@ data class Spacing(
     val default: Dp = 0.dp,
     val extraSmall: Dp = 4.dp,
     val small: Dp = 8.dp,
+    val gutterMobile: Dp = 12.dp,
     val medium: Dp = 16.dp,
+    val marginMobile: Dp = 16.dp,
     val large: Dp = 24.dp,
     val extraLarge: Dp = 32.dp,
-    val huge: Dp = 48.dp
+    val marginDesktop: Dp = 32.dp,
+    val huge: Dp = 48.dp,
+    
+    // Stitch Dimensional Constraints
+    val minTouchTarget: Dp = 48.dp,
+    val buttonHeight: Dp = 52.dp,
+    val chipHeight: Dp = 32.dp,
+    val hairlineBorder: Dp = 1.dp
 )
 
 val LocalSpacing = staticCompositionLocalOf { Spacing() }

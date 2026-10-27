@@ -15,7 +15,8 @@ fun SmartMedBoxLoadingIndicator(modifier: Modifier = Modifier) {
         modifier = modifier.fillMaxSize()
     ) {
         CircularProgressIndicator(
-            color = MaterialTheme.colorScheme.primary
+            color = MaterialTheme.colorScheme.primary,
+            trackColor = MaterialTheme.colorScheme.surfaceVariant
         )
     }
 }
