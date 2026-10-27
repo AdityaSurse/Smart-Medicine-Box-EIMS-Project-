@@ -52,9 +52,11 @@ fun SmartMedBoxAppScreen(navController: NavHostController = rememberNavControlle
             }
 
             composable<Screen.Auth> {
-                AuthScreen(
-                    uiState = AuthUiState.Idle,
-                    onEvent = {},
+                val viewModel: com.aditya.smartmedbox.feature.auth.ui.AuthViewModel = hiltViewModel()
+                val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+                com.aditya.smartmedbox.feature.auth.ui.AuthScreen(
+                    uiState = uiState,
+                    onEvent = viewModel::onEvent,
                     onNavigateToDashboard = {
                         navController.navigate(Screen.Dashboard) {
                             popUpTo<Screen.Auth> { inclusive = true }
