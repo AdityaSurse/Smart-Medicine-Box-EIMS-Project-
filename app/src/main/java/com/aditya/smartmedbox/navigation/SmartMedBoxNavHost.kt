@@ -27,11 +27,13 @@ import com.aditya.smartmedbox.feature.settings.ui.SettingsScreen
 fun SmartMedBoxAppScreen(navController: NavHostController = rememberNavController()) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
-    val isAuthOrOnboarding = currentRoute?.contains("Auth") == true || currentRoute?.contains("Onboarding") == true
+    val shouldHideBottomBar = currentRoute?.contains("Auth") == true ||
+        currentRoute?.contains("Onboarding") == true ||
+        currentRoute?.contains("AddEditMedicine") == true
 
     Scaffold(
         bottomBar = {
-            if (!isAuthOrOnboarding) {
+            if (!shouldHideBottomBar) {
                 SmartMedBoxBottomBar(navController = navController)
             }
         },
@@ -86,6 +88,16 @@ fun SmartMedBoxAppScreen(navController: NavHostController = rememberNavControlle
                     onEvent = viewModel::onEvent,
                     onNavigateToAddMedicine = { navController.navigate(Screen.AddEditMedicine()) },
                     onNavigateToEditMedicine = { medId -> navController.navigate(Screen.AddEditMedicine(medId)) }
+                )
+            }
+ 
+            composable<Screen.AddEditMedicine> {
+                val viewModel: com.aditya.smartmedbox.feature.medicines.ui.addedit.AddEditMedicineViewModel = hiltViewModel()
+                val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+                com.aditya.smartmedbox.feature.medicines.ui.addedit.AddEditMedicineScreen(
+                    uiState = uiState,
+                    onEvent = viewModel::onEvent,
+                    onNavigateBack = { navController.popBackStack() }
                 )
             }
 
