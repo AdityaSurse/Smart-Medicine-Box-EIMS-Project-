@@ -27,11 +27,11 @@ import com.aditya.smartmedbox.feature.settings.ui.SettingsScreen
 fun SmartMedBoxAppScreen(navController: NavHostController = rememberNavController()) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
-    val isAuthScreen = currentRoute?.contains("Auth") == true
+    val isAuthOrOnboarding = currentRoute?.contains("Auth") == true || currentRoute?.contains("Onboarding") == true
 
     Scaffold(
         bottomBar = {
-            if (!isAuthScreen) {
+            if (!isAuthOrOnboarding) {
                 SmartMedBoxBottomBar(navController = navController)
             }
         },
@@ -42,6 +42,15 @@ fun SmartMedBoxAppScreen(navController: NavHostController = rememberNavControlle
             startDestination = Screen.Dashboard,
             modifier = Modifier.padding(innerPadding)
         ) {
+            composable<Screen.Onboarding> {
+                val viewModel: com.aditya.smartmedbox.feature.onboarding.ui.OnboardingViewModel = hiltViewModel()
+                val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+                com.aditya.smartmedbox.feature.onboarding.ui.OnboardingScreen(
+                    uiState = uiState,
+                    onEvent = viewModel::onEvent
+                )
+            }
+
             composable<Screen.Auth> {
                 AuthScreen(
                     uiState = AuthUiState.Idle,
