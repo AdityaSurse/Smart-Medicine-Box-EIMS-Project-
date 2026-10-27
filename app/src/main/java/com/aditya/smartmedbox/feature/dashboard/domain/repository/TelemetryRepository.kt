@@ -5,4 +5,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface TelemetryRepository {
     fun observeTelemetry(deviceId: String): Flow<DeviceTelemetry>
+    suspend fun refreshTelemetry(deviceId: String): Result<DeviceTelemetry>
+    suspend fun dispenseDose(tray: String): Result<Unit>
 }

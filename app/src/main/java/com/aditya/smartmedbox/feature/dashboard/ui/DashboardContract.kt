@@ -1,31 +1,41 @@
 package com.aditya.smartmedbox.feature.dashboard.ui
 
-data class DeviceTelemetryUi(
-    val currentWeightGrams: Float = 0f,
-    val isBoxOpen: Boolean = false,
-    val temperatureCelsius: Float = 24.5f,
-    val humidityPercent: Float = 45.0f,
-    val isOnline: Boolean = true
+import com.aditya.smartmedbox.core.designsystem.component.DoseStatus
+import com.aditya.smartmedbox.feature.dashboard.domain.model.DeviceTelemetry
+
+data class DashboardScheduleItem(
+    val id: String,
+    val time: String,
+    val tray: String,
+    val medicineName: String,
+    val dosage: String,
+    val status: DoseStatus
 )
 
 sealed interface DashboardUiState {
     data object Loading : DashboardUiState
+    data object Offline : DashboardUiState
+    data class Error(val message: String) : DashboardUiState
 
     data class Success(
-        val deviceTelemetry: DeviceTelemetryUi = DeviceTelemetryUi(),
-        val nextScheduledDose: String = "10:00 AM",
-        val nextMedicationName: String = "Amoxicillin 500mg"
+        val telemetry: DeviceTelemetry = DeviceTelemetry(),
+        val isRefreshing: Boolean = false,
+        val scheduleLedger: List<DashboardScheduleItem> = emptyList(),
+        val caregiverNote: String = "Dr. Aris reduced Evening Steroid by 5mg.",
+        val caregiverNoteAuthor: String = "Updated by Sarah • 3 hours ago",
+        val weeklyAdherencePercent: Int = 94,
+        val missedThisWeekCount: Int = 1
     ) : DashboardUiState
-
-    data class Error(val message: String) : DashboardUiState
 }
 
 sealed interface DashboardUiEvent {
     data object Refresh : DashboardUiEvent
-
-    data object OpenDispenserCommand : DashboardUiEvent
+    data class DispenseNow(val tray: String) : DashboardUiEvent
+    data object ClearError : DashboardUiEvent
 }
 
 sealed interface DashboardUiEffect {
     data class ShowSnackbar(val message: String) : DashboardUiEffect
+    data object NavigateToSchedule : DashboardUiEffect
+    data object NavigateToHistory : DashboardUiEffect
 }
