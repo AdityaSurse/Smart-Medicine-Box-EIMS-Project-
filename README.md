@@ -113,9 +113,12 @@ flowchart TD
     REPO_IMPL["Data: Repository Implementation"] -->|"Implements"| REPO
     REPO_IMPL -->|"Cache / Read"| ROOM["Local: Room Database and DataStore"]
     REPO_IMPL -->|"Realtime Sync"| FS["Remote: Cloud Firestore and FCM"]
+    CORE["Core: Common, DesignSystem, DI, Util"] -.->|"Shared Utilities"| UI
+    CORE -.->|"Shared Utilities"| VM
+    CORE -.->|"Shared Utilities"| REPO_IMPL
 
     class FS cloud;
-    class UI,VM,UC,REPO,REPO_IMPL,ROOM app;
+    class UI,VM,UC,REPO,REPO_IMPL,ROOM,CORE app;
 ```
 
 ---
@@ -129,19 +132,15 @@ flowchart TD
     classDef app fill:#C8E6C9,stroke:#388E3C,stroke-width:2px,color:#1B5E20;
     classDef alert fill:#FFCDD2,stroke:#D32F2F,stroke-width:2px,color:#B71C1C;
 
-    AUTH["Auth / Pairing Screen"] --> DASH["Dashboard Screen"]
-    DASH --> PRESC_LIST["Prescription List Screen"]
-    PRESC_LIST --> PRESC_EDIT["Add / Edit Prescription Screen"]
-    DASH --> HISTORY["Intake History Screen"]
-    HISTORY --> HISTORY_DETAIL["Dose Audit Detail Screen"]
-    DASH --> TELEMETRY["Live Telemetry Screen"]
-    DASH --> SETTINGS["Device and Notification Settings"]
-    SETTINGS --> CALIB["Scale Calibration Screen"]
-    SETTINGS --> ALERT_DLG["Missed-Dose Alert Dialog"]
+    AUTH["Screen.Auth: Sign In & Device Link"] --> DASH["Screen.Dashboard: Live Telemetry & Next Dose"]
+    DASH <--> SCHEDULE["Screen.Schedule: Prescription Schedules"]
+    DASH <--> MEDS["Screen.Medicines: Medication Inventory"]
+    DASH <--> HISTORY["Screen.History: Intake History & Load Cell Logs"]
+    DASH <--> ALERTS["Screen.Alerts: Missed-Dose Alerts"]
+    DASH <--> SETTINGS["Screen.Settings: Calibration & Preferences"]
 
-    class CALIB device;
-    class AUTH,DASH,PRESC_LIST,PRESC_EDIT,HISTORY,HISTORY_DETAIL,TELEMETRY,SETTINGS app;
-    class ALERT_DLG alert;
+    class AUTH,DASH,SCHEDULE,MEDS,HISTORY,SETTINGS app;
+    class ALERTS alert;
 ```
 
 ---

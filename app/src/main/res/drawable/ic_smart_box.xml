@@ -1,0 +1,26 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <!-- Apothecary Smart Box Outer Shell -->
+    <path
+        android:fillColor="#F8F3EA"
+        android:strokeColor="#1D1C16"
+        android:strokeWidth="1.75"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M10,10 h28 a4,4 0 0 1 4,4 v20 a4,4 0 0 1 -4,4 h-28 a4,4 0 0 1 -4,-4 v-20 a4,4 0 0 1 4,-4 z" />
+    <!-- Compartment divider lines -->
+    <path
+        android:strokeColor="#1D1C16"
+        android:strokeWidth="1.75"
+        android:strokeLineCap="round"
+        android:pathData="M18,10 v28 M30,10 v28 M6,24 h36" />
+    <!-- Smart Box LED Status Ring -->
+    <path
+        android:fillColor="#3E683A"
+        android:strokeColor="#3E683A"
+        android:strokeWidth="1"
+        android:pathData="M24,17 m-2.5,0 a2.5,2.5 0 1,1 5,0 a2.5,2.5 0 1,1 -5,0" />
+</vector>
