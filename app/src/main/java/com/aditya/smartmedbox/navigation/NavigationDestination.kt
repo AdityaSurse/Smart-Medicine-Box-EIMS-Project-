@@ -19,10 +19,16 @@ sealed interface Screen {
     data object Medicines : Screen
 
     @Serializable
+    data class AddEditMedicine(val medicineId: String? = null) : Screen
+
+    @Serializable
     data object History : Screen
 
     @Serializable
     data object Alerts : Screen
+
+    @Serializable
+    data object Device : Screen
 
     @Serializable
     data object Settings : Screen

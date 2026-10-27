@@ -79,7 +79,14 @@ fun SmartMedBoxAppScreen(navController: NavHostController = rememberNavControlle
             }
 
             composable<Screen.Medicines> {
-                MedicinesScreen()
+                val viewModel: com.aditya.smartmedbox.feature.medicines.ui.MedicinesViewModel = hiltViewModel()
+                val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+                com.aditya.smartmedbox.feature.medicines.ui.MedicinesScreen(
+                    uiState = uiState,
+                    onEvent = viewModel::onEvent,
+                    onNavigateToAddMedicine = { navController.navigate(Screen.AddEditMedicine()) },
+                    onNavigateToEditMedicine = { medId -> navController.navigate(Screen.AddEditMedicine(medId)) }
+                )
             }
 
             composable<Screen.History> {
