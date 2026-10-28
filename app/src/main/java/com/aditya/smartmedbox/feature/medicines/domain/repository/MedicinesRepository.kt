@@ -9,5 +9,6 @@ interface MedicinesRepository {
     suspend fun saveMedicine(medicine: Medicine): Result<Unit>
     suspend fun toggleActive(id: String): Result<Unit>
     suspend fun deleteMedicine(id: String): Result<Unit>
+    suspend fun updateStock(medicineId: String, newStock: Int): Result<Unit>
     suspend fun refresh(): Result<Unit>
 }

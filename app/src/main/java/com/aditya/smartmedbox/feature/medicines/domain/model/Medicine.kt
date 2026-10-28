@@ -12,6 +12,8 @@ data class Medicine(
     val repeatDays: List<String> = listOf("M", "T", "W", "T", "F"),
     val currentStock: Int = 18,
     val totalStock: Int = 30,
+    val lowStockThreshold: Int = 5,
     val estimatedUnitWeightGrams: Float = 0.5f,
-    val isActive: Boolean = true
+    val isActive: Boolean = true,
+    val createdAt: Long = System.currentTimeMillis()
 )

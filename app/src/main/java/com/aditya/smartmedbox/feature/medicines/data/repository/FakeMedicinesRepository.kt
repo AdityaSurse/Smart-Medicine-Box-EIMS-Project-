@@ -110,6 +110,17 @@ class FakeMedicinesRepository @Inject constructor() : MedicinesRepository {
         return Result.success(Unit)
     }
 
+    override suspend fun updateStock(medicineId: String, newStock: Int): Result<Unit> {
+        val current = _medicines.value.toMutableList()
+        val index = current.indexOfFirst { it.id == medicineId }
+        if (index != -1) {
+            val med = current[index]
+            current[index] = med.copy(currentStock = newStock)
+            _medicines.value = current
+        }
+        return Result.success(Unit)
+    }
+
     override suspend fun refresh(): Result<Unit> {
         delay(400)
         return Result.success(Unit)
