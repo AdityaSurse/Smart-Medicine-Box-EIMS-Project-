@@ -44,3 +44,4 @@ class FakeDeviceRepository @Inject constructor() : DeviceRepository {
         return Result.success(Unit)
     }
 }
+

@@ -18,3 +18,4 @@ abstract class ScheduleModule {
         fakeScheduleRepository: FakeScheduleRepository
     ): ScheduleRepository
 }
+

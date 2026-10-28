@@ -698,3 +698,4 @@ private fun DiscoveredBoxCard(device: SmartBoxDevice) {
         }
     }
 }
+

@@ -107,3 +107,4 @@ class FakeAlertsRepository @Inject constructor() : AlertsRepository {
         return Result.success(Unit)
     }
 }
+

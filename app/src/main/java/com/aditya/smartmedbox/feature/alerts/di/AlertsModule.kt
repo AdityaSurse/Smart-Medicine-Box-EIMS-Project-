@@ -18,3 +18,4 @@ abstract class AlertsModule {
         fakeAlertsRepository: FakeAlertsRepository
     ): AlertsRepository
 }
+

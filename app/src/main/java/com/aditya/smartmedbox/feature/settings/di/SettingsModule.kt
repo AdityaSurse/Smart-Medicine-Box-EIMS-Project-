@@ -18,3 +18,4 @@ abstract class SettingsModule {
         fakeSettingsRepository: FakeSettingsRepository
     ): SettingsRepository
 }
+

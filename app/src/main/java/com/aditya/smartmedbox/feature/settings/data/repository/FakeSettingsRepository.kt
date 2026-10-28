@@ -34,3 +34,4 @@ class FakeSettingsRepository @Inject constructor() : SettingsRepository {
         return Result.success(Unit)
     }
 }
+

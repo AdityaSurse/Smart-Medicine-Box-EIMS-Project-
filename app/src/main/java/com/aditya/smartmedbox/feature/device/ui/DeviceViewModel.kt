@@ -86,3 +86,4 @@ class DeviceViewModel @Inject constructor(
         }
     }
 }
+

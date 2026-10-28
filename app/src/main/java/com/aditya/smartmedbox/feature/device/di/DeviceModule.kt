@@ -18,3 +18,4 @@ abstract class DeviceModule {
         fakeDeviceRepository: FakeDeviceRepository
     ): DeviceRepository
 }
+
