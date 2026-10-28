@@ -7,6 +7,7 @@
   - Explain architectural and technical trade-offs concisely before or alongside code modifications.
   - Strictly follow Conventional Commits format (`feat:`, `fix:`, `chore:`, `docs:`, `refactor:`, `test:`).
   - Never invent new styling or arbitrary UI components; match designs fetched via the Stitch MCP.
+  - Git & Branch Policy: Never create pull requests or push to remote. Only make local commits on the current branch and wait for the user to push.
 
 ---
 
