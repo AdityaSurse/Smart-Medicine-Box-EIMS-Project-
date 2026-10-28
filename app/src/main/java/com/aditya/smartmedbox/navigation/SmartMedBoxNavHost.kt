@@ -21,6 +21,7 @@ import com.aditya.smartmedbox.feature.dashboard.ui.DashboardViewModel
 import com.aditya.smartmedbox.feature.history.ui.HistoryScreen
 import com.aditya.smartmedbox.feature.medicines.ui.MedicinesScreen
 import com.aditya.smartmedbox.feature.schedule.ui.ScheduleScreen
+import com.aditya.smartmedbox.feature.schedule.ui.ScheduleViewModel
 import com.aditya.smartmedbox.feature.settings.ui.SettingsScreen
 
 @Composable
@@ -77,7 +78,13 @@ fun SmartMedBoxAppScreen(navController: NavHostController = rememberNavControlle
             }
 
             composable<Screen.Schedule> {
-                ScheduleScreen()
+                val viewModel: ScheduleViewModel = hiltViewModel()
+                val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+                ScheduleScreen(
+                    uiState = uiState,
+                    onEvent = viewModel::onEvent,
+                    onNavigateToAlerts = { navController.navigate(Screen.Alerts) }
+                )
             }
 
             composable<Screen.Medicines> {
