@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.aditya.smartmedbox.core.database.entity.DoseEventEntity
+import com.aditya.smartmedbox.feature.history.domain.model.DoseStatus
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -25,7 +26,7 @@ interface DoseEventDao {
     suspend fun upsertEvents(events: List<DoseEventEntity>)
 
     @Query("UPDATE dose_events SET status = :status, loggedTimeEpochMillis = :loggedTime, recordedWeightGrams = :weight WHERE id = :id")
-    suspend fun logDose(id: String, status: String, loggedTime: Long, weight: Float?)
+    suspend fun logDose(id: String, status: DoseStatus, loggedTime: Long, weight: Float?)
 
     @Query("SELECT COUNT(*) FROM dose_events WHERE status = 'MISSED' AND scheduledTimeEpochMillis >= :sinceMillis")
     fun getMissedEventsCount(sinceMillis: Long): Flow<Int>

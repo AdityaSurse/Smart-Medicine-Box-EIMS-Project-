@@ -1,6 +1,6 @@
 package com.aditya.smartmedbox.feature.alerts.di
 
-import com.aditya.smartmedbox.feature.alerts.data.repository.FakeAlertsRepository
+import com.aditya.smartmedbox.feature.alerts.data.repository.RoomAlertsRepository
 import com.aditya.smartmedbox.feature.alerts.domain.repository.AlertsRepository
 import dagger.Binds
 import dagger.Module
@@ -15,7 +15,6 @@ abstract class AlertsModule {
     @Binds
     @Singleton
     abstract fun bindAlertsRepository(
-        fakeAlertsRepository: FakeAlertsRepository
+        roomAlertsRepository: RoomAlertsRepository
     ): AlertsRepository
 }
-

@@ -1,6 +1,6 @@
 package com.aditya.smartmedbox.feature.medicines.di
 
-import com.aditya.smartmedbox.feature.medicines.data.repository.FakeMedicinesRepository
+import com.aditya.smartmedbox.feature.medicines.data.repository.RoomMedicinesRepository
 import com.aditya.smartmedbox.feature.medicines.domain.repository.MedicinesRepository
 import dagger.Binds
 import dagger.Module
@@ -15,6 +15,6 @@ abstract class MedicinesModule {
     @Binds
     @Singleton
     abstract fun bindMedicinesRepository(
-        fakeMedicinesRepository: FakeMedicinesRepository
+        roomMedicinesRepository: RoomMedicinesRepository
     ): MedicinesRepository
 }

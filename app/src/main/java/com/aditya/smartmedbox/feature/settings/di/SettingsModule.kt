@@ -1,6 +1,6 @@
 package com.aditya.smartmedbox.feature.settings.di
 
-import com.aditya.smartmedbox.feature.settings.data.repository.FakeSettingsRepository
+import com.aditya.smartmedbox.feature.settings.data.repository.DataStoreSettingsRepository
 import com.aditya.smartmedbox.feature.settings.domain.repository.SettingsRepository
 import dagger.Binds
 import dagger.Module
@@ -15,7 +15,6 @@ abstract class SettingsModule {
     @Binds
     @Singleton
     abstract fun bindSettingsRepository(
-        fakeSettingsRepository: FakeSettingsRepository
+        dataStoreSettingsRepository: DataStoreSettingsRepository
     ): SettingsRepository
 }
-

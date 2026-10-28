@@ -1,6 +1,6 @@
 package com.aditya.smartmedbox.feature.device.di
 
-import com.aditya.smartmedbox.feature.device.data.repository.FakeDeviceRepository
+import com.aditya.smartmedbox.feature.device.data.repository.RoomDeviceRepository
 import com.aditya.smartmedbox.feature.device.domain.repository.DeviceRepository
 import dagger.Binds
 import dagger.Module
@@ -15,7 +15,6 @@ abstract class DeviceModule {
     @Binds
     @Singleton
     abstract fun bindDeviceRepository(
-        fakeDeviceRepository: FakeDeviceRepository
+        roomDeviceRepository: RoomDeviceRepository
     ): DeviceRepository
 }
-
