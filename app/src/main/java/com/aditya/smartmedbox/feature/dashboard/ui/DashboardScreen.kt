@@ -59,7 +59,8 @@ import com.aditya.smartmedbox.core.designsystem.theme.PillShape
 fun DashboardScreen(
     uiState: DashboardUiState,
     onEvent: (DashboardUiEvent) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onNavigateToAlerts: () -> Unit = {}
 ) {
     val spacing = LocalSpacing.current
 
@@ -70,7 +71,7 @@ fun DashboardScreen(
                 subtitle = "Home",
                 actions = {
                     IconButton(
-                        onClick = { onEvent(DashboardUiEvent.Refresh) },
+                        onClick = onNavigateToAlerts,
                         modifier = Modifier.semantics { contentDescription = "Alerts and Notifications" }
                     ) {
                         Icon(

@@ -34,7 +34,9 @@ fun SmartMedBoxAppScreen(navController: NavHostController = rememberNavControlle
     val currentRoute = navBackStackEntry?.destination?.route
     val shouldHideBottomBar = currentRoute?.contains("Auth") == true ||
         currentRoute?.contains("Onboarding") == true ||
-        currentRoute?.contains("AddEditMedicine") == true
+        currentRoute?.contains("AddEditMedicine") == true ||
+        currentRoute?.contains("Device") == true ||
+        currentRoute?.contains("Alerts") == true
 
     Scaffold(
         bottomBar = {
@@ -77,7 +79,8 @@ fun SmartMedBoxAppScreen(navController: NavHostController = rememberNavControlle
                 val uiState by viewModel.uiState.collectAsStateWithLifecycle()
                 DashboardScreen(
                     uiState = uiState,
-                    onEvent = viewModel::onEvent
+                    onEvent = viewModel::onEvent,
+                    onNavigateToAlerts = { navController.navigate(Screen.Alerts) }
                 )
             }
 
