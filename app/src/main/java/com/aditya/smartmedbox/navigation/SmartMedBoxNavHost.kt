@@ -15,6 +15,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.aditya.smartmedbox.feature.alerts.ui.AlertsScreen
 import com.aditya.smartmedbox.feature.alerts.ui.AlertsViewModel
+import com.aditya.smartmedbox.feature.device.ui.DeviceScreen
+import com.aditya.smartmedbox.feature.device.ui.DeviceViewModel
 import com.aditya.smartmedbox.feature.auth.ui.AuthScreen
 import com.aditya.smartmedbox.feature.auth.ui.AuthUiState
 import com.aditya.smartmedbox.feature.dashboard.ui.DashboardScreen
@@ -125,6 +127,16 @@ fun SmartMedBoxAppScreen(navController: NavHostController = rememberNavControlle
                     uiState = uiState,
                     onEvent = viewModel::onEvent,
                     onNavigateBack = { navController.popBackStack() }
+                )
+            }
+
+            composable<Screen.Device> {
+                val viewModel: DeviceViewModel = hiltViewModel()
+                val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+                DeviceScreen(
+                    uiState = uiState,
+                    onEvent = viewModel::onEvent,
+                    onNavigateToAddMedicine = { navController.navigate(Screen.Medicines) }
                 )
             }
 
