@@ -166,8 +166,8 @@ fun DeviceScreen(
                     SmartMedBoxEmptyState(
                         title = "No Smart Boxes Discovered",
                         message = uiState.message,
-                        onAction = { onEvent(DeviceUiEvent.StartScan) },
-                        actionLabel = "Scan Again",
+                        actionButtonText = "Scan Again",
+                        onActionClick = { onEvent(DeviceUiEvent.StartScan) },
                         modifier = Modifier.align(Alignment.Center)
                     )
                 }

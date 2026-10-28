@@ -18,7 +18,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ChevronRight
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Battery5Bar
 import androidx.compose.material.icons.filled.Bedtime
 import androidx.compose.material.icons.filled.Call
@@ -574,7 +574,7 @@ private fun HardwareNetworkSection(
                 }
 
                 Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ChevronRight,
+                    imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.size(20.dp)
