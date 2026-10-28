@@ -17,3 +17,4 @@ abstract class DataStoreModule {
         userSettingsDataStore: UserSettingsDataStore
     ): UserSettingsRepository
 }
+

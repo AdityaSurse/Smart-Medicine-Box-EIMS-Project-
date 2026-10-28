@@ -14,3 +14,4 @@ data class DeviceStatusEntity(
     val batteryPercent: Int = 84,
     val isOnline: Boolean = true
 )
+

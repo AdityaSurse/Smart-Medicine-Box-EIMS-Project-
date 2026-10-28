@@ -14,3 +14,4 @@ data class DoseScheduleEntity(
     val compartmentBay: String = "Bay 01",
     val isActive: Boolean = true
 )
+

@@ -33,3 +33,4 @@ interface MedicineDao {
     @Query("DELETE FROM medicines")
     suspend fun deleteAllMedicines()
 }
+

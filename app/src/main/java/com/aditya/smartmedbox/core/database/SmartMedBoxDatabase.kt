@@ -30,3 +30,4 @@ abstract class SmartMedBoxDatabase : RoomDatabase() {
     abstract fun doseEventDao(): DoseEventDao
     abstract fun deviceStatusDao(): DeviceStatusDao
 }
+

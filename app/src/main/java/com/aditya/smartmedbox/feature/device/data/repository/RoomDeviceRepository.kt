@@ -55,3 +55,4 @@ class RoomDeviceRepository @Inject constructor(
         }
     }
 }
+

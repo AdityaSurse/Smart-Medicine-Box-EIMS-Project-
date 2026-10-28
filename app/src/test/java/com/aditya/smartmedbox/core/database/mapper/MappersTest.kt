@@ -115,3 +115,4 @@ class MappersTest {
         assertEquals(domain.batteryPercent, mappedBack.batteryPercent)
     }
 }
+

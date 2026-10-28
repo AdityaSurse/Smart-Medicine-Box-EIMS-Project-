@@ -94,3 +94,4 @@ class RoomHistoryRepository @Inject constructor(
         return Result.success(Unit)
     }
 }
+

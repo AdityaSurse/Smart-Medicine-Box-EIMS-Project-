@@ -30,3 +30,4 @@ class RoomDeviceStatusRepository @Inject constructor(
         }
     }
 }
+

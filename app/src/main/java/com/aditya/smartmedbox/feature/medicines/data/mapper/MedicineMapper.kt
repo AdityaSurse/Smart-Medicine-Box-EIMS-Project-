@@ -42,3 +42,4 @@ fun Medicine.toEntity(): MedicineEntity {
         createdAt = createdAt
     )
 }
+
