@@ -32,6 +32,7 @@ class UserSettingsDataStore @Inject constructor(
         val USER_NAME = stringPreferencesKey("user_name")
         val IS_DARK_MODE = booleanPreferencesKey("is_dark_mode")
         val SNOOZE_INTERVAL = intPreferencesKey("snooze_interval_minutes")
+        val MAX_REMINDER_REPEATS = intPreferencesKey("max_reminder_repeats")
         val LOW_STOCK_THRESHOLD = intPreferencesKey("low_stock_threshold_default")
         val IS_CHIME_ENABLED = booleanPreferencesKey("is_chime_enabled")
         val CAREGIVER_NAME = stringPreferencesKey("primary_caregiver_name")
@@ -52,6 +53,7 @@ class UserSettingsDataStore @Inject constructor(
                     userName = preferences[PreferencesKeys.USER_NAME] ?: "Eleanor Vance",
                     isDarkMode = preferences[PreferencesKeys.IS_DARK_MODE] ?: false,
                     snoozeIntervalMinutes = preferences[PreferencesKeys.SNOOZE_INTERVAL] ?: 10,
+                    maxReminderRepeats = preferences[PreferencesKeys.MAX_REMINDER_REPEATS] ?: 3,
                     lowStockThresholdDefault = preferences[PreferencesKeys.LOW_STOCK_THRESHOLD] ?: 5,
                     isChimeEnabled = preferences[PreferencesKeys.IS_CHIME_ENABLED] ?: true,
                     primaryCaregiverName = preferences[PreferencesKeys.CAREGIVER_NAME] ?: "Sarah Jenkins",
@@ -66,6 +68,7 @@ class UserSettingsDataStore @Inject constructor(
                 preferences[PreferencesKeys.USER_NAME] = settings.userName
                 preferences[PreferencesKeys.IS_DARK_MODE] = settings.isDarkMode
                 preferences[PreferencesKeys.SNOOZE_INTERVAL] = settings.snoozeIntervalMinutes
+                preferences[PreferencesKeys.MAX_REMINDER_REPEATS] = settings.maxReminderRepeats
                 preferences[PreferencesKeys.LOW_STOCK_THRESHOLD] = settings.lowStockThresholdDefault
                 preferences[PreferencesKeys.IS_CHIME_ENABLED] = settings.isChimeEnabled
                 preferences[PreferencesKeys.CAREGIVER_NAME] = settings.primaryCaregiverName
@@ -103,6 +106,17 @@ class UserSettingsDataStore @Inject constructor(
         return try {
             dataStore.edit { preferences ->
                 preferences[PreferencesKeys.LOW_STOCK_THRESHOLD] = threshold
+            }
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun updateMaxReminderRepeats(repeats: Int): Result<Unit> {
+        return try {
+            dataStore.edit { preferences ->
+                preferences[PreferencesKeys.MAX_REMINDER_REPEATS] = repeats
             }
             Result.success(Unit)
         } catch (e: Exception) {

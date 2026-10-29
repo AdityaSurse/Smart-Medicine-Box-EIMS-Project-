@@ -4,6 +4,7 @@ data class UserSettings(
     val userName: String = "Eleanor Vance",
     val isDarkMode: Boolean = false,
     val snoozeIntervalMinutes: Int = 10,
+    val maxReminderRepeats: Int = 3,
     val lowStockThresholdDefault: Int = 5,
     val isChimeEnabled: Boolean = true,
     val primaryCaregiverName: String = "Sarah Jenkins",

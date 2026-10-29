@@ -15,6 +15,7 @@ class UserSettingsTest {
         assertEquals("Eleanor Vance", settings.userName)
         assertFalse(settings.isDarkMode)
         assertEquals(10, settings.snoozeIntervalMinutes)
+        assertEquals(3, settings.maxReminderRepeats)
         assertEquals(5, settings.lowStockThresholdDefault)
         assertTrue(settings.isChimeEnabled)
         assertEquals("Sarah Jenkins", settings.primaryCaregiverName)
@@ -27,11 +28,13 @@ class UserSettingsTest {
         val updated = initial.copy(
             isDarkMode = true,
             snoozeIntervalMinutes = 15,
+            maxReminderRepeats = 5,
             lowStockThresholdDefault = 8
         )
 
         assertTrue(updated.isDarkMode)
         assertEquals(15, updated.snoozeIntervalMinutes)
+        assertEquals(5, updated.maxReminderRepeats)
         assertEquals(8, updated.lowStockThresholdDefault)
         assertEquals(initial.userName, updated.userName)
     }

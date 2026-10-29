@@ -24,7 +24,8 @@ sealed interface DashboardUiState {
         val caregiverNote: String = "Dr. Aris reduced Evening Steroid by 5mg.",
         val caregiverNoteAuthor: String = "Updated by Sarah • 3 hours ago",
         val weeklyAdherencePercent: Int = 94,
-        val missedThisWeekCount: Int = 1
+        val missedThisWeekCount: Int = 1,
+        val isExactAlarmPermissionRequired: Boolean = false
     ) : DashboardUiState
 }
 
@@ -32,10 +33,13 @@ sealed interface DashboardUiEvent {
     data object Refresh : DashboardUiEvent
     data class DispenseNow(val tray: String) : DashboardUiEvent
     data object ClearError : DashboardUiEvent
+    data object RequestExactAlarmPermission : DashboardUiEvent
+    data object DismissExactAlarmBanner : DashboardUiEvent
 }
 
 sealed interface DashboardUiEffect {
     data class ShowSnackbar(val message: String) : DashboardUiEffect
     data object NavigateToSchedule : DashboardUiEffect
     data object NavigateToHistory : DashboardUiEffect
+    data object OpenExactAlarmSettings : DashboardUiEffect
 }

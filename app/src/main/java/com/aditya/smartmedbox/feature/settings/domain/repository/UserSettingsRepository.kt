@@ -9,4 +9,5 @@ interface UserSettingsRepository {
     suspend fun updateTheme(isDarkMode: Boolean): Result<Unit>
     suspend fun updateSnoozeInterval(minutes: Int): Result<Unit>
     suspend fun updateLowStockThreshold(threshold: Int): Result<Unit>
+    suspend fun updateMaxReminderRepeats(repeats: Int): Result<Unit>
 }

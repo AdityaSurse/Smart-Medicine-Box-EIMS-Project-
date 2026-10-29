@@ -18,7 +18,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowForward
+import androidx.compose.material.icons.outlined.Alarm
 import androidx.compose.material.icons.outlined.Analytics
+import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.DeviceThermostat
 import androidx.compose.material.icons.outlined.EditNote
 import androidx.compose.material.icons.outlined.Inventory2
@@ -32,6 +34,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -159,6 +162,13 @@ private fun DashboardContent(state: DashboardUiState.Success, onEvent: (Dashboar
     ) {
         Spacer(modifier = Modifier.height(spacing.extraSmall))
 
+        if (state.isExactAlarmPermissionRequired) {
+            ExactAlarmPermissionBanner(
+                onEnableClick = { onEvent(DashboardUiEvent.RequestExactAlarmPermission) },
+                onDismissClick = { onEvent(DashboardUiEvent.DismissExactAlarmBanner) }
+            )
+        }
+
         // 1. TOP GREETING & SMART BOX STATUS
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -252,7 +262,13 @@ private fun DashboardContent(state: DashboardUiState.Success, onEvent: (Dashboar
                     value = state.telemetry.cadenceStatus,
                     icon = Icons.Outlined.Verified,
                     statusIndicator = {
-                        SmartMedBoxStatusChip(status = DoseStatus.ON_TIME)
+                        val chipStatus = when {
+                            state.telemetry.cadenceStatus.contains("missed", ignoreCase = true) -> DoseStatus.MISSED
+                            state.telemetry.cadenceStatus.contains("pending", ignoreCase = true) ||
+                                state.telemetry.cadenceStatus.contains("due", ignoreCase = true) -> DoseStatus.PENDING
+                            else -> DoseStatus.ON_TIME
+                        }
+                        SmartMedBoxStatusChip(status = chipStatus)
                     },
                     modifier = Modifier.weight(1f)
                 )
@@ -414,5 +430,58 @@ private fun DashboardContent(state: DashboardUiState.Success, onEvent: (Dashboar
         }
 
         Spacer(modifier = Modifier.height(spacing.medium))
+    }
+}
+
+@Composable
+private fun ExactAlarmPermissionBanner(onEnableClick: () -> Unit, onDismissClick: () -> Unit, modifier: Modifier = Modifier) {
+    val spacing = LocalSpacing.current
+
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(CardShape)
+            .background(MaterialTheme.colorScheme.errorContainer)
+            .border(spacing.hairlineBorder, MaterialTheme.colorScheme.error, CardShape)
+            .padding(spacing.medium)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(spacing.small),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.Alarm,
+                contentDescription = "Exact Alarms Notice",
+                tint = MaterialTheme.colorScheme.onErrorContainer,
+                modifier = Modifier.size(spacing.large)
+            )
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = "Exact Alarms Disabled",
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.onErrorContainer
+                )
+                Text(
+                    text = "Allow exact alarms to ensure critical medication alerts ring on time.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onErrorContainer
+                )
+            }
+            TextButton(onClick = onEnableClick) {
+                Text(
+                    text = "ENABLE",
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.error
+                )
+            }
+            IconButton(onClick = onDismissClick) {
+                Icon(
+                    imageVector = Icons.Outlined.Close,
+                    contentDescription = "Dismiss notice",
+                    tint = MaterialTheme.colorScheme.onErrorContainer
+                )
+            }
+        }
     }
 }

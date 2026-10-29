@@ -90,6 +90,26 @@ fun SmartMedBoxAppScreen(navController: NavHostController = rememberNavControlle
             composable<Screen.Dashboard> {
                 val viewModel: DashboardViewModel = hiltViewModel()
                 val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+                val context = androidx.compose.ui.platform.LocalContext.current
+
+                androidx.compose.runtime.LaunchedEffect(viewModel.effect) {
+                    viewModel.effect.collect { effect ->
+                        when (effect) {
+                            is com.aditya.smartmedbox.feature.dashboard.ui.DashboardUiEffect.OpenExactAlarmSettings -> {
+                                val intent = com.aditya.smartmedbox.core.alarm.ExactAlarmPermissionHelper.getExactAlarmSettingIntent(context)
+                                context.startActivity(intent)
+                            }
+                            is com.aditya.smartmedbox.feature.dashboard.ui.DashboardUiEffect.NavigateToSchedule -> {
+                                navController.navigate(Screen.Schedule)
+                            }
+                            is com.aditya.smartmedbox.feature.dashboard.ui.DashboardUiEffect.NavigateToHistory -> {
+                                navController.navigate(Screen.History)
+                            }
+                            else -> Unit
+                        }
+                    }
+                }
+
                 DashboardScreen(
                     uiState = uiState,
                     onEvent = viewModel::onEvent,

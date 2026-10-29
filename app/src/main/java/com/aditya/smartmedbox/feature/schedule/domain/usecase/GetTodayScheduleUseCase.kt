@@ -1,7 +1,7 @@
 package com.aditya.smartmedbox.feature.schedule.domain.usecase
 
+import com.aditya.smartmedbox.feature.history.domain.evaluator.DoseEvaluator
 import com.aditya.smartmedbox.feature.history.domain.model.DoseEvent
-import com.aditya.smartmedbox.feature.history.domain.model.DoseStatus
 import com.aditya.smartmedbox.feature.history.domain.repository.DoseEventRepository
 import com.aditya.smartmedbox.feature.medicines.domain.repository.MedicinesRepository
 import com.aditya.smartmedbox.feature.schedule.domain.repository.DoseScheduleRepository
@@ -13,7 +13,8 @@ import kotlinx.coroutines.flow.combine
 class GetTodayScheduleUseCase @Inject constructor(
     private val doseScheduleRepository: DoseScheduleRepository,
     private val doseEventRepository: DoseEventRepository,
-    private val medicinesRepository: MedicinesRepository
+    private val medicinesRepository: MedicinesRepository,
+    private val doseEvaluator: DoseEvaluator = DoseEvaluator()
 ) {
     operator fun invoke(currentTimeMillis: Long = System.currentTimeMillis()): Flow<List<DoseEvent>> {
         val calendar = Calendar.getInstance().apply { timeInMillis = currentTimeMillis }
@@ -65,8 +66,13 @@ class GetTodayScheduleUseCase @Inject constructor(
                     if (existing != null) {
                         resultList.add(existing)
                     } else {
-                        val isOverdue = currentTimeMillis > (scheduledEpoch + schedule.gracePeriodMinutes * 60 * 1000L)
-                        val status = if (isOverdue) DoseStatus.MISSED else DoseStatus.PENDING
+                        val evalResult = doseEvaluator.evaluate(
+                            schedule = schedule,
+                            scheduledDoseEpochMillis = scheduledEpoch,
+                            expectedPillWeightGrams = med?.estimatedUnitWeightGrams ?: 0.5f,
+                            boxEvents = emptyList(),
+                            currentEvaluationTimeMillis = currentTimeMillis
+                        )
                         resultList.add(
                             DoseEvent(
                                 id = "evt_${schedule.id}_$scheduledEpoch",
@@ -75,7 +81,7 @@ class GetTodayScheduleUseCase @Inject constructor(
                                 medicineName = med?.name ?: schedule.medicineName,
                                 dosage = med?.dosageDescription ?: "1 tablet",
                                 scheduledTimeEpochMillis = scheduledEpoch,
-                                status = status,
+                                status = evalResult.status,
                                 bayLabel = schedule.compartmentBay
                             )
                         )

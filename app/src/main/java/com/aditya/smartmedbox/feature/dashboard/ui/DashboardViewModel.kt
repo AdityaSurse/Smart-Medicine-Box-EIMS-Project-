@@ -2,10 +2,19 @@ package com.aditya.smartmedbox.feature.dashboard.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.aditya.smartmedbox.core.designsystem.component.DoseStatus
+import com.aditya.smartmedbox.core.designsystem.component.DoseStatus as ComponentDoseStatus
 import com.aditya.smartmedbox.core.util.DispatcherProvider
 import com.aditya.smartmedbox.feature.dashboard.domain.repository.TelemetryRepository
+import com.aditya.smartmedbox.feature.dashboard.domain.usecase.ComputeTimeLeftUseCase
+import com.aditya.smartmedbox.feature.dashboard.domain.usecase.GetNextDoseUseCase
+import com.aditya.smartmedbox.feature.history.domain.model.DoseStatus
+import com.aditya.smartmedbox.feature.history.domain.usecase.GetWeeklyMissedCountUseCase
+import com.aditya.smartmedbox.feature.schedule.domain.alarm.DoseAlarmScheduler
+import com.aditya.smartmedbox.feature.schedule.domain.usecase.GetTodayScheduleUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,52 +29,88 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class DashboardViewModel @Inject constructor(
     private val telemetryRepository: TelemetryRepository,
+    private val getTodayScheduleUseCase: GetTodayScheduleUseCase,
+    private val getNextDoseUseCase: GetNextDoseUseCase,
+    private val getWeeklyMissedCountUseCase: GetWeeklyMissedCountUseCase,
+    private val computeTimeLeftUseCase: ComputeTimeLeftUseCase,
+    private val doseAlarmScheduler: DoseAlarmScheduler,
     private val dispatchers: DispatcherProvider
 ) : ViewModel() {
 
     private val _isRefreshing = MutableStateFlow(false)
     private val _errorMessage = MutableStateFlow<String?>(null)
+    private val _isExactAlarmBannerDismissed = MutableStateFlow(false)
 
-    private val defaultLedger = listOf(
-        DashboardScheduleItem(
-            id = "item_1",
-            time = "8:00 AM",
-            tray = "Tray 01",
-            medicineName = "Levothyroxine 75mcg",
-            dosage = "1 tablet • Fasted",
-            status = DoseStatus.TAKEN
-        ),
-        DashboardScheduleItem(
-            id = "item_2",
-            time = "1:30 PM",
-            tray = "Tray 02",
-            medicineName = "Vitamin D3 2000 IU",
-            dosage = "1 softgel • With lunch",
-            status = DoseStatus.PENDING
-        ),
-        DashboardScheduleItem(
-            id = "item_3",
-            time = "6:00 PM",
-            tray = "Tray 03",
-            medicineName = "Omega-3 1000mg",
-            dosage = "1 capsule • Dinner",
-            status = DoseStatus.MISSED
-        )
-    )
+    private val timeFormatter = SimpleDateFormat("h:mm a", Locale.getDefault())
 
     val uiState: StateFlow<DashboardUiState> = combine(
         telemetryRepository.observeTelemetry("DG-4081"),
-        _isRefreshing,
-        _errorMessage
-    ) { telemetry, refreshing, error ->
+        getTodayScheduleUseCase(),
+        getNextDoseUseCase(),
+        getWeeklyMissedCountUseCase(),
+        combine(_isRefreshing, _errorMessage, _isExactAlarmBannerDismissed) { r, e, b -> Triple(r, e, b) }
+    ) { telemetry, todayEvents, nextDose, missedCount, (refreshing, error, bannerDismissed) ->
         when {
             error != null -> DashboardUiState.Error(error)
             !telemetry.isOnline -> DashboardUiState.Offline
-            else -> DashboardUiState.Success(
-                telemetry = telemetry,
-                isRefreshing = refreshing,
-                scheduleLedger = defaultLedger
-            )
+            else -> {
+                val now = System.currentTimeMillis()
+                val hasMissedDoseToday = todayEvents.any { it.status == DoseStatus.MISSED }
+                val hasPendingDueNow = todayEvents.any {
+                    it.status == DoseStatus.PENDING && now >= it.scheduledTimeEpochMillis
+                }
+
+                val cadenceStatus = when {
+                    hasMissedDoseToday || missedCount > 0 -> "Dose missed"
+                    hasPendingDueNow -> "Pending"
+                    else -> "On time"
+                }
+
+                val scheduleLedger = todayEvents.map { event ->
+                    DashboardScheduleItem(
+                        id = event.id,
+                        time = timeFormatter.format(Date(event.scheduledTimeEpochMillis)),
+                        tray = event.bayLabel,
+                        medicineName = event.medicineName,
+                        dosage = event.dosage,
+                        status = when (event.status) {
+                            DoseStatus.TAKEN -> ComponentDoseStatus.TAKEN
+                            DoseStatus.PENDING -> ComponentDoseStatus.PENDING
+                            DoseStatus.MISSED -> ComponentDoseStatus.MISSED
+                        }
+                    )
+                }
+
+                val nextDoseTime = nextDose?.let { timeFormatter.format(Date(it.scheduledTimeEpochMillis)) }
+                    ?: telemetry.nextDoseTime
+                val nextDoseCountdown = nextDose?.let { computeTimeLeftUseCase(it.scheduledTimeEpochMillis) }
+                    ?: telemetry.nextDoseCountdown
+
+                val updatedTelemetry = telemetry.copy(
+                    cadenceStatus = cadenceStatus,
+                    nextDoseMedicine = nextDose?.medicineName ?: telemetry.nextDoseMedicine,
+                    nextDoseDosage = nextDose?.dosage ?: telemetry.nextDoseDosage,
+                    nextDoseTime = nextDoseTime,
+                    nextDoseCountdown = nextDoseCountdown,
+                    nextDoseTray = nextDose?.bayLabel ?: telemetry.nextDoseTray
+                )
+
+                val totalDosesThisWeek = maxOf(1, todayEvents.size * 7)
+                val adherencePercent = ((1.0 - (missedCount.toDouble() / totalDosesThisWeek)) * 100)
+                    .toInt()
+                    .coerceIn(0, 100)
+
+                val isExactAlarmRequired = !doseAlarmScheduler.canScheduleExactAlarms() && !bannerDismissed
+
+                DashboardUiState.Success(
+                    telemetry = updatedTelemetry,
+                    isRefreshing = refreshing,
+                    scheduleLedger = scheduleLedger,
+                    weeklyAdherencePercent = adherencePercent,
+                    missedThisWeekCount = missedCount,
+                    isExactAlarmPermissionRequired = isExactAlarmRequired
+                )
+            }
         }
     }.stateIn(
         scope = viewModelScope,
@@ -81,6 +126,14 @@ class DashboardViewModel @Inject constructor(
             is DashboardUiEvent.Refresh -> refresh()
             is DashboardUiEvent.DispenseNow -> dispenseNow(event.tray)
             is DashboardUiEvent.ClearError -> _errorMessage.value = null
+            is DashboardUiEvent.RequestExactAlarmPermission -> {
+                viewModelScope.launch(dispatchers.main) {
+                    _effect.emit(DashboardUiEffect.OpenExactAlarmSettings)
+                }
+            }
+            is DashboardUiEvent.DismissExactAlarmBanner -> {
+                _isExactAlarmBannerDismissed.value = true
+            }
         }
     }
 
