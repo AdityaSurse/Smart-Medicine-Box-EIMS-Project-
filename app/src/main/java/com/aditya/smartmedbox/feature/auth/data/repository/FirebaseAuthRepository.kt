@@ -151,3 +151,4 @@ class FirebaseAuthRepository @Inject constructor(
         return split(" ").joinToString(" ") { it.replaceFirstChar { char -> char.uppercase() } }
     }
 }
+

@@ -75,3 +75,4 @@ class FirestoreDtosTest {
         assertEquals(0.55, log.recordedWeightGrams ?: 0.0, 0.01)
     }
 }
+

@@ -261,3 +261,4 @@ All collections are scoped under the authenticated user's ID (`users/{uid}/...`)
 - **Snapshot Listener Hydration**: Snapshot listeners on Firestore collections update the Room database in the background. If new documents arrive from the ESP32, Room is upserted, and the UI reacts reactively.
 - **Last-Write-Wins (LWW)**: Updates carry an `updatedAt` epoch timestamp. When reconciling discrepancies, the latest timestamp takes precedence.
 - **Optimistic Local Updates**: When a user creates a medicine or logs a dose on the Android app, Room writes the entity synchronously, guaranteeing immediate UI feedback. The Firestore sync worker subsequently pushes the payload to the cloud when connectivity is established.
+

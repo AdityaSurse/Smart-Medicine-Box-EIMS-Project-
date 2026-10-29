@@ -289,3 +289,4 @@ class FirestoreDoseLogDataSource @Inject constructor(
         }
     }
 }
+

@@ -69,3 +69,4 @@ expectedStatuses.forEach(status => {
 console.log('---------------------------------------------------------');
 console.log(`Results: ${passedTests}/${totalTests} tests passed.`);
 console.log('---------------------------------------------------------');
+
