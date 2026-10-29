@@ -20,4 +20,3 @@ enum class HardwareEventType {
     LOW_BATTERY,
     DOSE_DISPENSED
 }
-

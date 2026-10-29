@@ -108,4 +108,3 @@ class DoseReminderEngineTest {
         verify(exactly = 1) { alarmScheduler.cancelReminder(scheduleId) }
     }
 }
-
