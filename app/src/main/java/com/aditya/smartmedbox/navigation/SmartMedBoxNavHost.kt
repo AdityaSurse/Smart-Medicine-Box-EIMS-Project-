@@ -19,6 +19,7 @@ import com.aditya.smartmedbox.feature.device.ui.DeviceScreen
 import com.aditya.smartmedbox.feature.device.ui.DeviceViewModel
 import com.aditya.smartmedbox.feature.auth.ui.AuthScreen
 import com.aditya.smartmedbox.feature.auth.ui.AuthUiState
+import com.aditya.smartmedbox.feature.auth.ui.AuthViewModel
 import com.aditya.smartmedbox.feature.dashboard.ui.DashboardScreen
 import com.aditya.smartmedbox.feature.dashboard.ui.DashboardViewModel
 import com.aditya.smartmedbox.feature.history.ui.HistoryScreen
@@ -29,7 +30,13 @@ import com.aditya.smartmedbox.feature.settings.ui.SettingsScreen
 import com.aditya.smartmedbox.feature.settings.ui.SettingsViewModel
 
 @Composable
-fun SmartMedBoxAppScreen(navController: NavHostController = rememberNavController()) {
+fun SmartMedBoxAppScreen(
+    navController: NavHostController = rememberNavController(),
+    authViewModel: AuthViewModel = hiltViewModel()
+) {
+    val authUiState by authViewModel.uiState.collectAsStateWithLifecycle()
+    val currentUser = (authUiState as? AuthUiState.Content)?.currentUser
+
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
     val shouldHideBottomBar = currentRoute?.contains("Auth") == true ||
@@ -37,6 +44,15 @@ fun SmartMedBoxAppScreen(navController: NavHostController = rememberNavControlle
         currentRoute?.contains("AddEditMedicine") == true ||
         currentRoute?.contains("Device") == true ||
         currentRoute?.contains("Alerts") == true
+
+    // Auth-gated navigation: redirect unauthenticated sessions to login
+    androidx.compose.runtime.LaunchedEffect(currentUser) {
+        if (currentUser == null && currentRoute?.contains("Auth") != true && currentRoute?.contains("Onboarding") != true) {
+            navController.navigate(Screen.Auth) {
+                popUpTo(0) { inclusive = true }
+            }
+        }
+    }
 
     Scaffold(
         bottomBar = {

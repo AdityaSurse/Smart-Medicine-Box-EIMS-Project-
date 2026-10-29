@@ -29,6 +29,7 @@ sealed interface SettingsUiEvent {
     data object PlayTestChime : SettingsUiEvent
     data object ClearFeedback : SettingsUiEvent
     data object Refresh : SettingsUiEvent
+    data object SignOut : SettingsUiEvent
 }
 
 sealed interface SettingsUiEffect {

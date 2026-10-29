@@ -287,7 +287,10 @@ private fun SettingsContent(
 
         // 6. System Information & Seal
         item {
-            SystemInfoSection(settings = settings)
+            SystemInfoSection(
+                settings = settings,
+                onSignOut = { onEvent(SettingsUiEvent.SignOut) }
+            )
         }
     }
 }
@@ -1114,7 +1117,10 @@ private fun VisualEnvironmentSection(
 }
 
 @Composable
-private fun SystemInfoSection(settings: DeviceSettings) {
+private fun SystemInfoSection(
+    settings: DeviceSettings,
+    onSignOut: () -> Unit
+) {
     val spacing = LocalSpacing.current
 
     Box(
@@ -1157,6 +1163,23 @@ private fun SystemInfoSection(settings: DeviceSettings) {
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
+
+            androidx.compose.material3.OutlinedButton(
+                onClick = onSignOut,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = spacing.small)
+                    .height(44.dp),
+                shape = PillShape,
+                colors = androidx.compose.material3.ButtonDefaults.outlinedButtonColors(
+                    contentColor = MaterialTheme.colorScheme.error
+                )
+            ) {
+                Text(
+                    text = "Sign Out of Account",
+                    style = MaterialTheme.typography.labelLarge
+                )
+            }
 
             Row(
                 modifier = Modifier.padding(top = spacing.small),

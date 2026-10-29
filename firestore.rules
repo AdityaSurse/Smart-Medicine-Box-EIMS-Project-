@@ -1,0 +1,96 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return isAuthenticated() && request.auth.uid == uid;
+    }
+
+    function isValidTelemetry(data) {
+      return data.temp is number &&
+             data.temp >= -20.0 && data.temp <= 70.0 &&
+             data.humidity is number &&
+             data.humidity >= 0.0 && data.humidity <= 100.0 &&
+             data.weightGrams is number &&
+             data.weightGrams >= 0.0 &&
+             data.boxOpen is bool;
+    }
+
+    function isValidEvent(data) {
+      return data.eventType in [
+        'BOX_OPENED', 'BOX_CLOSED', 'WEIGHT_DROP',
+        'WEIGHT_INCREASE', 'TAMPER_ALERT', 'LOW_BATTERY', 'DOSE_DISPENSED'
+      ] && data.timestamp != null;
+    }
+
+    function isValidMedicine(data) {
+      return data.name is string && data.name.size() > 0 &&
+             data.currentStock is int && data.currentStock >= 0;
+    }
+
+    function isValidSchedule(data) {
+      return data.medicineId is string &&
+             data.times is list &&
+             data.daysOfWeek is list;
+    }
+
+    function isValidDoseLog(data) {
+      return data.medicineId is string &&
+             data.status in ['TAKEN', 'PENDING', 'MISSED'];
+    }
+
+    // User profile document
+    match /users/{uid} {
+      allow read, write: if isOwner(uid);
+
+      // Registered hardware devices
+      match /devices/{deviceId} {
+        allow read, write: if isOwner(uid);
+
+        // Real-time telemetry singleton
+        match /telemetry/{docId} {
+          allow read: if isOwner(uid);
+          allow write: if isOwner(uid) && (request.resource.data == null || isValidTelemetry(request.resource.data));
+        }
+
+        // Hardware events stream
+        match /events/{eventId} {
+          allow read: if isOwner(uid);
+          allow create: if isOwner(uid) && isValidEvent(request.resource.data);
+          allow update, delete: if isOwner(uid);
+        }
+      }
+
+      // Medicines inventory
+      match /medicines/{medicineId} {
+        allow read: if isOwner(uid);
+        allow create, update: if isOwner(uid) && isValidMedicine(request.resource.data);
+        allow delete: if isOwner(uid);
+      }
+
+      // Prescription schedules
+      match /schedules/{scheduleId} {
+        allow read: if isOwner(uid);
+        allow create, update: if isOwner(uid) && isValidSchedule(request.resource.data);
+        allow delete: if isOwner(uid);
+      }
+
+      // Dose intake logs
+      match /doseLogs/{logId} {
+        allow read: if isOwner(uid);
+        allow create, update: if isOwner(uid) && isValidDoseLog(request.resource.data);
+        allow delete: if isOwner(uid);
+      }
+    }
+
+    // Deny all other collections by default
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

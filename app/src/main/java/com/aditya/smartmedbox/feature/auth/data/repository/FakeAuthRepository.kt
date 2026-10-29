@@ -12,7 +12,12 @@ import kotlinx.coroutines.flow.asStateFlow
 @Singleton
 class FakeAuthRepository @Inject constructor() : AuthRepository {
     private val _currentUser = MutableStateFlow<User?>(
-        User(uid = "user_eleanor_8820", email = "eleanor.vance@apothecary.care", linkedDeviceId = "DG-4081")
+        User(
+            uid = "user_eleanor_8820",
+            email = "eleanor.vance@apothecary.care",
+            displayName = "Eleanor Vance",
+            linkedDeviceId = "DG-4081"
+        )
     )
 
     override fun getAuthState(): Flow<User?> = _currentUser.asStateFlow()
@@ -25,7 +30,12 @@ class FakeAuthRepository @Inject constructor() : AuthRepository {
         if (password.length < 6) {
             return Result.failure(IllegalArgumentException("Password must be at least 6 characters"))
         }
-        val user = User(uid = "user_${email.hashCode()}", email = email, linkedDeviceId = "DG-4081")
+        val user = User(
+            uid = "user_${email.hashCode()}",
+            email = email,
+            displayName = email.substringBefore("@").replace(".", " ").capitalizeWords(),
+            linkedDeviceId = "DG-4081"
+        )
         _currentUser.value = user
         return Result.success(user)
     }
@@ -38,7 +48,24 @@ class FakeAuthRepository @Inject constructor() : AuthRepository {
         if (password.length < 6) {
             return Result.failure(IllegalArgumentException("Password must be at least 6 characters"))
         }
-        val user = User(uid = "user_new_${email.hashCode()}", email = email, linkedDeviceId = null)
+        val user = User(
+            uid = "user_new_${email.hashCode()}",
+            email = email,
+            displayName = email.substringBefore("@").replace(".", " ").capitalizeWords(),
+            linkedDeviceId = "DG-4081"
+        )
+        _currentUser.value = user
+        return Result.success(user)
+    }
+
+    override suspend fun signInWithGoogle(idToken: String): Result<User> {
+        delay(500)
+        val user = User(
+            uid = "user_google_10294",
+            email = "eleanor.vance@gmail.com",
+            displayName = "Eleanor Vance",
+            linkedDeviceId = "DG-4081"
+        )
         _currentUser.value = user
         return Result.success(user)
     }
@@ -46,5 +73,9 @@ class FakeAuthRepository @Inject constructor() : AuthRepository {
     override suspend fun signOut(): Result<Unit> {
         _currentUser.value = null
         return Result.success(Unit)
+    }
+
+    private fun String.capitalizeWords(): String {
+        return split(" ").joinToString(" ") { it.replaceFirstChar { char -> char.uppercase() } }
     }
 }

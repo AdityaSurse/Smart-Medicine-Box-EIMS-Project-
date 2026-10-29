@@ -322,7 +322,7 @@ private fun AuthFormContent(
             }
         }
 
-        // 4. ACTION BUTTON
+        // 4. ACTION BUTTONS
         SmartMedBoxPrimaryButton(
             text = if (state.isSignUpMode) "Create Account & Pair" else "Sign In to Dispensary",
             onClick = {
@@ -331,6 +331,23 @@ private fun AuthFormContent(
             },
             enabled = !state.isLoading
         )
+
+        androidx.compose.material3.OutlinedButton(
+            onClick = {
+                onEvent(AuthUiEvent.SignInWithGoogle())
+                onNavigateToDashboard()
+            },
+            enabled = !state.isLoading,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(48.dp),
+            shape = PillShape
+        ) {
+            Text(
+                text = "Continue with Google",
+                style = MaterialTheme.typography.labelLarge
+            )
+        }
 
         // 5. CAREGIVER SECURITY FOOTER NOTE
         Row(

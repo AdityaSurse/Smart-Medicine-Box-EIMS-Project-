@@ -81,6 +81,7 @@ class AuthViewModel @Inject constructor(
                 _isSignUpMode.value = !_isSignUpMode.value
                 _errorMessage.value = null
             }
+            is AuthUiEvent.SignInWithGoogle -> signInWithGoogle(event.idToken)
             is AuthUiEvent.Submit -> submit()
             is AuthUiEvent.SignOut -> signOut()
             is AuthUiEvent.ClearError -> _errorMessage.value = null
@@ -114,6 +115,21 @@ class AuthViewModel @Inject constructor(
                 _effect.emit(AuthUiEffect.NavigateToDashboard)
             } else {
                 _errorMessage.value = result.exceptionOrNull()?.message ?: "Authentication failed."
+            }
+        }
+    }
+
+    private fun signInWithGoogle(idToken: String) {
+        viewModelScope.launch(dispatchers.io) {
+            _isLoading.value = true
+            val result = authRepository.signInWithGoogle(idToken)
+            _isLoading.value = false
+
+            if (result.isSuccess) {
+                _effect.emit(AuthUiEffect.ShowSnackbar("Signed in with Google"))
+                _effect.emit(AuthUiEffect.NavigateToDashboard)
+            } else {
+                _errorMessage.value = result.exceptionOrNull()?.message ?: "Google sign-in failed."
             }
         }
     }

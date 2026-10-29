@@ -2,6 +2,7 @@ package com.aditya.smartmedbox.feature.settings.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.aditya.smartmedbox.feature.auth.domain.repository.AuthRepository
 import com.aditya.smartmedbox.feature.settings.domain.repository.SettingsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -16,7 +17,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
-    private val settingsRepository: SettingsRepository
+    private val settingsRepository: SettingsRepository,
+    private val authRepository: AuthRepository
 ) : ViewModel() {
 
     private val feedbackState = MutableStateFlow<String?>(null)
@@ -82,6 +84,12 @@ class SettingsViewModel @Inject constructor(
             }
             SettingsUiEvent.Refresh -> {
                 observeSettings()
+            }
+            SettingsUiEvent.SignOut -> {
+                viewModelScope.launch {
+                    authRepository.signOut()
+                    _uiEffect.emit(SettingsUiEffect.ShowSnackbar("Signed out successfully"))
+                }
             }
         }
     }

@@ -22,6 +22,7 @@ sealed interface AuthUiEvent {
     data class EmailChanged(val email: String) : AuthUiEvent
     data class PasswordChanged(val password: String) : AuthUiEvent
     data object ToggleAuthMode : AuthUiEvent
+    data class SignInWithGoogle(val idToken: String = "mock_google_id_token") : AuthUiEvent
     data object Submit : AuthUiEvent
     data object SignOut : AuthUiEvent
     data object ClearError : AuthUiEvent
