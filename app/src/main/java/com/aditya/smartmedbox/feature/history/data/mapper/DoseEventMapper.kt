@@ -32,4 +32,3 @@ fun DoseEvent.toEntity(): DoseEventEntity {
         bayLabel = bayLabel
     )
 }
-

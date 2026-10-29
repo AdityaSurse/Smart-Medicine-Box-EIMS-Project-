@@ -13,7 +13,9 @@ interface DoseEventDao {
     @Query("SELECT * FROM dose_events ORDER BY scheduledTimeEpochMillis DESC")
     fun getAllEvents(): Flow<List<DoseEventEntity>>
 
-    @Query("SELECT * FROM dose_events WHERE scheduledTimeEpochMillis BETWEEN :startMillis AND :endMillis ORDER BY scheduledTimeEpochMillis ASC")
+    @Query(
+        "SELECT * FROM dose_events WHERE scheduledTimeEpochMillis BETWEEN :startMillis AND :endMillis ORDER BY scheduledTimeEpochMillis ASC"
+    )
     fun getEventsForDay(startMillis: Long, endMillis: Long): Flow<List<DoseEventEntity>>
 
     @Query("SELECT * FROM dose_events WHERE id = :id")

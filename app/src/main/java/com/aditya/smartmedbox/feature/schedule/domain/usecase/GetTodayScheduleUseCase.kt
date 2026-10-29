@@ -5,10 +5,10 @@ import com.aditya.smartmedbox.feature.history.domain.model.DoseStatus
 import com.aditya.smartmedbox.feature.history.domain.repository.DoseEventRepository
 import com.aditya.smartmedbox.feature.medicines.domain.repository.MedicinesRepository
 import com.aditya.smartmedbox.feature.schedule.domain.repository.DoseScheduleRepository
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
 import java.util.Calendar
 import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 
 class GetTodayScheduleUseCase @Inject constructor(
     private val doseScheduleRepository: DoseScheduleRepository,
@@ -99,4 +99,3 @@ class GetTodayScheduleUseCase @Inject constructor(
         return startOfDayMillis + (hour * 3600 + minute * 60) * 1000L
     }
 }
-

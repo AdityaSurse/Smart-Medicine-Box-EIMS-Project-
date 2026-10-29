@@ -3,10 +3,10 @@ package com.aditya.smartmedbox.feature.device.data.repository
 import com.aditya.smartmedbox.core.database.dao.DeviceStatusDao
 import com.aditya.smartmedbox.feature.device.domain.model.SmartBoxDevice
 import com.aditya.smartmedbox.feature.device.domain.repository.DeviceRepository
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 @Singleton
 class RoomDeviceRepository @Inject constructor(
@@ -55,4 +55,3 @@ class RoomDeviceRepository @Inject constructor(
         }
     }
 }
-

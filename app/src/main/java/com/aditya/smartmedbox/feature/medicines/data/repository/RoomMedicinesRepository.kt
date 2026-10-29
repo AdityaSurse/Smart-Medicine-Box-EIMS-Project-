@@ -6,11 +6,11 @@ import com.aditya.smartmedbox.feature.medicines.data.mapper.toDomain
 import com.aditya.smartmedbox.feature.medicines.data.mapper.toEntity
 import com.aditya.smartmedbox.feature.medicines.domain.model.Medicine
 import com.aditya.smartmedbox.feature.medicines.domain.repository.MedicinesRepository
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
-import javax.inject.Singleton
 
 @Singleton
 class RoomMedicinesRepository @Inject constructor(

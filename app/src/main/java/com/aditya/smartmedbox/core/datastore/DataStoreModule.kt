@@ -13,8 +13,5 @@ abstract class DataStoreModule {
 
     @Binds
     @Singleton
-    abstract fun bindUserSettingsRepository(
-        userSettingsDataStore: UserSettingsDataStore
-    ): UserSettingsRepository
+    abstract fun bindUserSettingsRepository(userSettingsDataStore: UserSettingsDataStore): UserSettingsRepository
 }
-

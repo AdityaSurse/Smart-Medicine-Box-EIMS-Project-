@@ -9,4 +9,3 @@ interface AlertsRepository {
     suspend fun snoozeAlert(alertId: String, minutes: Int): Result<Unit>
     suspend fun skipDose(alertId: String, reason: String?): Result<Unit>
 }
-

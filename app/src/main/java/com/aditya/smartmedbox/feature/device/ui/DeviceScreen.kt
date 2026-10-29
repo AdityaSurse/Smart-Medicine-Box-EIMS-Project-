@@ -8,11 +8,9 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -28,7 +26,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.BluetoothSearching
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.HelpOutline
 import androidx.compose.material.icons.filled.MedicalServices
 import androidx.compose.material.icons.filled.SignalCellularAlt
@@ -50,11 +47,8 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -68,12 +62,7 @@ import com.aditya.smartmedbox.core.designsystem.theme.PillShape
 import com.aditya.smartmedbox.feature.device.domain.model.SmartBoxDevice
 
 @Composable
-fun DeviceScreen(
-    uiState: DeviceUiState,
-    onEvent: (DeviceUiEvent) -> Unit,
-    modifier: Modifier = Modifier,
-    onNavigateToAddMedicine: () -> Unit = {}
-) {
+fun DeviceScreen(uiState: DeviceUiState, onEvent: (DeviceUiEvent) -> Unit, modifier: Modifier = Modifier, onNavigateToAddMedicine: () -> Unit = {}) {
     val spacing = LocalSpacing.current
 
     Scaffold(
@@ -190,13 +179,7 @@ fun DeviceScreen(
 }
 
 @Composable
-private fun DevicePairingContent(
-    device: SmartBoxDevice,
-    isPairing: Boolean,
-    feedbackMessage: String?,
-    onPairClick: () -> Unit,
-    onTroubleshootClick: () -> Unit
-) {
+private fun DevicePairingContent(device: SmartBoxDevice, isPairing: Boolean, feedbackMessage: String?, onPairClick: () -> Unit, onTroubleshootClick: () -> Unit) {
     val spacing = LocalSpacing.current
 
     Column(
@@ -312,8 +295,9 @@ private fun DevicePairingContent(
 }
 
 @Composable
-private fun ThreeStepProgressIndicator(currentStep: Int) {
+private fun ThreeStepProgressIndicator(currentStep: Int = 2) {
     val spacing = LocalSpacing.current
+    val isStep2Active = currentStep >= 2
 
     Box(
         modifier = Modifier
@@ -373,7 +357,7 @@ private fun ThreeStepProgressIndicator(currentStep: Int) {
                     modifier = Modifier
                         .size(28.dp)
                         .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.primary),
+                        .background(if (isStep2Active) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceContainer),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
@@ -698,4 +682,3 @@ private fun DiscoveredBoxCard(device: SmartBoxDevice) {
         }
     }
 }
-

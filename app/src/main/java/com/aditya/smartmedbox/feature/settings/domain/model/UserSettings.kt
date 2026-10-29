@@ -9,4 +9,3 @@ data class UserSettings(
     val primaryCaregiverName: String = "Sarah Jenkins",
     val primaryCaregiverPhone: String = "+1 (555) 234-5678"
 )
-

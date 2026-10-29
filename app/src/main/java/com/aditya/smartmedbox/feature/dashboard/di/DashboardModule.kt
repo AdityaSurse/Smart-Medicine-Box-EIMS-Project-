@@ -16,13 +16,9 @@ abstract class DashboardModule {
 
     @Binds
     @Singleton
-    abstract fun bindTelemetryRepository(
-        roomTelemetryRepository: RoomTelemetryRepository
-    ): TelemetryRepository
+    abstract fun bindTelemetryRepository(roomTelemetryRepository: RoomTelemetryRepository): TelemetryRepository
 
     @Binds
     @Singleton
-    abstract fun bindDeviceStatusRepository(
-        roomDeviceStatusRepository: RoomDeviceStatusRepository
-    ): DeviceStatusRepository
+    abstract fun bindDeviceStatusRepository(roomDeviceStatusRepository: RoomDeviceStatusRepository): DeviceStatusRepository
 }

@@ -16,13 +16,9 @@ abstract class ScheduleModule {
 
     @Binds
     @Singleton
-    abstract fun bindScheduleRepository(
-        roomScheduleRepository: RoomScheduleRepository
-    ): ScheduleRepository
+    abstract fun bindScheduleRepository(roomScheduleRepository: RoomScheduleRepository): ScheduleRepository
 
     @Binds
     @Singleton
-    abstract fun bindDoseScheduleRepository(
-        roomDoseScheduleRepository: RoomDoseScheduleRepository
-    ): DoseScheduleRepository
+    abstract fun bindDoseScheduleRepository(roomDoseScheduleRepository: RoomDoseScheduleRepository): DoseScheduleRepository
 }

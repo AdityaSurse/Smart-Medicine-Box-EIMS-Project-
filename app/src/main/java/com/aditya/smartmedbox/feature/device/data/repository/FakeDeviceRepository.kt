@@ -2,12 +2,12 @@ package com.aditya.smartmedbox.feature.device.data.repository
 
 import com.aditya.smartmedbox.feature.device.domain.model.SmartBoxDevice
 import com.aditya.smartmedbox.feature.device.domain.repository.DeviceRepository
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import javax.inject.Inject
-import javax.inject.Singleton
 
 @Singleton
 class FakeDeviceRepository @Inject constructor() : DeviceRepository {
@@ -44,4 +44,3 @@ class FakeDeviceRepository @Inject constructor() : DeviceRepository {
         return Result.success(Unit)
     }
 }
-

@@ -10,4 +10,3 @@ interface SettingsRepository {
     suspend fun updateThemeMode(isDark: Boolean): Result<Unit>
     suspend fun playTestChime(): Result<Unit>
 }
-

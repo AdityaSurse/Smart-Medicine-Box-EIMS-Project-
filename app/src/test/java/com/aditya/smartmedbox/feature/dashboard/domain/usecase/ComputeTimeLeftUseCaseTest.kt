@@ -43,4 +43,3 @@ class ComputeTimeLeftUseCaseTest {
         assertEquals("42m overdue", result)
     }
 }
-

@@ -14,6 +14,7 @@ import com.aditya.smartmedbox.core.database.entity.DoseEventEntity
 import com.aditya.smartmedbox.core.database.entity.DoseScheduleEntity
 import com.aditya.smartmedbox.core.database.entity.MedicineEntity
 import com.aditya.smartmedbox.feature.history.domain.model.DoseStatus
+import java.io.IOException
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -21,7 +22,6 @@ import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.io.IOException
 
 @RunWith(AndroidJUnit4::class)
 class RoomDaoTest {
@@ -150,4 +150,3 @@ class RoomDaoTest {
         }
     }
 }
-

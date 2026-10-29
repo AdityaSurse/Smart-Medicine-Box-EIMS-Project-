@@ -11,4 +11,3 @@ data class SmartBoxDevice(
     val isNearby: Boolean = true,
     val isPaired: Boolean = true
 )
-

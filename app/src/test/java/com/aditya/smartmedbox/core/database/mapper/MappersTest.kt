@@ -1,9 +1,5 @@
 package com.aditya.smartmedbox.core.database.mapper
 
-import com.aditya.smartmedbox.core.database.entity.DeviceStatusEntity
-import com.aditya.smartmedbox.core.database.entity.DoseEventEntity
-import com.aditya.smartmedbox.core.database.entity.DoseScheduleEntity
-import com.aditya.smartmedbox.core.database.entity.MedicineEntity
 import com.aditya.smartmedbox.feature.dashboard.data.mapper.toDomain
 import com.aditya.smartmedbox.feature.dashboard.data.mapper.toEntity
 import com.aditya.smartmedbox.feature.dashboard.domain.model.DeviceStatus
@@ -115,4 +111,3 @@ class MappersTest {
         assertEquals(domain.batteryPercent, mappedBack.batteryPercent)
     }
 }
-

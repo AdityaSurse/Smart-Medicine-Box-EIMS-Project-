@@ -39,7 +39,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.unit.dp
 import com.aditya.smartmedbox.core.designsystem.component.DoseStatus
 import com.aditya.smartmedbox.core.designsystem.component.SmartMedBoxDoseCard
 import com.aditya.smartmedbox.core.designsystem.component.SmartMedBoxEmptyState
@@ -56,12 +55,7 @@ import com.aditya.smartmedbox.core.designsystem.theme.PillShape
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DashboardScreen(
-    uiState: DashboardUiState,
-    onEvent: (DashboardUiEvent) -> Unit,
-    modifier: Modifier = Modifier,
-    onNavigateToAlerts: () -> Unit = {}
-) {
+fun DashboardScreen(uiState: DashboardUiState, onEvent: (DashboardUiEvent) -> Unit, modifier: Modifier = Modifier, onNavigateToAlerts: () -> Unit = {}) {
     val spacing = LocalSpacing.current
 
     Scaffold(
@@ -152,10 +146,7 @@ fun DashboardScreen(
 }
 
 @Composable
-private fun DashboardContent(
-    state: DashboardUiState.Success,
-    onEvent: (DashboardUiEvent) -> Unit
-) {
+private fun DashboardContent(state: DashboardUiState.Success, onEvent: (DashboardUiEvent) -> Unit) {
     val spacing = LocalSpacing.current
     val scrollState = rememberScrollState()
 

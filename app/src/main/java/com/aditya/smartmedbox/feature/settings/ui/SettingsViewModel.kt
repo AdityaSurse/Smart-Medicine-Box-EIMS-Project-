@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.aditya.smartmedbox.feature.auth.domain.repository.AuthRepository
 import com.aditya.smartmedbox.feature.settings.domain.repository.SettingsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -13,7 +14,6 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
@@ -94,4 +94,3 @@ class SettingsViewModel @Inject constructor(
         }
     }
 }
-

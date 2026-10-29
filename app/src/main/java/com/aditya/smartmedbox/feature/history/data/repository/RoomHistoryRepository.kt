@@ -1,21 +1,21 @@
 package com.aditya.smartmedbox.feature.history.data.repository
 
-import com.aditya.smartmedbox.core.designsystem.component.DoseStatus
 import com.aditya.smartmedbox.core.database.dao.DeviceStatusDao
 import com.aditya.smartmedbox.core.database.dao.DoseEventDao
+import com.aditya.smartmedbox.core.designsystem.component.DoseStatus
 import com.aditya.smartmedbox.feature.history.domain.model.AdherenceStats
 import com.aditya.smartmedbox.feature.history.domain.model.DailyAdherence
-import com.aditya.smartmedbox.feature.history.domain.model.IntakeLog
 import com.aditya.smartmedbox.feature.history.domain.model.DoseStatus as DomainDoseStatus
+import com.aditya.smartmedbox.feature.history.domain.model.IntakeLog
 import com.aditya.smartmedbox.feature.history.domain.repository.HistoryRepository
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 
 @Singleton
 class RoomHistoryRepository @Inject constructor(
@@ -94,4 +94,3 @@ class RoomHistoryRepository @Inject constructor(
         return Result.success(Unit)
     }
 }
-

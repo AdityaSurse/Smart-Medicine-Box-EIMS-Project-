@@ -49,11 +49,7 @@ import com.aditya.smartmedbox.core.designsystem.theme.LocalSpacing
 import com.aditya.smartmedbox.core.designsystem.theme.PillShape
 
 @Composable
-fun OnboardingScreen(
-    uiState: OnboardingUiState,
-    onEvent: (OnboardingUiEvent) -> Unit,
-    modifier: Modifier = Modifier
-) {
+fun OnboardingScreen(uiState: OnboardingUiState, onEvent: (OnboardingUiEvent) -> Unit, modifier: Modifier = Modifier) {
     val spacing = LocalSpacing.current
 
     Scaffold(
@@ -156,10 +152,7 @@ fun OnboardingScreen(
 }
 
 @Composable
-private fun OnboardingContent(
-    state: OnboardingUiState.Content,
-    onEvent: (OnboardingUiEvent) -> Unit
-) {
+private fun OnboardingContent(state: OnboardingUiState.Content, onEvent: (OnboardingUiEvent) -> Unit) {
     val spacing = LocalSpacing.current
     val scrollState = rememberScrollState()
 
@@ -423,12 +416,7 @@ private fun OnboardingContent(
 }
 
 @Composable
-private fun StepIndicator(
-    stepNumber: Int,
-    label: String,
-    isCompleted: Boolean,
-    isActive: Boolean
-) {
+private fun StepIndicator(stepNumber: Int, label: String, isCompleted: Boolean, isActive: Boolean) {
     val spacing = LocalSpacing.current
 
     Column(

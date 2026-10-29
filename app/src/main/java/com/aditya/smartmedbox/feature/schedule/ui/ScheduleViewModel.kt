@@ -3,9 +3,10 @@ package com.aditya.smartmedbox.feature.schedule.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aditya.smartmedbox.feature.schedule.domain.model.PrescriptionSchedule
-import com.aditya.smartmedbox.feature.schedule.domain.model.ScheduleDay
 import com.aditya.smartmedbox.feature.schedule.domain.repository.ScheduleRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.util.UUID
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -14,8 +15,6 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
-import java.util.UUID
-import javax.inject.Inject
 
 @HiltViewModel
 class ScheduleViewModel @Inject constructor(
@@ -117,4 +116,3 @@ class ScheduleViewModel @Inject constructor(
         }
     }
 }
-

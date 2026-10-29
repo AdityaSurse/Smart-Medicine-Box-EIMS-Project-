@@ -28,4 +28,3 @@ fun DoseSchedule.toEntity(): DoseScheduleEntity {
         isActive = isActive
     )
 }
-

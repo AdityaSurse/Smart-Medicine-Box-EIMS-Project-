@@ -80,4 +80,3 @@ class AddMedicineUseCaseTest {
         assertEquals("Stock cannot be negative.", result.exceptionOrNull()?.message)
     }
 }
-

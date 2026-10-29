@@ -124,4 +124,3 @@ class FirestoreSyncEngineTest {
         syncEngine.pushDoseLog(event)
     }
 }
-

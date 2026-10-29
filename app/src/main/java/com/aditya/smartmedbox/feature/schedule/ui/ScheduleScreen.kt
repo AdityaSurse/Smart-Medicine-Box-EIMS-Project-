@@ -1,8 +1,5 @@
 package com.aditya.smartmedbox.feature.schedule.ui
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -20,13 +17,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Alarm
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.EditNote
@@ -80,12 +75,7 @@ import com.aditya.smartmedbox.feature.schedule.domain.model.ScheduleDay
 import kotlinx.coroutines.delay
 
 @Composable
-fun ScheduleScreen(
-    uiState: ScheduleUiState,
-    onEvent: (ScheduleUiEvent) -> Unit,
-    modifier: Modifier = Modifier,
-    onNavigateToAlerts: () -> Unit = {}
-) {
+fun ScheduleScreen(uiState: ScheduleUiState, onEvent: (ScheduleUiEvent) -> Unit, modifier: Modifier = Modifier, onNavigateToAlerts: () -> Unit = {}) {
     val spacing = LocalSpacing.current
 
     Scaffold(
@@ -324,12 +314,7 @@ private fun ScheduleContent(
 }
 
 @Composable
-private fun WeeklyLedgerHeader(
-    days: List<ScheduleDay>,
-    selectedDay: Int,
-    isTraySynced: Boolean,
-    onSelectDay: (Int) -> Unit
-) {
+private fun WeeklyLedgerHeader(days: List<ScheduleDay>, selectedDay: Int, isTraySynced: Boolean, onSelectDay: (Int) -> Unit) {
     val spacing = LocalSpacing.current
 
     Column(modifier = Modifier.fillMaxWidth()) {
@@ -370,15 +355,21 @@ private fun WeeklyLedgerHeader(
                             .size(8.dp)
                             .clip(CircleShape)
                             .background(
-                                if (isTraySynced) MaterialTheme.colorScheme.secondary
-                                else MaterialTheme.colorScheme.error
+                                if (isTraySynced) {
+                                    MaterialTheme.colorScheme.secondary
+                                } else {
+                                    MaterialTheme.colorScheme.error
+                                }
                             )
                     )
                     Text(
                         text = if (isTraySynced) "TRAY SYNCED" else "OFFLINE",
                         style = MaterialTheme.typography.labelSmall,
-                        color = if (isTraySynced) MaterialTheme.colorScheme.secondary
-                        else MaterialTheme.colorScheme.error,
+                        color = if (isTraySynced) {
+                            MaterialTheme.colorScheme.secondary
+                        } else {
+                            MaterialTheme.colorScheme.error
+                        },
                         fontWeight = FontWeight.Bold
                     )
                 }
@@ -394,12 +385,21 @@ private fun WeeklyLedgerHeader(
         ) {
             days.forEach { day ->
                 val isSelected = day.dayNumber == selectedDay
-                val bg = if (isSelected) MaterialTheme.colorScheme.primary
-                else MaterialTheme.colorScheme.surfaceContainerLow
-                val textDayColor = if (isSelected) MaterialTheme.colorScheme.inversePrimary
-                else MaterialTheme.colorScheme.onSurfaceVariant
-                val textNumColor = if (isSelected) MaterialTheme.colorScheme.onPrimary
-                else MaterialTheme.colorScheme.onSurface
+                val bg = if (isSelected) {
+                    MaterialTheme.colorScheme.primary
+                } else {
+                    MaterialTheme.colorScheme.surfaceContainerLow
+                }
+                val textDayColor = if (isSelected) {
+                    MaterialTheme.colorScheme.inversePrimary
+                } else {
+                    MaterialTheme.colorScheme.onSurfaceVariant
+                }
+                val textNumColor = if (isSelected) {
+                    MaterialTheme.colorScheme.onPrimary
+                } else {
+                    MaterialTheme.colorScheme.onSurface
+                }
 
                 Box(
                     modifier = Modifier
@@ -440,10 +440,7 @@ private fun WeeklyLedgerHeader(
 }
 
 @Composable
-private fun ScheduleMedicationCard(
-    schedule: PrescriptionSchedule,
-    onToggleActive: (Boolean) -> Unit
-) {
+private fun ScheduleMedicationCard(schedule: PrescriptionSchedule, onToggleActive: (Boolean) -> Unit) {
     val spacing = LocalSpacing.current
 
     Box(
@@ -774,12 +771,21 @@ private fun NewRegimenFormCard(
                 ) {
                     allBays.forEach { bay ->
                         val isBaySelected = bay == selectedBay
-                        val bayBg = if (isBaySelected) MaterialTheme.colorScheme.primary
-                        else MaterialTheme.colorScheme.surfaceContainerLow
-                        val bayTextColor = if (isBaySelected) MaterialTheme.colorScheme.onPrimary
-                        else MaterialTheme.colorScheme.onSurface
-                        val baySubColor = if (isBaySelected) MaterialTheme.colorScheme.inversePrimary
-                        else MaterialTheme.colorScheme.onSurfaceVariant
+                        val bayBg = if (isBaySelected) {
+                            MaterialTheme.colorScheme.primary
+                        } else {
+                            MaterialTheme.colorScheme.surfaceContainerLow
+                        }
+                        val bayTextColor = if (isBaySelected) {
+                            MaterialTheme.colorScheme.onPrimary
+                        } else {
+                            MaterialTheme.colorScheme.onSurface
+                        }
+                        val baySubColor = if (isBaySelected) {
+                            MaterialTheme.colorScheme.inversePrimary
+                        } else {
+                            MaterialTheme.colorScheme.onSurfaceVariant
+                        }
 
                         Box(
                             modifier = Modifier
@@ -913,10 +919,16 @@ private fun NewRegimenFormCard(
                 ) {
                     allDays.forEach { dayLetter ->
                         val isDaySelected = repeatDays.contains(dayLetter)
-                        val dayBg = if (isDaySelected) MaterialTheme.colorScheme.primary
-                        else MaterialTheme.colorScheme.surfaceContainerLow
-                        val dayTextColor = if (isDaySelected) MaterialTheme.colorScheme.onPrimary
-                        else MaterialTheme.colorScheme.onSurfaceVariant
+                        val dayBg = if (isDaySelected) {
+                            MaterialTheme.colorScheme.primary
+                        } else {
+                            MaterialTheme.colorScheme.surfaceContainerLow
+                        }
+                        val dayTextColor = if (isDaySelected) {
+                            MaterialTheme.colorScheme.onPrimary
+                        } else {
+                            MaterialTheme.colorScheme.onSurfaceVariant
+                        }
 
                         Box(
                             modifier = Modifier

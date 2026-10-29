@@ -15,13 +15,13 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.aditya.smartmedbox.feature.alerts.ui.AlertsScreen
 import com.aditya.smartmedbox.feature.alerts.ui.AlertsViewModel
-import com.aditya.smartmedbox.feature.device.ui.DeviceScreen
-import com.aditya.smartmedbox.feature.device.ui.DeviceViewModel
 import com.aditya.smartmedbox.feature.auth.ui.AuthScreen
 import com.aditya.smartmedbox.feature.auth.ui.AuthUiState
 import com.aditya.smartmedbox.feature.auth.ui.AuthViewModel
 import com.aditya.smartmedbox.feature.dashboard.ui.DashboardScreen
 import com.aditya.smartmedbox.feature.dashboard.ui.DashboardViewModel
+import com.aditya.smartmedbox.feature.device.ui.DeviceScreen
+import com.aditya.smartmedbox.feature.device.ui.DeviceViewModel
 import com.aditya.smartmedbox.feature.history.ui.HistoryScreen
 import com.aditya.smartmedbox.feature.medicines.ui.MedicinesScreen
 import com.aditya.smartmedbox.feature.schedule.ui.ScheduleScreen
@@ -30,10 +30,7 @@ import com.aditya.smartmedbox.feature.settings.ui.SettingsScreen
 import com.aditya.smartmedbox.feature.settings.ui.SettingsViewModel
 
 @Composable
-fun SmartMedBoxAppScreen(
-    navController: NavHostController = rememberNavController(),
-    authViewModel: AuthViewModel = hiltViewModel()
-) {
+fun SmartMedBoxAppScreen(navController: NavHostController = rememberNavController(), authViewModel: AuthViewModel = hiltViewModel()) {
     val authUiState by authViewModel.uiState.collectAsStateWithLifecycle()
     val currentUser = (authUiState as? AuthUiState.Content)?.currentUser
 
@@ -120,7 +117,7 @@ fun SmartMedBoxAppScreen(
                     onNavigateToEditMedicine = { medId -> navController.navigate(Screen.AddEditMedicine(medId)) }
                 )
             }
- 
+
             composable<Screen.AddEditMedicine> {
                 val viewModel: com.aditya.smartmedbox.feature.medicines.ui.addedit.AddEditMedicineViewModel = hiltViewModel()
                 val uiState by viewModel.uiState.collectAsStateWithLifecycle()

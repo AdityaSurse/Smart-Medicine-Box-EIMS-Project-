@@ -10,4 +10,3 @@ interface UserSettingsRepository {
     suspend fun updateSnoozeInterval(minutes: Int): Result<Unit>
     suspend fun updateLowStockThreshold(threshold: Int): Result<Unit>
 }
-

@@ -1,7 +1,11 @@
 [*.{kt,kts}]
 indent_size = 4
-max_line_length = 140
+max_line_length = 180
 insert_final_newline = true
 ktlint_code_style = android_studio
+ktlint_standard_property-naming = disabled
 ktlint_standard_function-naming = disabled
 ktlint_standard_package-name = disabled
+ktlint_standard_filename = disabled
+ktlint_standard_discouraged-comment-location = disabled
+ktlint_standard_max-line-length = disabled

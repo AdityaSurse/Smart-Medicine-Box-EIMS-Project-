@@ -10,4 +10,3 @@ data class DeviceStatus(
     val batteryPercent: Int = 84,
     val isOnline: Boolean = true
 )
-

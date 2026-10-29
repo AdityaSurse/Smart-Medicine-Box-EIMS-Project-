@@ -10,10 +10,7 @@ class AddMedicineUseCase @Inject constructor(
     private val medicinesRepository: MedicinesRepository,
     private val doseScheduleRepository: DoseScheduleRepository
 ) {
-    suspend operator fun invoke(
-        medicine: Medicine,
-        gracePeriodMinutes: Int = 30
-    ): Result<Unit> {
+    suspend operator fun invoke(medicine: Medicine, gracePeriodMinutes: Int = 30): Result<Unit> {
         if (medicine.name.isBlank()) {
             return Result.failure(IllegalArgumentException("Medicine name cannot be blank."))
         }
@@ -50,4 +47,3 @@ class AddMedicineUseCase @Inject constructor(
         return if (result.isEmpty()) listOf(1, 2, 3, 4, 5) else result
     }
 }
-

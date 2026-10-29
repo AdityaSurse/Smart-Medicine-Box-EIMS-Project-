@@ -1,6 +1,5 @@
 package com.aditya.smartmedbox.core.firebase.datasource
 
-import com.aditya.smartmedbox.core.firebase.dto.FirestoreDeviceDto
 import com.aditya.smartmedbox.core.firebase.dto.FirestoreDoseLogDto
 import com.aditya.smartmedbox.core.firebase.dto.FirestoreEventDto
 import com.aditya.smartmedbox.core.firebase.dto.FirestoreMedicineDto
@@ -10,14 +9,14 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.SetOptions
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
-import javax.inject.Inject
-import javax.inject.Singleton
 
 @Singleton
 class FirestoreDeviceDataSource @Inject constructor(
@@ -289,4 +288,3 @@ class FirestoreDoseLogDataSource @Inject constructor(
         }
     }
 }
-

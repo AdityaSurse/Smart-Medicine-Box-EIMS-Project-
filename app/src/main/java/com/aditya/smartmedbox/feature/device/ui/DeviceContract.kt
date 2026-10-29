@@ -33,4 +33,3 @@ sealed interface DeviceUiEffect {
     data object NavigateToAddMedicine : DeviceUiEffect
     data class ShowSnackbar(val message: String) : DeviceUiEffect
 }
-

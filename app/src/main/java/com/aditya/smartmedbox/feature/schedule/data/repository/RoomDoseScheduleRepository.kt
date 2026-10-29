@@ -6,11 +6,11 @@ import com.aditya.smartmedbox.feature.schedule.data.mapper.toDomain
 import com.aditya.smartmedbox.feature.schedule.data.mapper.toEntity
 import com.aditya.smartmedbox.feature.schedule.domain.model.DoseSchedule
 import com.aditya.smartmedbox.feature.schedule.domain.repository.DoseScheduleRepository
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
-import javax.inject.Singleton
 
 @Singleton
 class RoomDoseScheduleRepository @Inject constructor(

@@ -36,4 +36,3 @@ class UserSettingsTest {
         assertEquals(initial.userName, updated.userName)
     }
 }
-

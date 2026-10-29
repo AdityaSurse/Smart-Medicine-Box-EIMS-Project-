@@ -21,4 +21,3 @@ data class MedicineEntity(
     val isActive: Boolean = true,
     val createdAt: Long = System.currentTimeMillis()
 )
-

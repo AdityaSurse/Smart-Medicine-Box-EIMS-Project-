@@ -12,12 +12,12 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.aditya.smartmedbox.feature.settings.domain.model.UserSettings
 import com.aditya.smartmedbox.feature.settings.domain.repository.UserSettingsRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.map
 import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.map
 
 val Context.userPreferencesDataStore: DataStore<Preferences> by preferencesDataStore(name = "user_settings")
 
@@ -110,4 +110,3 @@ class UserSettingsDataStore @Inject constructor(
         }
     }
 }
-

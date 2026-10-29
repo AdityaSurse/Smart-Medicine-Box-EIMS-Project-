@@ -76,4 +76,3 @@ class FirebaseAuthRepositoryTest {
         assertNull(user)
     }
 }
-

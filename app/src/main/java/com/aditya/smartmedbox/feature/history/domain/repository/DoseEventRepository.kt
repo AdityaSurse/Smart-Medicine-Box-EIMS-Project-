@@ -13,4 +13,3 @@ interface DoseEventRepository {
     suspend fun logDose(eventId: String, status: DoseStatus, loggedTimestamp: Long, recordedWeightGrams: Float?): Result<Unit>
     fun getMissedEventsCount(sinceEpochMillis: Long): Flow<Int>
 }
-

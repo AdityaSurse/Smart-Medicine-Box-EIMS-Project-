@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aditya.smartmedbox.core.designsystem.component.DoseStatus
 import com.aditya.smartmedbox.core.util.DispatcherProvider
-import com.aditya.smartmedbox.feature.dashboard.domain.model.DeviceTelemetry
 import com.aditya.smartmedbox.feature.dashboard.domain.repository.TelemetryRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject

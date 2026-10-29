@@ -4,10 +4,7 @@ import javax.inject.Inject
 import kotlin.math.abs
 
 class ComputeTimeLeftUseCase @Inject constructor() {
-    operator fun invoke(
-        scheduledTimeMillis: Long,
-        currentTimeMillis: Long = System.currentTimeMillis()
-    ): String {
+    operator fun invoke(scheduledTimeMillis: Long, currentTimeMillis: Long = System.currentTimeMillis()): String {
         val diffMillis = scheduledTimeMillis - currentTimeMillis
         val diffMinutes = diffMillis / (1000 * 60)
 
@@ -35,4 +32,3 @@ class ComputeTimeLeftUseCase @Inject constructor() {
         }
     }
 }
-

@@ -77,12 +77,7 @@ import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddEditMedicineScreen(
-    uiState: AddEditMedicineUiState,
-    onEvent: (AddEditMedicineUiEvent) -> Unit,
-    onNavigateBack: () -> Unit,
-    modifier: Modifier = Modifier
-) {
+fun AddEditMedicineScreen(uiState: AddEditMedicineUiState, onEvent: (AddEditMedicineUiEvent) -> Unit, onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
     val spacing = LocalSpacing.current
 
     LaunchedEffect(uiState.isSaved) {
@@ -281,7 +276,7 @@ fun AddEditMedicineScreen(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.spacedBy(spacing.small)
                         ) {
-                            (1..4).forEach { bayNumber ->
+                            for (bayNumber in 1..4) {
                                 val isSelected = uiState.selectedBayIndex == bayNumber
                                 Box(
                                     modifier = Modifier
@@ -289,8 +284,11 @@ fun AddEditMedicineScreen(
                                         .height(52.dp)
                                         .clip(RoundedCornerShape(10.dp))
                                         .background(
-                                            if (isSelected) MaterialTheme.colorScheme.primary
-                                            else MaterialTheme.colorScheme.surfaceContainerLow
+                                            if (isSelected) {
+                                                MaterialTheme.colorScheme.primary
+                                            } else {
+                                                MaterialTheme.colorScheme.surfaceContainerLow
+                                            }
                                         )
                                         .border(
                                             1.dp,
@@ -307,7 +305,13 @@ fun AddEditMedicineScreen(
                                         Text(
                                             text = "BAY",
                                             style = MaterialTheme.typography.labelSmall,
-                                            color = if (isSelected) MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f) else MaterialTheme.colorScheme.onSurfaceVariant
+                                            color = if (isSelected) {
+                                                MaterialTheme.colorScheme.onPrimary.copy(
+                                                    alpha = 0.7f
+                                                )
+                                            } else {
+                                                MaterialTheme.colorScheme.onSurfaceVariant
+                                            }
                                         )
                                         Text(
                                             text = "0$bayNumber",
@@ -370,8 +374,11 @@ fun AddEditMedicineScreen(
                                         .size(42.dp)
                                         .clip(CircleShape)
                                         .background(
-                                            if (isActive) MaterialTheme.colorScheme.primary
-                                            else MaterialTheme.colorScheme.surfaceContainerLow
+                                            if (isActive) {
+                                                MaterialTheme.colorScheme.primary
+                                            } else {
+                                                MaterialTheme.colorScheme.surfaceContainerLow
+                                            }
                                         )
                                         .border(
                                             1.dp,
@@ -545,11 +552,7 @@ fun AddEditMedicineScreen(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun OptInFlowRow(
-    timings: List<String>,
-    onRemoveTime: (String) -> Unit,
-    onAddTime: (String) -> Unit
-) {
+private fun OptInFlowRow(timings: List<String>, onRemoveTime: (String) -> Unit, onAddTime: (String) -> Unit) {
     val spacing = LocalSpacing.current
     var showQuickAddMenu by remember { mutableStateOf(false) }
 

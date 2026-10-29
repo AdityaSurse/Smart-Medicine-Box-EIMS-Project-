@@ -14,7 +14,5 @@ abstract class AlertsModule {
 
     @Binds
     @Singleton
-    abstract fun bindAlertsRepository(
-        roomAlertsRepository: RoomAlertsRepository
-    ): AlertsRepository
+    abstract fun bindAlertsRepository(roomAlertsRepository: RoomAlertsRepository): AlertsRepository
 }

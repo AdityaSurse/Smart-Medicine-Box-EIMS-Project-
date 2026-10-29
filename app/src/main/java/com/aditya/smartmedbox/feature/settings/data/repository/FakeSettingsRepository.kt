@@ -2,11 +2,11 @@ package com.aditya.smartmedbox.feature.settings.data.repository
 
 import com.aditya.smartmedbox.feature.settings.domain.model.DeviceSettings
 import com.aditya.smartmedbox.feature.settings.domain.repository.SettingsRepository
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import javax.inject.Inject
-import javax.inject.Singleton
 
 @Singleton
 class FakeSettingsRepository @Inject constructor() : SettingsRepository {
@@ -34,4 +34,3 @@ class FakeSettingsRepository @Inject constructor() : SettingsRepository {
         return Result.success(Unit)
     }
 }
-

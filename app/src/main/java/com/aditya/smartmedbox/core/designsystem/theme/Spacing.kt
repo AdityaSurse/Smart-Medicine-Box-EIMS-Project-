@@ -17,7 +17,7 @@ data class Spacing(
     val extraLarge: Dp = 32.dp,
     val marginDesktop: Dp = 32.dp,
     val huge: Dp = 48.dp,
-    
+
     // Stitch Dimensional Constraints
     val minTouchTarget: Dp = 48.dp,
     val buttonHeight: Dp = 52.dp,

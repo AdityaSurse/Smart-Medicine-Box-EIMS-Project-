@@ -1,8 +1,6 @@
 package com.aditya.smartmedbox.feature.schedule.domain.usecase
 
 import app.cash.turbine.test
-import com.aditya.smartmedbox.feature.history.domain.model.DoseEvent
-import com.aditya.smartmedbox.feature.history.domain.model.DoseStatus
 import com.aditya.smartmedbox.feature.history.domain.repository.DoseEventRepository
 import com.aditya.smartmedbox.feature.medicines.domain.model.Medicine
 import com.aditya.smartmedbox.feature.medicines.domain.repository.MedicinesRepository
@@ -10,12 +8,12 @@ import com.aditya.smartmedbox.feature.schedule.domain.model.DoseSchedule
 import com.aditya.smartmedbox.feature.schedule.domain.repository.DoseScheduleRepository
 import io.mockk.every
 import io.mockk.mockk
+import java.util.Calendar
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
-import java.util.Calendar
 
 class GetTodayScheduleUseCaseTest {
 
@@ -68,4 +66,3 @@ class GetTodayScheduleUseCaseTest {
         }
     }
 }
-

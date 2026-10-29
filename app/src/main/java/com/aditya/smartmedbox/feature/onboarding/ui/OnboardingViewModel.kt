@@ -3,7 +3,6 @@ package com.aditya.smartmedbox.feature.onboarding.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aditya.smartmedbox.core.util.DispatcherProvider
-import com.aditya.smartmedbox.feature.onboarding.domain.model.OnboardingDevice
 import com.aditya.smartmedbox.feature.onboarding.domain.repository.OnboardingRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject

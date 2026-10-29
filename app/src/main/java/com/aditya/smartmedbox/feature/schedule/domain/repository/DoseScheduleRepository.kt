@@ -11,4 +11,3 @@ interface DoseScheduleRepository {
     suspend fun deleteSchedule(scheduleId: String): Result<Unit>
     suspend fun toggleScheduleActive(scheduleId: String, isActive: Boolean): Result<Unit>
 }
-

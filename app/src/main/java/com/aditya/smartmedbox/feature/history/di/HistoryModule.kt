@@ -16,13 +16,9 @@ abstract class HistoryModule {
 
     @Binds
     @Singleton
-    abstract fun bindHistoryRepository(
-        roomHistoryRepository: RoomHistoryRepository
-    ): HistoryRepository
+    abstract fun bindHistoryRepository(roomHistoryRepository: RoomHistoryRepository): HistoryRepository
 
     @Binds
     @Singleton
-    abstract fun bindDoseEventRepository(
-        roomDoseEventRepository: RoomDoseEventRepository
-    ): DoseEventRepository
+    abstract fun bindDoseEventRepository(roomDoseEventRepository: RoomDoseEventRepository): DoseEventRepository
 }

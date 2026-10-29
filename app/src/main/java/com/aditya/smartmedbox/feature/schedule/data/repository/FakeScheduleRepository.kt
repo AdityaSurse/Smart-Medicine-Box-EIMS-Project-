@@ -3,12 +3,12 @@ package com.aditya.smartmedbox.feature.schedule.data.repository
 import com.aditya.smartmedbox.feature.schedule.domain.model.PrescriptionSchedule
 import com.aditya.smartmedbox.feature.schedule.domain.model.ScheduleDay
 import com.aditya.smartmedbox.feature.schedule.domain.repository.ScheduleRepository
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
-import javax.inject.Singleton
 
 @Singleton
 class FakeScheduleRepository @Inject constructor() : ScheduleRepository {
@@ -85,4 +85,3 @@ class FakeScheduleRepository @Inject constructor() : ScheduleRepository {
         return Result.success(Unit)
     }
 }
-

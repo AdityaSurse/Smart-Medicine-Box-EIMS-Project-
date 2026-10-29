@@ -198,12 +198,7 @@ fun MedicinesScreen(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun MedicinesContent(
-    state: MedicinesUiState.Success,
-    onEvent: (MedicinesUiEvent) -> Unit,
-    onEditMedicine: (String) -> Unit,
-    modifier: Modifier = Modifier
-) {
+private fun MedicinesContent(state: MedicinesUiState.Success, onEvent: (MedicinesUiEvent) -> Unit, onEditMedicine: (String) -> Unit, modifier: Modifier = Modifier) {
     val spacing = LocalSpacing.current
     val lowStockCount = state.medicines.count { it.currentStock <= 5 }
 
@@ -320,13 +315,7 @@ private fun MedicinesContent(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun MedicineCard(
-    medicine: Medicine,
-    onToggleActive: () -> Unit,
-    onEdit: () -> Unit,
-    onDelete: () -> Unit,
-    modifier: Modifier = Modifier
-) {
+private fun MedicineCard(medicine: Medicine, onToggleActive: () -> Unit, onEdit: () -> Unit, onDelete: () -> Unit, modifier: Modifier = Modifier) {
     val spacing = LocalSpacing.current
     val isLowStock = medicine.currentStock <= 5
 
@@ -438,7 +427,13 @@ private fun MedicineCard(
                     )
                     .border(
                         width = 1.dp,
-                        color = if (isLowStock) MaterialTheme.colorScheme.error.copy(alpha = 0.3f) else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
+                        color = if (isLowStock) {
+                            MaterialTheme.colorScheme.error.copy(
+                                alpha = 0.3f
+                            )
+                        } else {
+                            MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                        },
                         shape = RoundedCornerShape(8.dp)
                     )
                     .padding(horizontal = spacing.small, vertical = 6.dp),

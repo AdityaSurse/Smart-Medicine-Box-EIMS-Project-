@@ -23,9 +23,7 @@ object DatabaseModule {
 
     @Provides
     @Singleton
-    fun provideSmartMedBoxDatabase(
-        @ApplicationContext context: Context
-    ): SmartMedBoxDatabase {
+    fun provideSmartMedBoxDatabase(@ApplicationContext context: Context): SmartMedBoxDatabase {
         return Room.databaseBuilder(
             context,
             SmartMedBoxDatabase::class.java,

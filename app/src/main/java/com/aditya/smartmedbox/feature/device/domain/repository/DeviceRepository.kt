@@ -9,4 +9,3 @@ interface DeviceRepository {
     suspend fun pairDevice(deviceId: String): Result<Unit>
     suspend fun disconnectDevice(deviceId: String): Result<Unit>
 }
-

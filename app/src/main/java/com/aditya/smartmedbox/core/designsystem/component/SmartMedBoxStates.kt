@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -30,10 +29,7 @@ import com.aditya.smartmedbox.core.designsystem.theme.CardShape
 import com.aditya.smartmedbox.core.designsystem.theme.LocalSpacing
 
 @Composable
-fun SmartMedBoxLoadingState(
-    modifier: Modifier = Modifier,
-    message: String = "Synchronizing with Smart Medicine Box..."
-) {
+fun SmartMedBoxLoadingState(modifier: Modifier = Modifier, message: String = "Synchronizing with Smart Medicine Box...") {
     val spacing = LocalSpacing.current
 
     Column(
@@ -137,13 +133,7 @@ fun SmartMedBoxEmptyState(
 }
 
 @Composable
-fun SmartMedBoxErrorState(
-    title: String,
-    message: String,
-    onRetry: () -> Unit,
-    modifier: Modifier = Modifier,
-    retryButtonText: String = "Try Again"
-) {
+fun SmartMedBoxErrorState(title: String, message: String, onRetry: () -> Unit, modifier: Modifier = Modifier, retryButtonText: String = "Try Again") {
     val spacing = LocalSpacing.current
 
     Box(

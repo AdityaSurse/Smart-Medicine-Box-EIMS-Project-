@@ -76,8 +76,7 @@ class FakeMedicinesRepository @Inject constructor() : MedicinesRepository {
 
     override fun getMedicines(): Flow<List<Medicine>> = _medicines.asStateFlow()
 
-    override fun getMedicineById(id: String): Flow<Medicine?> =
-        _medicines.map { list -> list.find { it.id == id } }
+    override fun getMedicineById(id: String): Flow<Medicine?> = _medicines.map { list -> list.find { it.id == id } }
 
     override suspend fun saveMedicine(medicine: Medicine): Result<Unit> {
         delay(400)

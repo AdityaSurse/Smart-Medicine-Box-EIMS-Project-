@@ -7,4 +7,3 @@ interface DeviceStatusRepository {
     fun getDeviceStatus(): Flow<DeviceStatus>
     suspend fun updateDeviceStatus(status: DeviceStatus): Result<Unit>
 }
-

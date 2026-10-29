@@ -7,11 +7,11 @@ import com.aditya.smartmedbox.feature.history.data.mapper.toEntity
 import com.aditya.smartmedbox.feature.history.domain.model.DoseEvent
 import com.aditya.smartmedbox.feature.history.domain.model.DoseStatus
 import com.aditya.smartmedbox.feature.history.domain.repository.DoseEventRepository
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
-import javax.inject.Singleton
 
 @Singleton
 class RoomDoseEventRepository @Inject constructor(
@@ -55,12 +55,7 @@ class RoomDoseEventRepository @Inject constructor(
         }
     }
 
-    override suspend fun logDose(
-        eventId: String,
-        status: DoseStatus,
-        loggedTimestamp: Long,
-        recordedWeightGrams: Float?
-    ): Result<Unit> {
+    override suspend fun logDose(eventId: String, status: DoseStatus, loggedTimestamp: Long, recordedWeightGrams: Float?): Result<Unit> {
         return try {
             doseEventDao.logDose(
                 id = eventId,

@@ -85,10 +85,7 @@ val MaterialTheme.semanticColors: SemanticColors
     get() = LocalSemanticColors.current
 
 @Composable
-fun SmartMedBoxTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    content: @Composable () -> Unit
-) {
+fun SmartMedBoxTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable () -> Unit) {
     val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
     val semanticColors = if (darkTheme) DarkSemanticColors else LightSemanticColors
 

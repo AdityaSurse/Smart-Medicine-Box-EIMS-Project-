@@ -68,4 +68,3 @@ class LogDoseUseCaseTest {
         coVerify(exactly = 0) { medicinesRepository.updateStock(any(), any()) }
     }
 }
-

@@ -18,4 +18,3 @@ data class DoseEvent(
     val recordedWeightGrams: Float? = null,
     val bayLabel: String = "Bay 01"
 )
-

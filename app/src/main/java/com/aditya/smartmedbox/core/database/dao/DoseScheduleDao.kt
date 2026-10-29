@@ -33,4 +33,3 @@ interface DoseScheduleDao {
     @Query("DELETE FROM dose_schedules")
     suspend fun deleteAllSchedules()
 }
-

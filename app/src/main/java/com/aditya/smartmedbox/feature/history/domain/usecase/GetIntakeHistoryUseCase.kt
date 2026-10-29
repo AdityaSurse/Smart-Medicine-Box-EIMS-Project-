@@ -3,9 +3,9 @@ package com.aditya.smartmedbox.feature.history.domain.usecase
 import com.aditya.smartmedbox.feature.history.domain.model.DoseEvent
 import com.aditya.smartmedbox.feature.history.domain.model.DoseStatus
 import com.aditya.smartmedbox.feature.history.domain.repository.DoseEventRepository
+import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
 
 data class IntakeHistorySummary(
     val events: List<DoseEvent>,
@@ -36,4 +36,3 @@ class GetIntakeHistoryUseCase @Inject constructor(
         }
     }
 }
-

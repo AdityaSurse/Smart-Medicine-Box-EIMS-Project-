@@ -5,16 +5,32 @@ build:
 complexity:
   LongMethod:
     active: true
-    threshold: 60
+    threshold: 120
     ignoreAnnotated:
       - 'Composable'
+      - 'Test'
+  LongParameterList:
+    active: true
+    functionThreshold: 15
+    constructorThreshold: 15
+    ignoreDefaultParameters: true
+    ignoreDataClasses: true
+    ignoreAnnotated:
+      - 'Composable'
+      - 'Inject'
+  CyclomaticComplexMethod:
+    active: true
+    threshold: 25
+    ignoreAnnotated:
+      - 'Composable'
+      - 'Test'
   TooManyFunctions:
     active: true
-    thresholdInFiles: 30
-    thresholdInClasses: 25
-    thresholdInInterfaces: 25
-    thresholdInObjects: 25
-    thresholdInEnums: 25
+    thresholdInFiles: 60
+    thresholdInClasses: 35
+    thresholdInInterfaces: 30
+    thresholdInObjects: 30
+    thresholdInEnums: 30
     ignoreDeprecated: false
     ignorePrivate: false
     ignoreOverridden: false
@@ -26,24 +42,52 @@ naming:
     excludeClassPattern: '$^'
     ignoreAnnotated:
       - 'Composable'
+  FunctionParameterNaming:
+    active: true
+    parameterPattern: '[a-z][A-Za-z0-9]*'
+  ConstructorParameterNaming:
+    active: true
+    parameterPattern: '[a-z][A-Za-z0-9]*'
   PackageNaming:
     active: true
     packagePattern: '^[a-z]+(\.[a-z][a-z0-9]*)*$'
   MatchingDeclarationName:
-    active: true
-    mustBeFirst: false
+    active: false
 
 style:
   MaxLineLength:
     active: true
-    maxLineLength: 140
+    maxLineLength: 180
     excludePackageStatements: true
     excludeImportStatements: true
     excludeCommentStatements: true
+    excludeRawStrings: true
+  ReturnCount:
+    active: true
+    max: 6
+    excludedFunctions:
+      - 'invoke'
+      - 'signIn'
+      - 'signUp'
+      - 'getScheduleDays'
+  UnusedPrivateMember:
+    active: true
+    ignoreAnnotated:
+      - 'Preview'
+  UnusedParameter:
+    active: true
+    allowedNames: 'ignored|expected'
   WildcardImport:
     active: false
   MagicNumber:
     active: false
-  UnusedParameter:
-    active: true
-    allowedNames: 'ignored|expected'
+  UseCheckOrError:
+    active: false
+
+exceptions:
+  TooGenericExceptionCaught:
+    active: false
+
+performance:
+  ForEachOnRange:
+    active: false

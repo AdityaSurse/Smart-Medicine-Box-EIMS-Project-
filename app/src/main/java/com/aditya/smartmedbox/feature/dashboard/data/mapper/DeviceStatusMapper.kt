@@ -28,4 +28,3 @@ fun DeviceStatus.toEntity(): DeviceStatusEntity {
         isOnline = isOnline
     )
 }
-

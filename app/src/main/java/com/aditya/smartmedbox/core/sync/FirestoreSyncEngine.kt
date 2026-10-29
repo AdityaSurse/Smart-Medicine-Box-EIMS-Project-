@@ -21,14 +21,14 @@ import com.aditya.smartmedbox.feature.history.domain.model.DoseEvent
 import com.aditya.smartmedbox.feature.history.domain.model.DoseStatus
 import com.aditya.smartmedbox.feature.medicines.domain.model.Medicine
 import com.aditya.smartmedbox.feature.schedule.domain.model.DoseSchedule
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import javax.inject.Inject
-import javax.inject.Singleton
 
 @Singleton
 class FirestoreSyncEngine @Inject constructor(
@@ -66,16 +66,18 @@ class FirestoreSyncEngine @Inject constructor(
                         firestoreDeviceDataSource.observeLatestTelemetry(uid, deviceId).collect { telemetryDto ->
                             if (telemetryDto != null) {
                                 val current = deviceStatusDao.getDeviceStatus("DG_BOX_4081").firstOrNull()
-                                val updated = (current ?: DeviceStatusEntity(
-                                    deviceId = "DG_BOX_4081",
-                                    temperatureCelsius = 21.4f,
-                                    humidityPercent = 46.0f,
-                                    weightGrams = 14.8f,
-                                    lastSeenTimestamp = System.currentTimeMillis(),
-                                    isBoxOpen = false,
-                                    batteryPercent = 84,
-                                    isOnline = true
-                                )).copy(
+                                val updated = (
+                                    current ?: DeviceStatusEntity(
+                                        deviceId = "DG_BOX_4081",
+                                        temperatureCelsius = 21.4f,
+                                        humidityPercent = 46.0f,
+                                        weightGrams = 14.8f,
+                                        lastSeenTimestamp = System.currentTimeMillis(),
+                                        isBoxOpen = false,
+                                        batteryPercent = 84,
+                                        isOnline = true
+                                    )
+                                    ).copy(
                                     temperatureCelsius = telemetryDto.temp.toFloat(),
                                     humidityPercent = telemetryDto.humidity.toFloat(),
                                     weightGrams = telemetryDto.weightGrams.toFloat(),
@@ -245,4 +247,3 @@ class FirestoreSyncEngine @Inject constructor(
         }
     }
 }
-

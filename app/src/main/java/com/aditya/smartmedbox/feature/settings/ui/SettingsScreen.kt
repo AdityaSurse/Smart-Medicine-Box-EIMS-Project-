@@ -8,13 +8,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -177,12 +175,7 @@ fun SettingsScreen(
 }
 
 @Composable
-private fun SettingsContent(
-    settings: DeviceSettings,
-    feedbackMessage: String?,
-    onEvent: (SettingsUiEvent) -> Unit,
-    onNavigateToPairDevice: () -> Unit
-) {
+private fun SettingsContent(settings: DeviceSettings, feedbackMessage: String?, onEvent: (SettingsUiEvent) -> Unit, onNavigateToPairDevice: () -> Unit) {
     val spacing = LocalSpacing.current
 
     LaunchedEffect(feedbackMessage) {
@@ -296,10 +289,7 @@ private fun SettingsContent(
 }
 
 @Composable
-private fun ConnectedDeviceSection(
-    settings: DeviceSettings,
-    onPairNewBay: () -> Unit
-) {
+private fun ConnectedDeviceSection(settings: DeviceSettings, onPairNewBay: () -> Unit) {
     val spacing = LocalSpacing.current
 
     Box(
@@ -384,10 +374,16 @@ private fun ConnectedDeviceSection(
             ) {
                 settings.bays.forEach { bay ->
                     val isTaken = bay.isTaken
-                    val bayBg = if (isTaken) MaterialTheme.colorScheme.secondaryContainer
-                    else MaterialTheme.colorScheme.surfaceContainer
-                    val bayContentColor = if (isTaken) MaterialTheme.colorScheme.onSecondaryContainer
-                    else MaterialTheme.colorScheme.onSurface
+                    val bayBg = if (isTaken) {
+                        MaterialTheme.colorScheme.secondaryContainer
+                    } else {
+                        MaterialTheme.colorScheme.surfaceContainer
+                    }
+                    val bayContentColor = if (isTaken) {
+                        MaterialTheme.colorScheme.onSecondaryContainer
+                    } else {
+                        MaterialTheme.colorScheme.onSurface
+                    }
 
                     Box(
                         modifier = Modifier
@@ -505,11 +501,7 @@ private fun ConnectedDeviceSection(
 }
 
 @Composable
-private fun HardwareNetworkSection(
-    settings: DeviceSettings,
-    onSelectSnooze: (Int) -> Unit,
-    onTestTone: () -> Unit
-) {
+private fun HardwareNetworkSection(settings: DeviceSettings, onSelectSnooze: (Int) -> Unit, onTestTone: () -> Unit) {
     val spacing = LocalSpacing.current
 
     Box(
@@ -666,10 +658,16 @@ private fun HardwareNetworkSection(
                 ) {
                     listOf(5, 10, 15).forEach { minutes ->
                         val isSelected = minutes == settings.snoozeIntervalMinutes
-                        val btnBg = if (isSelected) MaterialTheme.colorScheme.primary
-                        else androidx.compose.ui.graphics.Color.Transparent
-                        val btnTextColor = if (isSelected) MaterialTheme.colorScheme.onPrimary
-                        else MaterialTheme.colorScheme.onSurfaceVariant
+                        val btnBg = if (isSelected) {
+                            MaterialTheme.colorScheme.primary
+                        } else {
+                            androidx.compose.ui.graphics.Color.Transparent
+                        }
+                        val btnTextColor = if (isSelected) {
+                            MaterialTheme.colorScheme.onPrimary
+                        } else {
+                            MaterialTheme.colorScheme.onSurfaceVariant
+                        }
 
                         Box(
                             modifier = Modifier
@@ -878,10 +876,7 @@ private fun CareCircleSection(settings: DeviceSettings) {
 }
 
 @Composable
-private fun RefillThresholdSection(
-    currentThreshold: Int,
-    onThresholdChange: (Int) -> Unit
-) {
+private fun RefillThresholdSection(currentThreshold: Int, onThresholdChange: (Int) -> Unit) {
     val spacing = LocalSpacing.current
     var sliderVal by remember(currentThreshold) { mutableFloatStateOf(currentThreshold.toFloat()) }
 
@@ -973,10 +968,26 @@ private fun RefillThresholdSection(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(text = "1 TAB", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                        Text(text = "5 TABS", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                        Text(text = "10 TABS", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                        Text(text = "15 TABS", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(
+                            text = "1 TAB",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Text(
+                            text = "5 TABS",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Text(
+                            text = "10 TABS",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Text(
+                            text = "15 TABS",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
                     }
                 }
             }
@@ -985,10 +996,7 @@ private fun RefillThresholdSection(
 }
 
 @Composable
-private fun VisualEnvironmentSection(
-    isDark: Boolean,
-    onToggleTheme: (Boolean) -> Unit
-) {
+private fun VisualEnvironmentSection(isDark: Boolean, onToggleTheme: (Boolean) -> Unit) {
     val spacing = LocalSpacing.current
 
     Box(
@@ -1117,10 +1125,7 @@ private fun VisualEnvironmentSection(
 }
 
 @Composable
-private fun SystemInfoSection(
-    settings: DeviceSettings,
-    onSignOut: () -> Unit
-) {
+private fun SystemInfoSection(settings: DeviceSettings, onSignOut: () -> Unit) {
     val spacing = LocalSpacing.current
 
     Box(

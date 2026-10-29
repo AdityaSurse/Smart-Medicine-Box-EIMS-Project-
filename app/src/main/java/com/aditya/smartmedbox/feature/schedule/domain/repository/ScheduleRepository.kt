@@ -10,4 +10,3 @@ interface ScheduleRepository {
     suspend fun toggleScheduleActive(scheduleId: String, isActive: Boolean): Result<Unit>
     suspend fun addSchedule(schedule: PrescriptionSchedule): Result<Unit>
 }
-

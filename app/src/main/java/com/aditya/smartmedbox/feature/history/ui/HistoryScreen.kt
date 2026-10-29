@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -34,7 +33,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.aditya.smartmedbox.core.designsystem.component.DoseStatus
 import com.aditya.smartmedbox.core.designsystem.component.SmartMedBoxEmptyState
@@ -50,11 +48,7 @@ import com.aditya.smartmedbox.core.designsystem.theme.PillShape
 import com.aditya.smartmedbox.feature.history.domain.model.DailyAdherence
 
 @Composable
-fun HistoryScreen(
-    uiState: HistoryUiState,
-    onEvent: (HistoryUiEvent) -> Unit,
-    modifier: Modifier = Modifier
-) {
+fun HistoryScreen(uiState: HistoryUiState, onEvent: (HistoryUiEvent) -> Unit, modifier: Modifier = Modifier) {
     val spacing = LocalSpacing.current
 
     Scaffold(
@@ -142,10 +136,7 @@ fun HistoryScreen(
 }
 
 @Composable
-private fun HistoryContent(
-    state: HistoryUiState.Content,
-    onEvent: (HistoryUiEvent) -> Unit
-) {
+private fun HistoryContent(state: HistoryUiState.Content, onEvent: (HistoryUiEvent) -> Unit) {
     val spacing = LocalSpacing.current
     val scrollState = rememberScrollState()
 
@@ -518,11 +509,7 @@ private fun WeeklyBarColumn(day: DailyAdherence) {
 }
 
 @Composable
-private fun HistoryFilterChip(
-    label: String,
-    isSelected: Boolean,
-    onClick: () -> Unit
-) {
+private fun HistoryFilterChip(label: String, isSelected: Boolean, onClick: () -> Unit) {
     val spacing = LocalSpacing.current
 
     Box(
@@ -530,8 +517,11 @@ private fun HistoryFilterChip(
             .height(spacing.chipHeight)
             .clip(PillShape)
             .background(
-                if (isSelected) MaterialTheme.colorScheme.primary
-                else MaterialTheme.colorScheme.surfaceContainer
+                if (isSelected) {
+                    MaterialTheme.colorScheme.primary
+                } else {
+                    MaterialTheme.colorScheme.surfaceContainer
+                }
             )
             .clickable(onClick = onClick)
             .padding(horizontal = spacing.medium),
@@ -540,8 +530,11 @@ private fun HistoryFilterChip(
         Text(
             text = label,
             style = MaterialTheme.typography.labelSmall,
-            color = if (isSelected) MaterialTheme.colorScheme.onPrimary
-            else MaterialTheme.colorScheme.onSurfaceVariant
+            color = if (isSelected) {
+                MaterialTheme.colorScheme.onPrimary
+            } else {
+                MaterialTheme.colorScheme.onSurfaceVariant
+            }
         )
     }
 }

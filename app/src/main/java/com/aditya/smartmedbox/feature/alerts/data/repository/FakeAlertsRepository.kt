@@ -4,11 +4,11 @@ import com.aditya.smartmedbox.feature.alerts.domain.model.AdherenceAlert
 import com.aditya.smartmedbox.feature.alerts.domain.model.AlertSeverity
 import com.aditya.smartmedbox.feature.alerts.domain.model.TrayCompartmentStatus
 import com.aditya.smartmedbox.feature.alerts.domain.repository.AlertsRepository
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import javax.inject.Inject
-import javax.inject.Singleton
 
 @Singleton
 class FakeAlertsRepository @Inject constructor() : AlertsRepository {
@@ -71,10 +71,14 @@ class FakeAlertsRepository @Inject constructor() : AlertsRepository {
                                 isMissedOrUnopened = false,
                                 isTaken = true
                             )
-                        } else tray
+                        } else {
+                            tray
+                        }
                     }
                 )
-            } else alert
+            } else {
+                alert
+            }
         }
         return Result.success(Unit)
     }
@@ -83,7 +87,9 @@ class FakeAlertsRepository @Inject constructor() : AlertsRepository {
         alertsState.value = alertsState.value.map { alert ->
             if (alert.id == alertId) {
                 alert.copy(isChimeActive = false)
-            } else alert
+            } else {
+                alert
+            }
         }
         return Result.success(Unit)
     }
@@ -99,12 +105,15 @@ class FakeAlertsRepository @Inject constructor() : AlertsRepository {
                                 statusText = "Skipped",
                                 isMissedOrUnopened = false
                             )
-                        } else tray
+                        } else {
+                            tray
+                        }
                     }
                 )
-            } else alert
+            } else {
+                alert
+            }
         }
         return Result.success(Unit)
     }
 }
-

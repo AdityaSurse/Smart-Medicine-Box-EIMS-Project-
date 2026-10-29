@@ -5,10 +5,10 @@ import com.aditya.smartmedbox.feature.dashboard.data.mapper.toDomain
 import com.aditya.smartmedbox.feature.dashboard.data.mapper.toEntity
 import com.aditya.smartmedbox.feature.dashboard.domain.model.DeviceStatus
 import com.aditya.smartmedbox.feature.dashboard.domain.repository.DeviceStatusRepository
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 @Singleton
 class RoomDeviceStatusRepository @Inject constructor(
@@ -30,4 +30,3 @@ class RoomDeviceStatusRepository @Inject constructor(
         }
     }
 }
-

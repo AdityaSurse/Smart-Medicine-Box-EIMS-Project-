@@ -6,6 +6,8 @@ import com.aditya.smartmedbox.feature.auth.domain.repository.AuthRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,8 +15,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
-import javax.inject.Singleton
 
 @Singleton
 class FirebaseAuthRepository @Inject constructor(
@@ -64,7 +64,7 @@ class FirebaseAuthRepository @Inject constructor(
             try {
                 val authResult = auth.signInWithEmailAndPassword(email, password).await()
                 val user = authResult.user?.toDomain()
-                    ?: throw IllegalStateException("Firebase returned a null authenticated user")
+                    ?: error("Firebase returned a null authenticated user")
                 Result.success(user)
             } catch (e: Exception) {
                 Result.failure(e)
@@ -90,7 +90,7 @@ class FirebaseAuthRepository @Inject constructor(
             try {
                 val authResult = auth.createUserWithEmailAndPassword(email, password).await()
                 val user = authResult.user?.toDomain()
-                    ?: throw IllegalStateException("Firebase user creation failed")
+                    ?: error("Firebase user creation failed")
                 Result.success(user)
             } catch (e: Exception) {
                 Result.failure(e)
@@ -117,7 +117,7 @@ class FirebaseAuthRepository @Inject constructor(
                 val credential = GoogleAuthProvider.getCredential(idToken, null)
                 val authResult = auth.signInWithCredential(credential).await()
                 val user = authResult.user?.toDomain()
-                    ?: throw IllegalStateException("Google authentication returned empty user")
+                    ?: error("Google authentication returned empty user")
                 Result.success(user)
             } catch (e: Exception) {
                 Result.failure(e)
@@ -151,4 +151,3 @@ class FirebaseAuthRepository @Inject constructor(
         return split(" ").joinToString(" ") { it.replaceFirstChar { char -> char.uppercase() } }
     }
 }
-

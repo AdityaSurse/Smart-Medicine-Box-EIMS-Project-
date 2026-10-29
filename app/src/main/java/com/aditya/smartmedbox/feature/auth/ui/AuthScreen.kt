@@ -54,12 +54,7 @@ import com.aditya.smartmedbox.core.designsystem.theme.LocalSpacing
 import com.aditya.smartmedbox.core.designsystem.theme.PillShape
 
 @Composable
-fun AuthScreen(
-    uiState: AuthUiState,
-    onEvent: (AuthUiEvent) -> Unit,
-    onNavigateToDashboard: () -> Unit,
-    modifier: Modifier = Modifier
-) {
+fun AuthScreen(uiState: AuthUiState, onEvent: (AuthUiEvent) -> Unit, onNavigateToDashboard: () -> Unit, modifier: Modifier = Modifier) {
     val spacing = LocalSpacing.current
 
     Scaffold(
@@ -106,11 +101,7 @@ fun AuthScreen(
 }
 
 @Composable
-private fun AuthFormContent(
-    state: AuthUiState.Content,
-    onEvent: (AuthUiEvent) -> Unit,
-    onNavigateToDashboard: () -> Unit
-) {
+private fun AuthFormContent(state: AuthUiState.Content, onEvent: (AuthUiEvent) -> Unit, onNavigateToDashboard: () -> Unit) {
     val spacing = LocalSpacing.current
     val scrollState = rememberScrollState()
     var passwordVisible by remember { mutableStateOf(false) }
@@ -147,10 +138,11 @@ private fun AuthFormContent(
         )
 
         Text(
-            text = if (state.isSignUpMode)
+            text = if (state.isSignUpMode) {
                 "Create a caregiver or patient profile to pair and synchronize with the medicine box."
-            else
-                "Sign in to synchronize your medication regimen with Box #DG-4081.",
+            } else {
+                "Sign in to synchronize your medication regimen with Box #DG-4081."
+            },
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(horizontal = spacing.small)
@@ -170,8 +162,11 @@ private fun AuthFormContent(
                     .weight(1f)
                     .clip(PillShape)
                     .background(
-                        if (signInSelected) MaterialTheme.colorScheme.primary
-                        else MaterialTheme.colorScheme.surfaceContainer
+                        if (signInSelected) {
+                            MaterialTheme.colorScheme.primary
+                        } else {
+                            MaterialTheme.colorScheme.surfaceContainer
+                        }
                     )
                     .padding(vertical = spacing.small),
                 contentAlignment = Alignment.Center
@@ -183,8 +178,11 @@ private fun AuthFormContent(
                     Text(
                         text = "Sign In",
                         style = MaterialTheme.typography.labelSmall,
-                        color = if (signInSelected) MaterialTheme.colorScheme.onPrimary
-                        else MaterialTheme.colorScheme.onSurfaceVariant
+                        color = if (signInSelected) {
+                            MaterialTheme.colorScheme.onPrimary
+                        } else {
+                            MaterialTheme.colorScheme.onSurfaceVariant
+                        }
                     )
                 }
             }
@@ -195,8 +193,11 @@ private fun AuthFormContent(
                     .weight(1f)
                     .clip(PillShape)
                     .background(
-                        if (registerSelected) MaterialTheme.colorScheme.primary
-                        else MaterialTheme.colorScheme.surfaceContainer
+                        if (registerSelected) {
+                            MaterialTheme.colorScheme.primary
+                        } else {
+                            MaterialTheme.colorScheme.surfaceContainer
+                        }
                     )
                     .padding(vertical = spacing.small),
                 contentAlignment = Alignment.Center
@@ -208,8 +209,11 @@ private fun AuthFormContent(
                     Text(
                         text = "Register",
                         style = MaterialTheme.typography.labelSmall,
-                        color = if (registerSelected) MaterialTheme.colorScheme.onPrimary
-                        else MaterialTheme.colorScheme.onSurfaceVariant
+                        color = if (registerSelected) {
+                            MaterialTheme.colorScheme.onPrimary
+                        } else {
+                            MaterialTheme.colorScheme.onSurfaceVariant
+                        }
                     )
                 }
             }

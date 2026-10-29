@@ -14,7 +14,5 @@ abstract class DeviceModule {
 
     @Binds
     @Singleton
-    abstract fun bindDeviceRepository(
-        roomDeviceRepository: RoomDeviceRepository
-    ): DeviceRepository
+    abstract fun bindDeviceRepository(roomDeviceRepository: RoomDeviceRepository): DeviceRepository
 }

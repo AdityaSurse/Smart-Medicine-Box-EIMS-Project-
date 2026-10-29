@@ -85,4 +85,3 @@ data class FirestoreDoseLogDto(
     @get:PropertyName("source") @set:PropertyName("source") var source: String = "DEVICE_SENSOR",
     @get:PropertyName("updatedAt") @set:PropertyName("updatedAt") var updatedAt: Any? = null
 )
-

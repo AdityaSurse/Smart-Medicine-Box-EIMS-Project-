@@ -6,13 +6,13 @@ import com.aditya.smartmedbox.core.database.entity.DoseScheduleEntity
 import com.aditya.smartmedbox.feature.schedule.domain.model.PrescriptionSchedule
 import com.aditya.smartmedbox.feature.schedule.domain.model.ScheduleDay
 import com.aditya.smartmedbox.feature.schedule.domain.repository.ScheduleRepository
+import java.util.Calendar
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
-import java.util.Calendar
-import javax.inject.Inject
-import javax.inject.Singleton
 
 @Singleton
 class RoomScheduleRepository @Inject constructor(
@@ -23,7 +23,6 @@ class RoomScheduleRepository @Inject constructor(
     override fun getScheduleDays(): Flow<List<ScheduleDay>> {
         val calendar = Calendar.getInstance()
         val currentDayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
-        val currentDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
 
         // Generate 7-day strip centered around today
         val days = mutableListOf<ScheduleDay>()
@@ -40,7 +39,7 @@ class RoomScheduleRepository @Inject constructor(
             Calendar.SUNDAY to "S"
         )
 
-        for (i in 0 until 7) {
+        repeat(7) {
             val dNum = calClone.get(Calendar.DAY_OF_MONTH)
             val dWeek = calClone.get(Calendar.DAY_OF_WEEK)
             val isToday = dNum == currentDayOfMonth

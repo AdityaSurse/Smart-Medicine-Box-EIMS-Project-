@@ -1,8 +1,8 @@
 package com.aditya.smartmedbox.feature.history.domain.usecase
 
 import com.aditya.smartmedbox.feature.history.domain.repository.DoseEventRepository
-import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 
 class GetWeeklyMissedCountUseCase @Inject constructor(
     private val doseEventRepository: DoseEventRepository
@@ -12,4 +12,3 @@ class GetWeeklyMissedCountUseCase @Inject constructor(
         return doseEventRepository.getMissedEventsCount(sevenDaysAgo)
     }
 }
-

@@ -4,11 +4,11 @@ import com.aditya.smartmedbox.core.database.dao.DeviceStatusDao
 import com.aditya.smartmedbox.core.database.dao.MedicineDao
 import com.aditya.smartmedbox.feature.dashboard.domain.model.DeviceTelemetry
 import com.aditya.smartmedbox.feature.dashboard.domain.repository.TelemetryRepository
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.firstOrNull
-import javax.inject.Inject
-import javax.inject.Singleton
 
 @Singleton
 class RoomTelemetryRepository @Inject constructor(
@@ -43,16 +43,18 @@ class RoomTelemetryRepository @Inject constructor(
     override suspend fun refreshTelemetry(deviceId: String): Result<DeviceTelemetry> {
         return try {
             val current = deviceStatusDao.getDeviceStatusFlow("DG_BOX_4081").firstOrNull()
-            val updated = (current ?: com.aditya.smartmedbox.core.database.entity.DeviceStatusEntity(
-                deviceId = "DG_BOX_4081",
-                temperatureCelsius = 21.4f,
-                humidityPercent = 46.0f,
-                weightGrams = 14.8f,
-                lastSeenTimestamp = System.currentTimeMillis(),
-                isBoxOpen = false,
-                batteryPercent = 84,
-                isOnline = true
-            )).copy(
+            val updated = (
+                current ?: com.aditya.smartmedbox.core.database.entity.DeviceStatusEntity(
+                    deviceId = "DG_BOX_4081",
+                    temperatureCelsius = 21.4f,
+                    humidityPercent = 46.0f,
+                    weightGrams = 14.8f,
+                    lastSeenTimestamp = System.currentTimeMillis(),
+                    isBoxOpen = false,
+                    batteryPercent = 84,
+                    isOnline = true
+                )
+                ).copy(
                 lastSeenTimestamp = System.currentTimeMillis(),
                 isOnline = true
             )

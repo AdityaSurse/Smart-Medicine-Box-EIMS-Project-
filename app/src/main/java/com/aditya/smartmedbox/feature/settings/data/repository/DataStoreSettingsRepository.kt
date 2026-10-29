@@ -3,13 +3,12 @@ package com.aditya.smartmedbox.feature.settings.data.repository
 import com.aditya.smartmedbox.core.database.dao.DeviceStatusDao
 import com.aditya.smartmedbox.feature.settings.domain.model.CaregiverContact
 import com.aditya.smartmedbox.feature.settings.domain.model.DeviceSettings
-import com.aditya.smartmedbox.feature.settings.domain.model.HardwareBayStatus
 import com.aditya.smartmedbox.feature.settings.domain.repository.SettingsRepository
 import com.aditya.smartmedbox.feature.settings.domain.repository.UserSettingsRepository
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 
 @Singleton
 class DataStoreSettingsRepository @Inject constructor(
@@ -67,4 +66,3 @@ class DataStoreSettingsRepository @Inject constructor(
         return Result.success(Unit)
     }
 }
-

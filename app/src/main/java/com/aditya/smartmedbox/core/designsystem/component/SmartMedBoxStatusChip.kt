@@ -15,7 +15,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import com.aditya.smartmedbox.core.designsystem.theme.LocalSpacing
 import com.aditya.smartmedbox.core.designsystem.theme.PillShape
 import com.aditya.smartmedbox.core.designsystem.theme.semanticColors
@@ -28,11 +27,7 @@ enum class DoseStatus {
 }
 
 @Composable
-fun SmartMedBoxStatusChip(
-    status: DoseStatus,
-    modifier: Modifier = Modifier,
-    customLabel: String? = null
-) {
+fun SmartMedBoxStatusChip(status: DoseStatus, modifier: Modifier = Modifier, customLabel: String? = null) {
     val spacing = LocalSpacing.current
     val semanticColors = MaterialTheme.semanticColors
 

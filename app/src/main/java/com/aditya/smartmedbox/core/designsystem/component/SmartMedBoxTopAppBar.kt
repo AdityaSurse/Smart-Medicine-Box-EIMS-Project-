@@ -14,7 +14,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import com.aditya.smartmedbox.core.designsystem.theme.LocalSpacing
 
 @OptIn(ExperimentalMaterial3Api::class)

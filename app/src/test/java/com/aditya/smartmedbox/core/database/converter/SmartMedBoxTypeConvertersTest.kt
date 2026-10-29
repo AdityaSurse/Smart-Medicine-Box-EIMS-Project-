@@ -36,4 +36,3 @@ class SmartMedBoxTypeConvertersTest {
         assertEquals(DoseStatus.PENDING, converters.toDoseStatus("UNKNOWN_STATUS"))
     }
 }
-
