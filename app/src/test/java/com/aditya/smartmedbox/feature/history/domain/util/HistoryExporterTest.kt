@@ -49,3 +49,4 @@ class HistoryExporterTest {
         assertTrue(summary.contains("Lisinopril"))
     }
 }
+
