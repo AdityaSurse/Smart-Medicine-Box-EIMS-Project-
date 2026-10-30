@@ -29,6 +29,11 @@ data class DeviceSettings(
     val snoozeIntervalMinutes: Int = 10,
     val refillThresholdTablets: Int = 5,
     val isDarkMode: Boolean = false,
+    val unitSystem: String = "Metric (°C, g)",
+    val gracePeriodMinutes: Int = 30,
+    val reminderRepeatCount: Int = 3,
+    val quietHoursEnabled: Boolean = false,
+    val quietHoursText: String = "10:00 PM – 07:00 AM",
     val bays: List<HardwareBayStatus> = listOf(
         HardwareBayStatus("BAY 01", "MORN", true, "check_circle"),
         HardwareBayStatus("BAY 02", "NOON", true, "check_circle"),

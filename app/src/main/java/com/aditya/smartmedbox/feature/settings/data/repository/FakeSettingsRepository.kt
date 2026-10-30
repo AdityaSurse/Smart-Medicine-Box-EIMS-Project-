@@ -33,4 +33,29 @@ class FakeSettingsRepository @Inject constructor() : SettingsRepository {
     override suspend fun playTestChime(): Result<Unit> {
         return Result.success(Unit)
     }
+
+    override suspend fun updateUnitSystem(unitSystem: String): Result<Unit> {
+        settingsState.value = settingsState.value.copy(unitSystem = unitSystem)
+        return Result.success(Unit)
+    }
+
+    override suspend fun updateGracePeriod(minutes: Int): Result<Unit> {
+        settingsState.value = settingsState.value.copy(gracePeriodMinutes = minutes)
+        return Result.success(Unit)
+    }
+
+    override suspend fun updateReminderRepeatCount(count: Int): Result<Unit> {
+        settingsState.value = settingsState.value.copy(reminderRepeatCount = count)
+        return Result.success(Unit)
+    }
+
+    override suspend fun updateQuietHours(enabled: Boolean): Result<Unit> {
+        settingsState.value = settingsState.value.copy(quietHoursEnabled = enabled)
+        return Result.success(Unit)
+    }
+
+    override suspend fun clearAllData(): Result<Unit> {
+        settingsState.value = DeviceSettings()
+        return Result.success(Unit)
+    }
 }

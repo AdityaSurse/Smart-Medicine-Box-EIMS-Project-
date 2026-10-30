@@ -30,9 +30,17 @@ sealed interface SettingsUiEvent {
     data object ClearFeedback : SettingsUiEvent
     data object Refresh : SettingsUiEvent
     data object SignOut : SettingsUiEvent
+    data class SetUnitSystem(val unitSystem: String) : SettingsUiEvent
+    data class SetGracePeriod(val minutes: Int) : SettingsUiEvent
+    data class SetReminderRepeat(val count: Int) : SettingsUiEvent
+    data class ToggleQuietHours(val enabled: Boolean) : SettingsUiEvent
+    data object ExportHistoryCsv : SettingsUiEvent
+    data object ExportHistorySummary : SettingsUiEvent
+    data object ClearAllData : SettingsUiEvent
 }
 
 sealed interface SettingsUiEffect {
     data class ShowSnackbar(val message: String) : SettingsUiEffect
     data object NavigateToPairDevice : SettingsUiEffect
+    data class ShareExport(val content: String, val mimeType: String, val title: String) : SettingsUiEffect
 }

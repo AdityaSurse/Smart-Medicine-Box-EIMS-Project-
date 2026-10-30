@@ -23,7 +23,10 @@ import androidx.compose.material.icons.filled.Bedtime
 import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.DeleteForever
+import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FileDownload
 import androidx.compose.material.icons.filled.Inventory2
 import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.Medication
@@ -33,8 +36,12 @@ import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material.icons.filled.Security
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material.icons.filled.SwapHoriz
 import androidx.compose.material.icons.filled.Sync
+import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material.icons.filled.VerifiedUser
 import androidx.compose.material.icons.filled.Wifi
 import androidx.compose.material.icons.filled.WifiTethering
@@ -56,12 +63,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.aditya.smartmedbox.R
 import com.aditya.smartmedbox.core.designsystem.component.SmartMedBoxEmptyState
 import com.aditya.smartmedbox.core.designsystem.component.SmartMedBoxErrorState
 import com.aditya.smartmedbox.core.designsystem.component.SmartMedBoxLoadingState
@@ -79,7 +88,8 @@ fun SettingsScreen(
     onEvent: (SettingsUiEvent) -> Unit,
     modifier: Modifier = Modifier,
     onNavigateToPairDevice: () -> Unit = {},
-    onNavigateToAlerts: () -> Unit = {}
+    onNavigateToAlerts: () -> Unit = {},
+    onNavigateToPrivacy: () -> Unit = {}
 ) {
     val spacing = LocalSpacing.current
 
@@ -149,7 +159,8 @@ fun SettingsScreen(
                         settings = uiState.settings,
                         feedbackMessage = uiState.message,
                         onEvent = onEvent,
-                        onNavigateToPairDevice = onNavigateToPairDevice
+                        onNavigateToPairDevice = onNavigateToPairDevice,
+                        onNavigateToPrivacy = onNavigateToPrivacy
                     )
                 }
 
@@ -166,7 +177,8 @@ fun SettingsScreen(
                         settings = uiState.settings,
                         feedbackMessage = uiState.feedbackMessage,
                         onEvent = onEvent,
-                        onNavigateToPairDevice = onNavigateToPairDevice
+                        onNavigateToPairDevice = onNavigateToPairDevice,
+                        onNavigateToPrivacy = onNavigateToPrivacy
                     )
                 }
             }
@@ -175,7 +187,13 @@ fun SettingsScreen(
 }
 
 @Composable
-private fun SettingsContent(settings: DeviceSettings, feedbackMessage: String?, onEvent: (SettingsUiEvent) -> Unit, onNavigateToPairDevice: () -> Unit) {
+private fun SettingsContent(
+    settings: DeviceSettings,
+    feedbackMessage: String?,
+    onEvent: (SettingsUiEvent) -> Unit,
+    onNavigateToPairDevice: () -> Unit,
+    onNavigateToPrivacy: () -> Unit
+) {
     val spacing = LocalSpacing.current
 
     LaunchedEffect(feedbackMessage) {
@@ -257,12 +275,31 @@ private fun SettingsContent(settings: DeviceSettings, feedbackMessage: String?, 
             )
         }
 
-        // 3. Care Circle & Telemetry (Caregiver Contacts)
+        // 3. Clinical Protocols & Timing
+        item {
+            ClinicalProtocolsSection(
+                settings = settings,
+                onSelectUnitSystem = { onEvent(SettingsUiEvent.SetUnitSystem(it)) },
+                onSelectGracePeriod = { onEvent(SettingsUiEvent.SetGracePeriod(it)) },
+                onSelectReminderRepeat = { onEvent(SettingsUiEvent.SetReminderRepeat(it)) },
+                onToggleQuietHours = { onEvent(SettingsUiEvent.ToggleQuietHours(it)) }
+            )
+        }
+
+        // 4. Clinical Audit & Export
+        item {
+            ClinicalExportSection(
+                onExportCsv = { onEvent(SettingsUiEvent.ExportHistoryCsv) },
+                onExportSummary = { onEvent(SettingsUiEvent.ExportHistorySummary) }
+            )
+        }
+
+        // 5. Care Circle & Telemetry (Caregiver Contacts)
         item {
             CareCircleSection(settings = settings)
         }
 
-        // 4. Refill & Inventory Thresholds
+        // 6. Refill & Inventory Thresholds
         item {
             RefillThresholdSection(
                 currentThreshold = settings.refillThresholdTablets,
@@ -270,7 +307,7 @@ private fun SettingsContent(settings: DeviceSettings, feedbackMessage: String?, 
             )
         }
 
-        // 5. Visual Environment (Theme toggle)
+        // 7. Visual Environment (Theme toggle)
         item {
             VisualEnvironmentSection(
                 isDark = settings.isDarkMode,
@@ -278,7 +315,15 @@ private fun SettingsContent(settings: DeviceSettings, feedbackMessage: String?, 
             )
         }
 
-        // 6. System Information & Seal
+        // 8. Privacy & Health Data Sovereignty
+        item {
+            PrivacyAndDataSection(
+                onNavigateToPrivacy = onNavigateToPrivacy,
+                onClearAllData = { onEvent(SettingsUiEvent.ClearAllData) }
+            )
+        }
+
+        // 9. System Information & Seal
         item {
             SystemInfoSection(
                 settings = settings,
@@ -1211,6 +1256,488 @@ private fun SystemInfoSection(settings: DeviceSettings, onSignOut: () -> Unit) {
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontWeight = FontWeight.Bold
                 )
+            }
+        }
+    }
+}
+
+@Composable
+private fun ClinicalProtocolsSection(
+    settings: DeviceSettings,
+    onSelectUnitSystem: (String) -> Unit,
+    onSelectGracePeriod: (Int) -> Unit,
+    onSelectReminderRepeat: (Int) -> Unit,
+    onToggleQuietHours: (Boolean) -> Unit
+) {
+    val spacing = LocalSpacing.current
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(CardShape)
+            .background(MaterialTheme.colorScheme.surfaceContainerLow)
+            .border(spacing.hairlineBorder, MaterialTheme.colorScheme.outlineVariant, CardShape)
+            .padding(spacing.medium)
+    ) {
+        Column(verticalArrangement = Arrangement.spacedBy(spacing.medium)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = stringResource(R.string.settings_section_dispenser),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontWeight = FontWeight.Bold
+                )
+                Icon(
+                    imageVector = Icons.Default.Tune,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.size(spacing.large)
+                )
+            }
+
+            // Measurement Units
+            Column(verticalArrangement = Arrangement.spacedBy(spacing.extraSmall)) {
+                Text(
+                    text = stringResource(R.string.settings_units_label),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontWeight = FontWeight.Bold
+                )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(ControlShape)
+                        .background(MaterialTheme.colorScheme.surfaceContainer)
+                        .padding(spacing.extraSmall),
+                    horizontalArrangement = Arrangement.spacedBy(spacing.extraSmall)
+                ) {
+                    val metricLabel = stringResource(R.string.settings_units_metric)
+                    val imperialLabel = stringResource(R.string.settings_units_imperial)
+                    val units = listOf(metricLabel, imperialLabel)
+                    units.forEach { unit ->
+                        val isSelected = (unit == metricLabel && settings.unitSystem.startsWith("Metric")) ||
+                            (unit == imperialLabel && settings.unitSystem.startsWith("Imperial"))
+                        val bg = if (isSelected) MaterialTheme.colorScheme.primary else androidx.compose.ui.graphics.Color.Transparent
+                        val textColor = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
+
+                        Box(
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(spacing.minTouchTarget)
+                                .clip(ControlShape)
+                                .background(bg)
+                                .clickable { onSelectUnitSystem(unit) }
+                                .semantics {
+                                    role = Role.Button
+                                    contentDescription = unit
+                                },
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = unit,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = textColor,
+                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
+                            )
+                        }
+                    }
+                }
+            }
+
+            // Grace Period
+            Column(verticalArrangement = Arrangement.spacedBy(spacing.extraSmall)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = stringResource(R.string.settings_grace_period_label),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = "${settings.gracePeriodMinutes} min",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(ControlShape)
+                        .background(MaterialTheme.colorScheme.surfaceContainer)
+                        .padding(spacing.extraSmall),
+                    horizontalArrangement = Arrangement.spacedBy(spacing.extraSmall)
+                ) {
+                    listOf(15, 30, 45, 60).forEach { mins ->
+                        val isSelected = mins == settings.gracePeriodMinutes
+                        val bg = if (isSelected) MaterialTheme.colorScheme.primary else androidx.compose.ui.graphics.Color.Transparent
+                        val textColor = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
+
+                        Box(
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(spacing.minTouchTarget)
+                                .clip(ControlShape)
+                                .background(bg)
+                                .clickable { onSelectGracePeriod(mins) }
+                                .semantics {
+                                    role = Role.Button
+                                    contentDescription = "$mins minutes grace period"
+                                },
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "$mins m",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = textColor,
+                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
+                            )
+                        }
+                    }
+                }
+            }
+
+            // Max Reminder Repeats
+            Column(verticalArrangement = Arrangement.spacedBy(spacing.extraSmall)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = stringResource(R.string.settings_reminder_repeats_label),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = "${settings.reminderRepeatCount}x repeats",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(ControlShape)
+                        .background(MaterialTheme.colorScheme.surfaceContainer)
+                        .padding(spacing.extraSmall),
+                    horizontalArrangement = Arrangement.spacedBy(spacing.extraSmall)
+                ) {
+                    listOf(1, 2, 3, 5).forEach { count ->
+                        val isSelected = count == settings.reminderRepeatCount
+                        val bg = if (isSelected) MaterialTheme.colorScheme.primary else androidx.compose.ui.graphics.Color.Transparent
+                        val textColor = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
+
+                        Box(
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(spacing.minTouchTarget)
+                                .clip(ControlShape)
+                                .background(bg)
+                                .clickable { onSelectReminderRepeat(count) }
+                                .semantics {
+                                    role = Role.Button
+                                    contentDescription = "$count repeats"
+                                },
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "${count}x",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = textColor,
+                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
+                            )
+                        }
+                    }
+                }
+            }
+
+            // Quiet Hours
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(ControlShape)
+                    .background(MaterialTheme.colorScheme.surfaceContainer)
+                    .clickable { onToggleQuietHours(!settings.quietHoursEnabled) }
+                    .padding(spacing.medium),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(spacing.medium),
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Bedtime,
+                        contentDescription = null,
+                        tint = if (settings.quietHoursEnabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.size(spacing.large)
+                    )
+                    Column {
+                        Text(
+                            text = stringResource(R.string.settings_quiet_hours_label),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            text = settings.quietHoursText,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+
+                androidx.compose.material3.Switch(
+                    checked = settings.quietHoursEnabled,
+                    onCheckedChange = { onToggleQuietHours(it) }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun ClinicalExportSection(onExportCsv: () -> Unit, onExportSummary: () -> Unit) {
+    val spacing = LocalSpacing.current
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(CardShape)
+            .background(MaterialTheme.colorScheme.surfaceContainerLow)
+            .border(spacing.hairlineBorder, MaterialTheme.colorScheme.outlineVariant, CardShape)
+            .padding(spacing.medium)
+    ) {
+        Column(verticalArrangement = Arrangement.spacedBy(spacing.medium)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "CLINICAL AUDIT & EXPORT",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontWeight = FontWeight.Bold
+                )
+                Icon(
+                    imageVector = Icons.Default.Share,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.size(spacing.large)
+                )
+            }
+
+            Text(
+                text = "Export verified telemetry and dispenser event records for clinician consultations, pharmacy reconciliation, or personal archive.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+
+            Button(
+                onClick = onExportCsv,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(spacing.buttonHeight),
+                shape = ControlShape,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                    contentColor = MaterialTheme.colorScheme.onSurface
+                )
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(spacing.small)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.FileDownload,
+                        contentDescription = null,
+                        modifier = Modifier.size(spacing.large)
+                    )
+                    Text(
+                        text = stringResource(R.string.settings_export_csv),
+                        style = MaterialTheme.typography.labelMedium,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
+            }
+
+            Button(
+                onClick = onExportSummary,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(spacing.buttonHeight),
+                shape = ControlShape,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                    contentColor = MaterialTheme.colorScheme.onSurface
+                )
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(spacing.small)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Description,
+                        contentDescription = null,
+                        modifier = Modifier.size(spacing.large)
+                    )
+                    Text(
+                        text = stringResource(R.string.settings_export_summary),
+                        style = MaterialTheme.typography.labelMedium,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun PrivacyAndDataSection(onNavigateToPrivacy: () -> Unit, onClearAllData: () -> Unit) {
+    val spacing = LocalSpacing.current
+    var showDeleteConfirmation by remember { androidx.compose.runtime.mutableStateOf(false) }
+
+    if (showDeleteConfirmation) {
+        androidx.compose.material3.AlertDialog(
+            onDismissRequest = { showDeleteConfirmation = false },
+            title = {
+                Text(
+                    text = stringResource(R.string.settings_delete_data),
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.error
+                )
+            },
+            text = {
+                Text(
+                    text = stringResource(R.string.settings_delete_data_warning),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showDeleteConfirmation = false
+                        onClearAllData()
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.error,
+                        contentColor = MaterialTheme.colorScheme.onError
+                    ),
+                    shape = PillShape
+                ) {
+                    Text(text = "Delete Permanently", fontWeight = FontWeight.Bold)
+                }
+            },
+            dismissButton = {
+                androidx.compose.material3.TextButton(
+                    onClick = { showDeleteConfirmation = false }
+                ) {
+                    Text(text = "Cancel")
+                }
+            },
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
+        )
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(CardShape)
+            .background(MaterialTheme.colorScheme.surfaceContainerLow)
+            .border(spacing.hairlineBorder, MaterialTheme.colorScheme.outlineVariant, CardShape)
+            .padding(spacing.medium)
+    ) {
+        Column(verticalArrangement = Arrangement.spacedBy(spacing.medium)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = stringResource(R.string.settings_section_privacy),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontWeight = FontWeight.Bold
+                )
+                Icon(
+                    imageVector = Icons.Default.Shield,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.size(spacing.large)
+                )
+            }
+
+            Button(
+                onClick = onNavigateToPrivacy,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(spacing.buttonHeight),
+                shape = ControlShape,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                    contentColor = MaterialTheme.colorScheme.onSurface
+                )
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(spacing.small)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Security,
+                        contentDescription = null,
+                        modifier = Modifier.size(spacing.large)
+                    )
+                    Text(
+                        text = stringResource(R.string.settings_privacy_policy),
+                        style = MaterialTheme.typography.labelMedium,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
+            }
+
+            androidx.compose.material3.OutlinedButton(
+                onClick = { showDeleteConfirmation = true },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(spacing.buttonHeight),
+                shape = ControlShape,
+                colors = androidx.compose.material3.ButtonDefaults.outlinedButtonColors(
+                    contentColor = MaterialTheme.colorScheme.error
+                ),
+                border = androidx.compose.material3.ButtonDefaults.outlinedButtonBorder(enabled = true).copy(
+                    brush = androidx.compose.ui.graphics.SolidColor(MaterialTheme.colorScheme.error.copy(alpha = 0.5f))
+                )
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(spacing.small)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.DeleteForever,
+                        contentDescription = null,
+                        modifier = Modifier.size(spacing.large)
+                    )
+                    Text(
+                        text = stringResource(R.string.settings_delete_data),
+                        style = MaterialTheme.typography.labelMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
             }
         }
     }

@@ -10,4 +10,8 @@ interface UserSettingsRepository {
     suspend fun updateSnoozeInterval(minutes: Int): Result<Unit>
     suspend fun updateLowStockThreshold(threshold: Int): Result<Unit>
     suspend fun updateMaxReminderRepeats(repeats: Int): Result<Unit>
+    suspend fun updateUnitSystem(unitSystem: String): Result<Unit>
+    suspend fun updateGracePeriod(minutes: Int): Result<Unit>
+    suspend fun updateQuietHours(enabled: Boolean, text: String = "10:00 PM – 07:00 AM"): Result<Unit>
+    suspend fun clearAllData(): Result<Unit>
 }

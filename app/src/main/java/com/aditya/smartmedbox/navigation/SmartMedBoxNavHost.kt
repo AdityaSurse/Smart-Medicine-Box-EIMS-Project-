@@ -43,7 +43,8 @@ fun SmartMedBoxAppScreen(navController: NavHostController = rememberNavControlle
         currentRoute?.contains("AddEditMedicine") == true ||
         currentRoute?.contains("Device") == true ||
         currentRoute?.contains("Alerts") == true ||
-        currentRoute?.contains("NotificationRationale") == true
+        currentRoute?.contains("NotificationRationale") == true ||
+        currentRoute?.contains("PrivacyPolicy") == true
 
     // Auth-gated navigation: redirect unauthenticated sessions to login
     androidx.compose.runtime.LaunchedEffect(currentUser) {
@@ -198,11 +199,40 @@ fun SmartMedBoxAppScreen(navController: NavHostController = rememberNavControlle
             composable<Screen.Settings> {
                 val viewModel: SettingsViewModel = hiltViewModel()
                 val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+                val context = androidx.compose.ui.platform.LocalContext.current
+
+                androidx.compose.runtime.LaunchedEffect(viewModel.uiEffect) {
+                    viewModel.uiEffect.collect { effect ->
+                        when (effect) {
+                            is com.aditya.smartmedbox.feature.settings.ui.SettingsUiEffect.ShareExport -> {
+                                val sendIntent = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
+                                    type = effect.mimeType
+                                    putExtra(android.content.Intent.EXTRA_TEXT, effect.content)
+                                    putExtra(android.content.Intent.EXTRA_TITLE, effect.title)
+                                }
+                                val shareIntent = android.content.Intent.createChooser(sendIntent, effect.title)
+                                context.startActivity(shareIntent)
+                            }
+                            is com.aditya.smartmedbox.feature.settings.ui.SettingsUiEffect.NavigateToPairDevice -> {
+                                navController.navigate(Screen.Device)
+                            }
+                            else -> Unit
+                        }
+                    }
+                }
+
                 SettingsScreen(
                     uiState = uiState,
                     onEvent = viewModel::onEvent,
                     onNavigateToPairDevice = { navController.navigate(Screen.Device) },
-                    onNavigateToAlerts = { navController.navigate(Screen.Alerts) }
+                    onNavigateToAlerts = { navController.navigate(Screen.Alerts) },
+                    onNavigateToPrivacy = { navController.navigate(Screen.PrivacyPolicy) }
+                )
+            }
+
+            composable<Screen.PrivacyPolicy> {
+                com.aditya.smartmedbox.feature.settings.ui.privacy.PrivacyPolicyScreen(
+                    onNavigateBack = { navController.popBackStack() }
                 )
             }
 

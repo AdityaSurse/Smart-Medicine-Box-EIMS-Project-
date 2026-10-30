@@ -4,11 +4,16 @@
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    <!-- Cross / Pill icon -->
+    <path
+        android:fillColor="#3E683A"
+        android:pathData="M34,30 h40 a8,8 0 0 1 8,8 v32 a8,8 0 0 1 -8,8 h-40 a8,8 0 0 1 -8,-8 v-32 a8,8 0 0 1 8,-8 z" />
     <path
         android:fillColor="#FFFFFF"
-        android:pathData="M48,28h12v52h-12z" />
+        android:pathData="M50,38 h8 v24 h-8 z" />
     <path
         android:fillColor="#FFFFFF"
-        android:pathData="M28,48h52v12h-52z" />
+        android:pathData="M42,46 h24 v8 h-24 z" />
+    <path
+        android:fillColor="#BCECB2"
+        android:pathData="M70,36 A3,3 0 1 0 70,42 A3,3 0 1 0 70,36 Z" />
 </vector>

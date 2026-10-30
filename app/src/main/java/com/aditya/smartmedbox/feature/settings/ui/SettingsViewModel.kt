@@ -3,6 +3,8 @@ package com.aditya.smartmedbox.feature.settings.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aditya.smartmedbox.feature.auth.domain.repository.AuthRepository
+import com.aditya.smartmedbox.feature.history.domain.repository.HistoryRepository
+import com.aditya.smartmedbox.feature.history.domain.util.HistoryExporter
 import com.aditya.smartmedbox.feature.settings.domain.repository.SettingsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -13,12 +15,14 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository,
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val historyRepository: HistoryRepository
 ) : ViewModel() {
 
     private val feedbackState = MutableStateFlow<String?>(null)
@@ -89,6 +93,67 @@ class SettingsViewModel @Inject constructor(
                 viewModelScope.launch {
                     authRepository.signOut()
                     _uiEffect.emit(SettingsUiEffect.ShowSnackbar("Signed out successfully"))
+                }
+            }
+            is SettingsUiEvent.SetUnitSystem -> {
+                viewModelScope.launch {
+                    settingsRepository.updateUnitSystem(event.unitSystem)
+                    feedbackState.value = "Unit system set to ${event.unitSystem}"
+                    _uiEffect.emit(SettingsUiEffect.ShowSnackbar("Measurement units updated"))
+                }
+            }
+            is SettingsUiEvent.SetGracePeriod -> {
+                viewModelScope.launch {
+                    settingsRepository.updateGracePeriod(event.minutes)
+                    feedbackState.value = "Grace period set to ${event.minutes} min"
+                    _uiEffect.emit(SettingsUiEffect.ShowSnackbar("Dose grace period updated"))
+                }
+            }
+            is SettingsUiEvent.SetReminderRepeat -> {
+                viewModelScope.launch {
+                    settingsRepository.updateReminderRepeatCount(event.count)
+                    feedbackState.value = "Reminder repeat loop set to ${event.count} times"
+                    _uiEffect.emit(SettingsUiEffect.ShowSnackbar("Reminder repeat count updated"))
+                }
+            }
+            is SettingsUiEvent.ToggleQuietHours -> {
+                viewModelScope.launch {
+                    settingsRepository.updateQuietHours(event.enabled)
+                    feedbackState.value = if (event.enabled) "Quiet hours activated" else "Quiet hours disabled"
+                    _uiEffect.emit(SettingsUiEffect.ShowSnackbar(if (event.enabled) "Quiet hours enabled" else "Quiet hours disabled"))
+                }
+            }
+            SettingsUiEvent.ExportHistoryCsv -> {
+                viewModelScope.launch {
+                    val logs = historyRepository.getIntakeHistory().first()
+                    val csv = HistoryExporter.exportToCsv(logs)
+                    _uiEffect.emit(
+                        SettingsUiEffect.ShareExport(
+                            content = csv,
+                            mimeType = "text/csv",
+                            title = "Export Intake History (CSV)"
+                        )
+                    )
+                }
+            }
+            SettingsUiEvent.ExportHistorySummary -> {
+                viewModelScope.launch {
+                    val logs = historyRepository.getIntakeHistory().first()
+                    val summary = HistoryExporter.exportToPrintableSummary(logs)
+                    _uiEffect.emit(
+                        SettingsUiEffect.ShareExport(
+                            content = summary,
+                            mimeType = "text/plain",
+                            title = "Export Clinical Adherence Report"
+                        )
+                    )
+                }
+            }
+            SettingsUiEvent.ClearAllData -> {
+                viewModelScope.launch {
+                    settingsRepository.clearAllData()
+                    feedbackState.value = "All local health and scheduling data wiped"
+                    _uiEffect.emit(SettingsUiEffect.ShowSnackbar("All medical data successfully deleted"))
                 }
             }
         }

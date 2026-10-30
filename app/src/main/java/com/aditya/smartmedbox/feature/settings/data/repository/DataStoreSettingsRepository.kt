@@ -1,5 +1,6 @@
 package com.aditya.smartmedbox.feature.settings.data.repository
 
+import com.aditya.smartmedbox.core.database.SmartMedBoxDatabase
 import com.aditya.smartmedbox.core.database.dao.DeviceStatusDao
 import com.aditya.smartmedbox.feature.settings.domain.model.CaregiverContact
 import com.aditya.smartmedbox.feature.settings.domain.model.DeviceSettings
@@ -7,13 +8,16 @@ import com.aditya.smartmedbox.feature.settings.domain.repository.SettingsReposit
 import com.aditya.smartmedbox.feature.settings.domain.repository.UserSettingsRepository
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.withContext
 
 @Singleton
 class DataStoreSettingsRepository @Inject constructor(
     private val userSettingsRepository: UserSettingsRepository,
-    private val deviceStatusDao: DeviceStatusDao
+    private val deviceStatusDao: DeviceStatusDao,
+    private val database: SmartMedBoxDatabase
 ) : SettingsRepository {
 
     override fun getSettings(): Flow<DeviceSettings> {
@@ -37,6 +41,11 @@ class DataStoreSettingsRepository @Inject constructor(
                 snoozeIntervalMinutes = userSettings.snoozeIntervalMinutes,
                 refillThresholdTablets = userSettings.lowStockThresholdDefault,
                 isDarkMode = userSettings.isDarkMode,
+                unitSystem = userSettings.unitSystem,
+                gracePeriodMinutes = userSettings.gracePeriodMinutes,
+                reminderRepeatCount = userSettings.maxReminderRepeats,
+                quietHoursEnabled = userSettings.quietHoursEnabled,
+                quietHoursText = userSettings.quietHoursText,
                 caregivers = listOf(
                     CaregiverContact(
                         id = "cg_01",
@@ -64,5 +73,31 @@ class DataStoreSettingsRepository @Inject constructor(
 
     override suspend fun playTestChime(): Result<Unit> {
         return Result.success(Unit)
+    }
+
+    override suspend fun updateUnitSystem(unitSystem: String): Result<Unit> {
+        return userSettingsRepository.updateUnitSystem(unitSystem)
+    }
+
+    override suspend fun updateGracePeriod(minutes: Int): Result<Unit> {
+        return userSettingsRepository.updateGracePeriod(minutes)
+    }
+
+    override suspend fun updateReminderRepeatCount(count: Int): Result<Unit> {
+        return userSettingsRepository.updateMaxReminderRepeats(count)
+    }
+
+    override suspend fun updateQuietHours(enabled: Boolean): Result<Unit> {
+        return userSettingsRepository.updateQuietHours(enabled)
+    }
+
+    override suspend fun clearAllData(): Result<Unit> = withContext(Dispatchers.IO) {
+        try {
+            database.clearAllTables()
+            userSettingsRepository.clearAllData()
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 }

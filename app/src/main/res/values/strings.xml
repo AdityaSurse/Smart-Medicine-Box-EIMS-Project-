@@ -1,3 +1,68 @@
 <resources>
     <string name="app_name">Smart Medicine Box</string>
+
+    <!-- Navigation & Common -->
+    <string name="nav_dashboard">Dashboard</string>
+    <string name="nav_medicines">Medicines</string>
+    <string name="nav_schedule">Schedule</string>
+    <string name="nav_history">History</string>
+    <string name="nav_device">Box Device</string>
+    <string name="nav_settings">Settings</string>
+    <string name="nav_privacy">Privacy Policy</string>
+    <string name="back">Back</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="confirm">Confirm</string>
+    <string name="refresh">Refresh</string>
+    <string name="retry">Retry</string>
+    <string name="error_general">An unexpected error occurred. Please try again.</string>
+
+    <!-- Authentication -->
+    <string name="auth_title">DoseGuard</string>
+    <string name="auth_subtitle">Access &amp; Authentication</string>
+    <string name="auth_email_hint">Email address</string>
+    <string name="auth_password_hint">Password</string>
+    <string name="auth_sign_in">Sign In to Continue</string>
+    <string name="auth_sign_up">Create Account</string>
+    <string name="auth_google_sign_in">Continue with Google</string>
+    <string name="auth_switch_to_signup">Don\'t have an account? Sign Up</string>
+    <string name="auth_switch_to_signin">Already have an account? Sign In</string>
+    <string name="auth_sign_out">Sign Out</string>
+
+    <!-- Dashboard -->
+    <string name="dashboard_title">DoseGuard</string>
+    <string name="dashboard_subtitle">Protocol &amp; Telemetry</string>
+    <string name="dashboard_status_online">ONLINE</string>
+    <string name="dashboard_status_stale">STALE</string>
+    <string name="dashboard_stale_warning">Telemetry Stale: Smart Box Disconnected</string>
+    <string name="dashboard_silence_buzzer">Silence Smart Box Buzzer</string>
+    <string name="dashboard_dispense_now">Dispense Now</string>
+
+    <!-- Settings & Hardening -->
+    <string name="settings_title">Apothecary System</string>
+    <string name="settings_subtitle">Settings &amp; Preferences</string>
+    <string name="settings_section_general">GENERAL PREFERENCES</string>
+    <string name="settings_section_dispenser">SMART DISPENSER HARDWARE</string>
+    <string name="settings_section_privacy">PRIVACY &amp; HEALTH DATA</string>
+    <string name="settings_units_label">Measurement Units</string>
+    <string name="settings_units_metric">Metric (°C, grams)</string>
+    <string name="settings_units_imperial">Imperial (°F, ounces)</string>
+    <string name="settings_grace_period_label">Dose Grace Period</string>
+    <string name="settings_reminder_repeats_label">Max Reminder Repeats</string>
+    <string name="settings_quiet_hours_label">Quiet Hours (Mute Chime)</string>
+    <string name="settings_quiet_hours_desc">Do not sound audible alarm chimes during night hours (10:00 PM – 07:00 AM)</string>
+    <string name="settings_export_csv">Export Intake History (CSV)</string>
+    <string name="settings_export_summary">Export Clinical Summary (Text/PDF)</string>
+    <string name="settings_privacy_policy">Review Privacy Policy</string>
+    <string name="settings_delete_data">Delete All Account &amp; Medical Data</string>
+    <string name="settings_delete_data_warning">This will permanently delete all prescription schedules, intake event history, device pairing records, and local databases. This action cannot be undone.</string>
+
+    <!-- Privacy Policy -->
+    <string name="privacy_title">Privacy Policy &amp; Health Data</string>
+    <string name="privacy_data_sovereignty_title">Patient Data Sovereignty</string>
+    <string name="privacy_data_sovereignty_body">All medical schedules, doses, and telemetry data are stored offline-first in an encrypted local database on your device. Remote synchronization occurs strictly over secure HTTPS/TLS to your private Cloud Firestore tenant.</string>
+    <string name="privacy_encryption_title">End-to-End Protections &amp; Zero Sharing</string>
+    <string name="privacy_encryption_body">Your prescription details, dosages, and adherence timestamps are private medical records. We never monetize, sell, or disclose your clinical data to third-party advertisers or data brokers.</string>
+    <string name="privacy_erasure_title">Right to Erasure (GDPR / HIPAA)</string>
+    <string name="privacy_erasure_body">You retain absolute ownership of your clinical records. You may instantly wipe all local data and cloud records using the Data Deletion tool in Settings.</string>
 </resources>

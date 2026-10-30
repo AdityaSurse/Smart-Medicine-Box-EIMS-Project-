@@ -37,6 +37,10 @@ class UserSettingsDataStore @Inject constructor(
         val IS_CHIME_ENABLED = booleanPreferencesKey("is_chime_enabled")
         val CAREGIVER_NAME = stringPreferencesKey("primary_caregiver_name")
         val CAREGIVER_PHONE = stringPreferencesKey("primary_caregiver_phone")
+        val UNIT_SYSTEM = stringPreferencesKey("unit_system")
+        val GRACE_PERIOD_MINUTES = intPreferencesKey("grace_period_minutes")
+        val QUIET_HOURS_ENABLED = booleanPreferencesKey("quiet_hours_enabled")
+        val QUIET_HOURS_TEXT = stringPreferencesKey("quiet_hours_text")
     }
 
     override fun getUserSettings(): Flow<UserSettings> {
@@ -57,7 +61,11 @@ class UserSettingsDataStore @Inject constructor(
                     lowStockThresholdDefault = preferences[PreferencesKeys.LOW_STOCK_THRESHOLD] ?: 5,
                     isChimeEnabled = preferences[PreferencesKeys.IS_CHIME_ENABLED] ?: true,
                     primaryCaregiverName = preferences[PreferencesKeys.CAREGIVER_NAME] ?: "Sarah Jenkins",
-                    primaryCaregiverPhone = preferences[PreferencesKeys.CAREGIVER_PHONE] ?: "+1 (555) 234-5678"
+                    primaryCaregiverPhone = preferences[PreferencesKeys.CAREGIVER_PHONE] ?: "+1 (555) 234-5678",
+                    unitSystem = preferences[PreferencesKeys.UNIT_SYSTEM] ?: "Metric (°C, g)",
+                    gracePeriodMinutes = preferences[PreferencesKeys.GRACE_PERIOD_MINUTES] ?: 30,
+                    quietHoursEnabled = preferences[PreferencesKeys.QUIET_HOURS_ENABLED] ?: false,
+                    quietHoursText = preferences[PreferencesKeys.QUIET_HOURS_TEXT] ?: "10:00 PM – 07:00 AM"
                 )
             }
     }
@@ -73,6 +81,10 @@ class UserSettingsDataStore @Inject constructor(
                 preferences[PreferencesKeys.IS_CHIME_ENABLED] = settings.isChimeEnabled
                 preferences[PreferencesKeys.CAREGIVER_NAME] = settings.primaryCaregiverName
                 preferences[PreferencesKeys.CAREGIVER_PHONE] = settings.primaryCaregiverPhone
+                preferences[PreferencesKeys.UNIT_SYSTEM] = settings.unitSystem
+                preferences[PreferencesKeys.GRACE_PERIOD_MINUTES] = settings.gracePeriodMinutes
+                preferences[PreferencesKeys.QUIET_HOURS_ENABLED] = settings.quietHoursEnabled
+                preferences[PreferencesKeys.QUIET_HOURS_TEXT] = settings.quietHoursText
             }
             Result.success(Unit)
         } catch (e: Exception) {
@@ -117,6 +129,51 @@ class UserSettingsDataStore @Inject constructor(
         return try {
             dataStore.edit { preferences ->
                 preferences[PreferencesKeys.MAX_REMINDER_REPEATS] = repeats
+            }
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun updateUnitSystem(unitSystem: String): Result<Unit> {
+        return try {
+            dataStore.edit { preferences ->
+                preferences[PreferencesKeys.UNIT_SYSTEM] = unitSystem
+            }
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun updateGracePeriod(minutes: Int): Result<Unit> {
+        return try {
+            dataStore.edit { preferences ->
+                preferences[PreferencesKeys.GRACE_PERIOD_MINUTES] = minutes
+            }
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun updateQuietHours(enabled: Boolean, text: String): Result<Unit> {
+        return try {
+            dataStore.edit { preferences ->
+                preferences[PreferencesKeys.QUIET_HOURS_ENABLED] = enabled
+                preferences[PreferencesKeys.QUIET_HOURS_TEXT] = text
+            }
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun clearAllData(): Result<Unit> {
+        return try {
+            dataStore.edit { preferences ->
+                preferences.clear()
             }
             Result.success(Unit)
         } catch (e: Exception) {

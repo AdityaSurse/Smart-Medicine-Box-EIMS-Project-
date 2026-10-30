@@ -74,4 +74,3 @@ class AddEditMedicineScreenTest {
         composeTestRule.onNodeWithText("Edit Regimen").assertIsDisplayed()
     }
 }
-
