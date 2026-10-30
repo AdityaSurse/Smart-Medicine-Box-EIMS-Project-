@@ -75,3 +75,6 @@ feature/<feature_name>/
   - Never hardcode API keys, service credentials, or tokens in source code.
   - `google-services.json` must be excluded in `.gitignore` and provided via local environment or secure CI/CD secrets.
   - Use `BuildConfig` or encrypted properties for environment variables.
+- **Portability & Environment Independence**:
+  - Never add machine-specific paths to committed files. gradle.properties must work on any machine and in CI.
+  - Machine-specific SDK and toolchain locations belong strictly in untracked `local.properties`.
