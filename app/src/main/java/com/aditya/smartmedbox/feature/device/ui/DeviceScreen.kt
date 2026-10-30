@@ -8,6 +8,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,23 +25,34 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.BluetoothSearching
+import androidx.compose.material.icons.automirrored.filled.BluetoothSearching
+import androidx.compose.material.icons.automirrored.filled.HelpOutline
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.HelpOutline
+import androidx.compose.material.icons.filled.LinkOff
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.MedicalServices
+import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.SignalCellularAlt
 import androidx.compose.material.icons.filled.Verified
+import androidx.compose.material.icons.filled.Wifi
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -51,8 +63,8 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
-import com.aditya.smartmedbox.core.designsystem.component.SmartMedBoxEmptyState
 import com.aditya.smartmedbox.core.designsystem.component.SmartMedBoxErrorState
 import com.aditya.smartmedbox.core.designsystem.component.SmartMedBoxLoadingState
 import com.aditya.smartmedbox.core.designsystem.theme.CardShape
@@ -60,6 +72,7 @@ import com.aditya.smartmedbox.core.designsystem.theme.ControlShape
 import com.aditya.smartmedbox.core.designsystem.theme.LocalSpacing
 import com.aditya.smartmedbox.core.designsystem.theme.PillShape
 import com.aditya.smartmedbox.feature.device.domain.model.SmartBoxDevice
+import com.aditya.smartmedbox.feature.device.domain.model.WifiNetwork
 
 @Composable
 fun DeviceScreen(uiState: DeviceUiState, onEvent: (DeviceUiEvent) -> Unit, modifier: Modifier = Modifier, onNavigateToAddMedicine: () -> Unit = {}) {
@@ -105,7 +118,7 @@ fun DeviceScreen(uiState: DeviceUiState, onEvent: (DeviceUiEvent) -> Unit, modif
                     modifier = Modifier.semantics { contentDescription = "Support and instructions" }
                 ) {
                     Icon(
-                        imageVector = Icons.Default.HelpOutline,
+                        imageVector = Icons.AutoMirrored.Filled.HelpOutline,
                         contentDescription = "Help",
                         tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -152,25 +165,17 @@ fun DeviceScreen(uiState: DeviceUiState, onEvent: (DeviceUiEvent) -> Unit, modif
                 }
 
                 is DeviceUiState.Empty -> {
-                    SmartMedBoxEmptyState(
-                        title = "No Smart Boxes Discovered",
-                        message = uiState.message,
-                        actionButtonText = "Scan Again",
-                        onActionClick = { onEvent(DeviceUiEvent.StartScan) },
-                        modifier = Modifier.align(Alignment.Center)
+                    UnpairedDeviceContent(
+                        state = uiState,
+                        onEvent = onEvent
                     )
                 }
 
                 is DeviceUiState.Success -> {
                     DevicePairingContent(
-                        device = uiState.device,
-                        isPairing = uiState.isPairingInProgress,
-                        feedbackMessage = uiState.pairingSuccessMessage,
-                        onPairClick = {
-                            onEvent(DeviceUiEvent.PairDevice(uiState.device.deviceId))
-                            onNavigateToAddMedicine()
-                        },
-                        onTroubleshootClick = { onEvent(DeviceUiEvent.Troubleshoot) }
+                        state = uiState,
+                        onEvent = onEvent,
+                        onNavigateToAddMedicine = onNavigateToAddMedicine
                     )
                 }
             }
@@ -179,8 +184,58 @@ fun DeviceScreen(uiState: DeviceUiState, onEvent: (DeviceUiEvent) -> Unit, modif
 }
 
 @Composable
-private fun DevicePairingContent(device: SmartBoxDevice, isPairing: Boolean, feedbackMessage: String?, onPairClick: () -> Unit, onTroubleshootClick: () -> Unit) {
+private fun UnpairedDeviceContent(state: DeviceUiState.Empty, onEvent: (DeviceUiEvent) -> Unit) {
     val spacing = LocalSpacing.current
+    var showQrDialog by remember { mutableStateOf(false) }
+    var deviceIdInput by remember { mutableStateOf(state.manualDeviceId.ifBlank { "DG-4081" }) }
+    var pairingTokenInput by remember { mutableStateOf(state.manualPairingToken.ifBlank { "8820" }) }
+
+    if (showQrDialog) {
+        var qrPayloadInput by remember { mutableStateOf("smartmedbox://pair?deviceId=DG-4081&token=8820") }
+        AlertDialog(
+            onDismissRequest = { showQrDialog = false },
+            title = {
+                Text(
+                    text = "Scan Box QR Code",
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(spacing.small)) {
+                    Text(
+                        text = "Point camera at the QR code on the bottom of the box, or enter the payload text:",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    OutlinedTextField(
+                        value = qrPayloadInput,
+                        onValueChange = { qrPayloadInput = it },
+                        label = { Text("QR Code String") },
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true,
+                        shape = ControlShape
+                    )
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showQrDialog = false
+                        onEvent(DeviceUiEvent.ScanQrCode(qrPayloadInput))
+                    },
+                    shape = ControlShape
+                ) {
+                    Text("Apply & Connect")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showQrDialog = false }) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
 
     Column(
         modifier = Modifier
@@ -189,10 +244,203 @@ private fun DevicePairingContent(device: SmartBoxDevice, isPairing: Boolean, fee
             .padding(horizontal = spacing.marginMobile, vertical = spacing.small),
         verticalArrangement = Arrangement.spacedBy(spacing.large)
     ) {
-        // 3-Step Progress Indicator
         ThreeStepProgressIndicator(currentStep = 2)
 
-        // Step Eyebrow & Editorial Headline
+        Column(verticalArrangement = Arrangement.spacedBy(spacing.extraSmall)) {
+            Text(
+                text = "PAIR SMART BOX",
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                text = "Connect your DoseGuard Box",
+                style = MaterialTheme.typography.headlineLarge,
+                color = MaterialTheme.colorScheme.onSurface,
+                fontWeight = FontWeight.SemiBold
+            )
+            Text(
+                text = "Scan the QR code printed on the box bottom or enter the device credentials manually.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+
+        ConcentricRadarScanningVisual()
+
+        // Quick Scan Button
+        Button(
+            onClick = { showQrDialog = true },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(54.dp),
+            shape = CardShape,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary
+            )
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(spacing.small)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.QrCodeScanner,
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp)
+                )
+                Text(
+                    text = "Scan Box QR Code",
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        }
+
+        // Manual Entry Card
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(CardShape)
+                .background(MaterialTheme.colorScheme.surfaceContainerLowest)
+                .border(1.dp, MaterialTheme.colorScheme.outlineVariant, CardShape)
+                .padding(spacing.medium)
+        ) {
+            Column(verticalArrangement = Arrangement.spacedBy(spacing.medium)) {
+                Text(
+                    text = "Manual Device Entry",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+
+                OutlinedTextField(
+                    value = deviceIdInput,
+                    onValueChange = {
+                        deviceIdInput = it
+                        onEvent(DeviceUiEvent.UpdateManualFields(it, pairingTokenInput))
+                    },
+                    label = { Text("Device ID / Serial (e.g. DG-4081)") },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = ControlShape,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant
+                    )
+                )
+
+                OutlinedTextField(
+                    value = pairingTokenInput,
+                    onValueChange = {
+                        pairingTokenInput = it
+                        onEvent(DeviceUiEvent.UpdateManualFields(deviceIdInput, it))
+                    },
+                    label = { Text("Pairing Token / PIN (e.g. 8820)") },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = ControlShape,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant
+                    )
+                )
+
+                Button(
+                    onClick = {
+                        onEvent(DeviceUiEvent.PairDevice(deviceIdInput, pairingTokenInput))
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(48.dp),
+                    shape = ControlShape,
+                    enabled = !state.isPairing && deviceIdInput.isNotBlank()
+                ) {
+                    if (state.isPairing) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(18.dp),
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            strokeWidth = 2.dp
+                        )
+                    } else {
+                        Text(
+                            text = "Claim & Connect Box",
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun DevicePairingContent(state: DeviceUiState.Success, onEvent: (DeviceUiEvent) -> Unit, onNavigateToAddMedicine: () -> Unit) {
+    val spacing = LocalSpacing.current
+    val device = state.device
+    var showUnpairDialog by remember { mutableStateOf(false) }
+
+    if (showUnpairDialog) {
+        AlertDialog(
+            onDismissRequest = { showUnpairDialog = false },
+            title = {
+                Text(
+                    text = "Unpair DoseGuard Smart Box?",
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            },
+            text = {
+                Text(
+                    text = "This will unlink ${device.modelName} from your account and reset real-time synchronization. You can reconnect the box anytime.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showUnpairDialog = false
+                        onEvent(DeviceUiEvent.UnpairDevice(device.deviceId))
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.error,
+                        contentColor = MaterialTheme.colorScheme.onError
+                    ),
+                    shape = ControlShape
+                ) {
+                    Text("Unpair Box")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showUnpairDialog = false }) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
+
+    if (state.isWifiProvisioningActive) {
+        WifiProvisioningDialog(
+            availableNetworks = state.availableWifiNetworks,
+            provisioningStage = state.provisioningStage,
+            onSubmit = { ssid, password ->
+                onEvent(DeviceUiEvent.SubmitWifiCredentials(ssid, password))
+            },
+            onDismiss = {
+                onEvent(DeviceUiEvent.CancelWifiProvisioning)
+            }
+        )
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = spacing.marginMobile, vertical = spacing.small),
+        verticalArrangement = Arrangement.spacedBy(spacing.large)
+    ) {
+        ThreeStepProgressIndicator(currentStep = 2)
+
         Column(verticalArrangement = Arrangement.spacedBy(spacing.extraSmall)) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -205,7 +453,7 @@ private fun DevicePairingContent(device: SmartBoxDevice, isPairing: Boolean, fee
                         .background(MaterialTheme.colorScheme.secondary)
                 )
                 Text(
-                    text = "STEP 02 OF 03 • HARDWARE PAIRING",
+                    text = "STEP 02 OF 03 • HARDWARE CONNECTED",
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontWeight = FontWeight.Bold
@@ -213,32 +461,27 @@ private fun DevicePairingContent(device: SmartBoxDevice, isPairing: Boolean, fee
             }
 
             Text(
-                text = "Connecting to your Smart Box",
+                text = "Smart Box Paired & Synchronized",
                 style = MaterialTheme.typography.headlineLarge,
                 color = MaterialTheme.colorScheme.onSurface,
                 fontWeight = FontWeight.SemiBold
             )
 
             Text(
-                text = "Place your phone within 3 feet of the smart box. Ensure the power cable is connected and the top lid ring is pulsing.",
+                text = "Your DoseGuard hardware is claimed to your account and reporting live telemetry.",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
 
-        // Radar pulse visual
-        ConcentricRadarScanningVisual()
-
-        // Found Box Card
         DiscoveredBoxCard(device = device)
 
-        // Actions
         Column(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(spacing.small)
         ) {
             Button(
-                onClick = onPairClick,
+                onClick = onNavigateToAddMedicine,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(54.dp),
@@ -246,41 +489,78 @@ private fun DevicePairingContent(device: SmartBoxDevice, isPairing: Boolean, fee
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.onPrimary
-                ),
-                enabled = !isPairing
+                )
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(spacing.small)
                 ) {
-                    if (isPairing) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(20.dp),
-                            color = MaterialTheme.colorScheme.onPrimary,
-                            strokeWidth = 2.dp
-                        )
-                        Text(
-                            text = feedbackMessage ?: "Configuring Bays...",
-                            style = MaterialTheme.typography.bodyMedium,
-                            fontWeight = FontWeight.Bold
-                        )
-                    } else {
-                        Text(
-                            text = "Continue to Add Medicine",
-                            style = MaterialTheme.typography.bodyMedium,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                            contentDescription = null,
-                            modifier = Modifier.size(20.dp)
-                        )
-                    }
+                    Text(
+                        text = "Continue to Add Medicine",
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+            }
+
+            OutlinedButton(
+                onClick = { onEvent(DeviceUiEvent.StartWifiProvisioning) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp),
+                shape = CardShape
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(spacing.small)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Wifi,
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Text(
+                        text = "Provision Box Wi-Fi",
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
+            }
+
+            OutlinedButton(
+                onClick = { showUnpairDialog = true },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp),
+                shape = CardShape,
+                colors = ButtonDefaults.outlinedButtonColors(
+                    contentColor = MaterialTheme.colorScheme.error
+                )
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(spacing.small)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.LinkOff,
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Text(
+                        text = "Unpair Smart Box",
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Medium
+                    )
                 }
             }
 
             TextButton(
-                onClick = onTroubleshootClick,
+                onClick = { onEvent(DeviceUiEvent.Troubleshoot) },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
@@ -292,6 +572,122 @@ private fun DevicePairingContent(device: SmartBoxDevice, isPairing: Boolean, fee
             }
         }
     }
+}
+
+@Composable
+private fun WifiProvisioningDialog(availableNetworks: List<WifiNetwork>, provisioningStage: String?, onSubmit: (String, String) -> Unit, onDismiss: () -> Unit) {
+    val spacing = LocalSpacing.current
+    var selectedSsid by remember { mutableStateOf(availableNetworks.firstOrNull()?.ssid ?: "") }
+    var password by remember { mutableStateOf("") }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(spacing.small)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Wifi,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary
+                )
+                Text(
+                    text = "Provision Box Wi-Fi",
+                    style = MaterialTheme.typography.headlineSmall
+                )
+            }
+        },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(spacing.medium)) {
+                if (provisioningStage != null) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(spacing.small)
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(20.dp),
+                            strokeWidth = 2.dp
+                        )
+                        Text(
+                            text = provisioningStage,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
+
+                Text(
+                    text = "Select a 2.4 GHz network to connect the Smart Box:",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+
+                availableNetworks.forEach { network ->
+                    val isSelected = network.ssid == selectedSsid
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(ControlShape)
+                            .background(
+                                if (isSelected) {
+                                    MaterialTheme.colorScheme.primaryContainer
+                                } else {
+                                    MaterialTheme.colorScheme.surfaceContainerLow
+                                }
+                            )
+                            .clickable { selectedSsid = network.ssid }
+                            .padding(spacing.small),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = network.ssid,
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                            color = if (isSelected) {
+                                MaterialTheme.colorScheme.onPrimaryContainer
+                            } else {
+                                MaterialTheme.colorScheme.onSurface
+                            }
+                        )
+                        if (network.isSecure) {
+                            Icon(
+                                imageVector = Icons.Default.Lock,
+                                contentDescription = "Secured",
+                                modifier = Modifier.size(14.dp),
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                }
+
+                OutlinedTextField(
+                    value = password,
+                    onValueChange = { password = it },
+                    label = { Text("Wi-Fi Password") },
+                    visualTransformation = PasswordVisualTransformation(),
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = ControlShape
+                )
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = { onSubmit(selectedSsid, password) },
+                shape = ControlShape,
+                enabled = selectedSsid.isNotBlank()
+            ) {
+                Text("Provision Wi-Fi")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        }
+    )
 }
 
 @Composable
@@ -464,7 +860,7 @@ private fun ConcentricRadarScanningVisual() {
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
-                        imageVector = Icons.Default.BluetoothSearching,
+                        imageVector = Icons.AutoMirrored.Filled.BluetoothSearching,
                         contentDescription = "Bluetooth searching signal",
                         tint = MaterialTheme.colorScheme.onSecondaryContainer,
                         modifier = Modifier.size(22.dp)

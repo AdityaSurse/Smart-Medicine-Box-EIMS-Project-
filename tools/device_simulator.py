@@ -179,13 +179,71 @@ class DeviceSimulator:
         self.publish_telemetry()
         print(f"{GREEN}>>> Dose cycle complete. Weight now {self.weight_grams:.2f}g. <<<{RESET}\n")
 
+    def poll_remote_commands(self):
+        """Polls Firestore for pending remote commands from the mobile app (e.g. SILENCE_BUZZER)."""
+        url = self.get_firestore_url(f"users/{self.uid}/devices/{self.device_id}/commands")
+        if self.api_key:
+            url += f"?key={self.api_key}"
+
+        req = urllib.request.Request(url, headers={"Content-Type": "application/json"}, method="GET")
+        try:
+            with urllib.request.urlopen(req, timeout=4) as response:
+                if response.status == 200:
+                    data = json.loads(response.read().decode("utf-8"))
+                    documents = data.get("documents", [])
+                    for doc in documents:
+                        doc_name = doc.get("name", "")
+                        fields = doc.get("fields", {})
+                        status = fields.get("status", {}).get("stringValue", "")
+                        cmd_type = fields.get("type", {}).get("stringValue", "")
+
+                        if status == "PENDING":
+                            print(f"{BOLD}{YELLOW}>>> REMOTE COMMAND DETECTED: {cmd_type} <<<{RESET}")
+                            if cmd_type == "SILENCE_BUZZER":
+                                print(f"{GREEN}[HARDWARE GPIO 25] Active buzzer muted! Piezo output disabled.{RESET}")
+                            elif cmd_type == "DISPENSE_DOSE":
+                                print(f"{GREEN}[HARDWARE SERVO] Tray unlocked via remote command.{RESET}")
+
+                            # Mark command EXECUTED
+                            cmd_path = doc_name.split("/documents/")[-1] if "/documents/" in doc_name else ""
+                            if cmd_path:
+                                exec_time = datetime.datetime.now(datetime.timezone.utc).isoformat()
+                                self.send_firestore_document(cmd_path, {
+                                    "status": "EXECUTED",
+                                    "executedAt": exec_time
+                                }, is_patch=True)
+                                print(f"{CYAN}   Command marked EXECUTED.{RESET}")
+        except Exception:
+            # Silent fallback when offline or in mock mode
+            pass
+
+    def check_device_claim(self) -> bool:
+        """Verifies if device is claimed by user in Firestore."""
+        url = self.get_firestore_url(f"users/{self.uid}/devices/{self.device_id}")
+        if self.api_key:
+            url += f"?key={self.api_key}"
+
+        req = urllib.request.Request(url, headers={"Content-Type": "application/json"}, method="GET")
+        try:
+            with urllib.request.urlopen(req, timeout=4) as response:
+                if response.status == 200:
+                    data = json.loads(response.read().decode("utf-8"))
+                    fields = data.get("fields", {})
+                    token = fields.get("pairingToken", {}).get("stringValue", "N/A")
+                    print(f"{GREEN}[PAIRING CHECK] Device {self.device_id} is CLAIMED by {self.uid} (Token: {token}){RESET}")
+                    return True
+        except Exception:
+            pass
+        print(f"{YELLOW}[PAIRING CHECK] Device {self.device_id} is not claimed or offline.{RESET}")
+        return False
+
     def run_telemetry_loop(self, interval_seconds: int = 5, loop_count: int = None):
         """Runs the continuous telemetry publication loop."""
         print(f"{BOLD}{BLUE}======================================================={RESET}")
         print(f"{BOLD}{BLUE} Smart Medicine Box - ESP32 Firmware Telemetry Simulator{RESET}")
         print(f" Target User:   {CYAN}{self.uid}{RESET}")
         print(f" Device Serial: {CYAN}{self.device_id}{RESET}")
-        print(f" Cadence:       Every {interval_seconds}s")
+        print(f" Cadence:       Every {interval_seconds}s (with remote command polling)")
         if self.emulator:
             print(f" Emulator:      {self.emulator}")
         print(f"{BOLD}{BLUE}======================================================={RESET}\n")
@@ -194,6 +252,7 @@ class DeviceSimulator:
         try:
             while loop_count is None or iterations < loop_count:
                 self.publish_telemetry()
+                self.poll_remote_commands()
                 time.sleep(interval_seconds)
                 iterations += 1
         except KeyboardInterrupt:
@@ -213,6 +272,7 @@ def main():
     parser.add_argument("--count", type=int, default=None, help="Number of telemetry cycles (None for infinite)")
     parser.add_argument("--simulate-dose", action="store_true", help="Simulate an immediate physical dose intake")
     parser.add_argument("--bay", default="Bay 01", help="Compartment bay for dose simulation")
+    parser.add_argument("--check-claim", action="store_true", help="Check if device is claimed by user in Firestore")
 
     args = parser.parse_args()
 
@@ -224,7 +284,9 @@ def main():
         api_key=args.api_key
     )
 
-    if args.simulate_dose:
+    if args.check_claim:
+        simulator.check_device_claim()
+    elif args.simulate_dose:
         simulator.trigger_dose_cycle(bay_label=args.bay)
     else:
         simulator.run_telemetry_loop(interval_seconds=args.interval, loop_count=args.count)

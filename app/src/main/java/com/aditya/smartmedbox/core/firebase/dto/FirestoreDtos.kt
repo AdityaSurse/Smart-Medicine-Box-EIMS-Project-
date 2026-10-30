@@ -37,7 +37,17 @@ data class FirestoreDeviceDto(
     @get:PropertyName("wifiSsid") @set:PropertyName("wifiSsid") var wifiSsid: String = "Home_WiFi_2G",
     @get:PropertyName("ipAddress") @set:PropertyName("ipAddress") var ipAddress: String = "192.168.1.142",
     @get:PropertyName("lastSeen") @set:PropertyName("lastSeen") var lastSeen: Any? = null,
-    @get:PropertyName("pairedAt") @set:PropertyName("pairedAt") var pairedAt: Any? = null
+    @get:PropertyName("pairedAt") @set:PropertyName("pairedAt") var pairedAt: Any? = null,
+    @get:PropertyName("pairingToken") @set:PropertyName("pairingToken") var pairingToken: String = ""
+)
+
+data class FirestoreCommandDto(
+    @get:PropertyName("commandId") @set:PropertyName("commandId") var commandId: String = "",
+    @get:PropertyName("type") @set:PropertyName("type") var type: String = "SILENCE_BUZZER",
+    @get:PropertyName("status") @set:PropertyName("status") var status: String = "PENDING",
+    @get:PropertyName("createdAt") @set:PropertyName("createdAt") var createdAt: Any? = null,
+    @get:PropertyName("executedAt") @set:PropertyName("executedAt") var executedAt: Any? = null,
+    @get:PropertyName("payload") @set:PropertyName("payload") var payload: Map<String, Any> = emptyMap()
 )
 
 data class FirestoreMedicineDto(

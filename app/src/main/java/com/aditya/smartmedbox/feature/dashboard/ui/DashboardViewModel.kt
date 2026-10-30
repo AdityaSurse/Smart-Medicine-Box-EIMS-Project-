@@ -132,7 +132,9 @@ class DashboardViewModel @Inject constructor(
                     weeklyAdherencePercent = adherencePercent,
                     missedThisWeekCount = missedCount,
                     isExactAlarmPermissionRequired = isExactAlarmRequired,
-                    isNotificationPermissionRequired = isNotificationRequired
+                    isNotificationPermissionRequired = isNotificationRequired,
+                    isTelemetryStale = telemetry.isStale,
+                    lastSeenText = telemetry.lastSeenFormatted
                 )
             }
         }
@@ -149,6 +151,7 @@ class DashboardViewModel @Inject constructor(
         when (event) {
             is DashboardUiEvent.Refresh -> refresh()
             is DashboardUiEvent.DispenseNow -> dispenseNow(event.tray)
+            is DashboardUiEvent.SilenceBuzzer -> silenceBuzzer()
             is DashboardUiEvent.ClearError -> _errorMessage.value = null
             is DashboardUiEvent.RequestExactAlarmPermission -> {
                 viewModelScope.launch(dispatchers.main) {
@@ -165,6 +168,17 @@ class DashboardViewModel @Inject constructor(
             }
             is DashboardUiEvent.DismissNotificationBanner -> {
                 _isNotificationBannerDismissed.value = true
+            }
+        }
+    }
+
+    private fun silenceBuzzer() {
+        viewModelScope.launch(dispatchers.io) {
+            val result = telemetryRepository.silenceBuzzer("DG-4081")
+            if (result.isSuccess) {
+                _effect.emit(DashboardUiEffect.ShowSnackbar("Buzzer silence signal sent to Smart Box"))
+            } else {
+                _errorMessage.value = "Failed to silence buzzer"
             }
         }
     }

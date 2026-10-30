@@ -65,10 +65,10 @@ class FirestoreSyncEngine @Inject constructor(
                     launch {
                         firestoreDeviceDataSource.observeLatestTelemetry(uid, deviceId).collect { telemetryDto ->
                             if (telemetryDto != null) {
-                                val current = deviceStatusDao.getDeviceStatus("DG_BOX_4081").firstOrNull()
+                                val current = deviceStatusDao.getDeviceStatus(deviceId).firstOrNull()
                                 val updated = (
                                     current ?: DeviceStatusEntity(
-                                        deviceId = "DG_BOX_4081",
+                                        deviceId = deviceId,
                                         temperatureCelsius = 21.4f,
                                         humidityPercent = 46.0f,
                                         weightGrams = 14.8f,
@@ -78,6 +78,7 @@ class FirestoreSyncEngine @Inject constructor(
                                         isOnline = true
                                     )
                                     ).copy(
+                                    deviceId = deviceId,
                                     temperatureCelsius = telemetryDto.temp.toFloat(),
                                     humidityPercent = telemetryDto.humidity.toFloat(),
                                     weightGrams = telemetryDto.weightGrams.toFloat(),

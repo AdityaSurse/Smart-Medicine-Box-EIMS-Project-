@@ -18,5 +18,7 @@ data class DeviceTelemetry(
     val nextDoseTray: String = "Tray 02",
     val lastTakenTime: String = "1:30 PM",
     val cycleProgressFraction: Float = 0.68f,
-    val timestamp: Long = System.currentTimeMillis()
+    val timestamp: Long = System.currentTimeMillis(),
+    val isStale: Boolean = false,
+    val lastSeenFormatted: String = "Just now"
 )

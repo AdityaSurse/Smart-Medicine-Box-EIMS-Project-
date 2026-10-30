@@ -23,6 +23,8 @@ class FirebaseAuthRepository @Inject constructor(
 ) : AuthRepository {
 
     // Fallback in-memory state for offline execution when Firebase credentials are not supplied
+    private val currentDeviceId = MutableStateFlow<String?>("DG-4081")
+
     private val fallbackUser = MutableStateFlow<User?>(
         User(
             uid = "user_eleanor_8820",
@@ -37,11 +39,11 @@ class FirebaseAuthRepository @Inject constructor(
 
         return callbackFlow {
             val listener = FirebaseAuth.AuthStateListener { currentAuth ->
-                val user = currentAuth.currentUser?.toDomain()
+                val user = currentAuth.currentUser?.toDomain(currentDeviceId.value)
                 trySend(user)
             }
             auth.addAuthStateListener(listener)
-            trySend(auth.currentUser?.toDomain())
+            trySend(auth.currentUser?.toDomain(currentDeviceId.value))
             awaitClose { auth.removeAuthStateListener(listener) }
         }
     }
@@ -125,6 +127,17 @@ class FirebaseAuthRepository @Inject constructor(
         }
     }
 
+    override suspend fun updateLinkedDeviceId(deviceId: String?): Result<Unit> {
+        return withContext(dispatchers.io) {
+            currentDeviceId.value = deviceId
+            val fallback = fallbackUser.value
+            if (fallback != null) {
+                fallbackUser.value = fallback.copy(linkedDeviceId = deviceId)
+            }
+            Result.success(Unit)
+        }
+    }
+
     override suspend fun signOut(): Result<Unit> {
         return withContext(dispatchers.io) {
             val auth = firebaseAuth
@@ -137,13 +150,13 @@ class FirebaseAuthRepository @Inject constructor(
         }
     }
 
-    private fun FirebaseUser.toDomain(): User {
+    private fun FirebaseUser.toDomain(deviceId: String? = currentDeviceId.value): User {
         return User(
             uid = uid,
             email = email ?: "",
             displayName = displayName,
             photoUrl = photoUrl?.toString(),
-            linkedDeviceId = "DG-4081"
+            linkedDeviceId = deviceId
         )
     }
 

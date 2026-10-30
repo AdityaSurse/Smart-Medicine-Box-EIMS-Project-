@@ -1,5 +1,6 @@
 package com.aditya.smartmedbox.core.firebase.datasource
 
+import com.aditya.smartmedbox.core.firebase.dto.FirestoreDeviceDto
 import com.aditya.smartmedbox.core.firebase.dto.FirestoreDoseLogDto
 import com.aditya.smartmedbox.core.firebase.dto.FirestoreEventDto
 import com.aditya.smartmedbox.core.firebase.dto.FirestoreMedicineDto
@@ -106,6 +107,87 @@ class FirestoreDeviceDataSource @Inject constructor(
             )
             docRef.set(map).await()
             Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    fun observeDeviceMetadata(uid: String, deviceId: String): Flow<FirestoreDeviceDto?> {
+        val db = firestore ?: return flowOf(null)
+        return callbackFlow {
+            val docRef = db.collection("users").document(uid)
+                .collection("devices").document(deviceId)
+
+            val registration = docRef.addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    Timber.w(error, "Device metadata listener failed for $deviceId")
+                    return@addSnapshotListener
+                }
+                val dto = snapshot?.toObject(FirestoreDeviceDto::class.java)
+                trySend(dto)
+            }
+            awaitClose { registration.remove() }
+        }
+    }
+
+    suspend fun claimDevice(uid: String, deviceId: String, pairingToken: String, modelName: String = "DoseGuard Bay 4X"): Result<Unit> {
+        val db = firestore ?: return Result.success(Unit)
+        return try {
+            val docRef = db.collection("users").document(uid)
+                .collection("devices").document(deviceId)
+
+            val map = hashMapOf(
+                "deviceId" to deviceId,
+                "modelName" to modelName,
+                "serialNumber" to "#$deviceId",
+                "firmwareVersion" to "v3.2",
+                "hardwareRev" to "Rev 3.2",
+                "macAddress" to "24:6F:28:AB:D4:C2",
+                "baysCount" to 4,
+                "isOnline" to true,
+                "batteryPercent" to 84,
+                "wifiSsid" to "Home_WiFi_2G",
+                "ipAddress" to "192.168.1.142",
+                "pairingToken" to pairingToken,
+                "lastSeen" to FieldValue.serverTimestamp(),
+                "pairedAt" to FieldValue.serverTimestamp()
+            )
+            docRef.set(map, SetOptions.merge()).await()
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun unpairDevice(uid: String, deviceId: String): Result<Unit> {
+        val db = firestore ?: return Result.success(Unit)
+        return try {
+            val docRef = db.collection("users").document(uid)
+                .collection("devices").document(deviceId)
+            docRef.delete().await()
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun sendDeviceCommand(uid: String, deviceId: String, commandType: String, payload: Map<String, Any> = emptyMap()): Result<String> {
+        val db = firestore ?: return Result.success("cmd_offline_${System.currentTimeMillis()}")
+        return try {
+            val cmdId = "cmd_${System.currentTimeMillis()}"
+            val docRef = db.collection("users").document(uid)
+                .collection("devices").document(deviceId)
+                .collection("commands").document(cmdId)
+
+            val map = hashMapOf(
+                "commandId" to cmdId,
+                "type" to commandType,
+                "status" to "PENDING",
+                "createdAt" to FieldValue.serverTimestamp(),
+                "payload" to payload
+            )
+            docRef.set(map).await()
+            Result.success(cmdId)
         } catch (e: Exception) {
             Result.failure(e)
         }

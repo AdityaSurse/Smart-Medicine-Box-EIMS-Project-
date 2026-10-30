@@ -7,4 +7,5 @@ interface TelemetryRepository {
     fun observeTelemetry(deviceId: String): Flow<DeviceTelemetry>
     suspend fun refreshTelemetry(deviceId: String): Result<DeviceTelemetry>
     suspend fun dispenseDose(tray: String): Result<Unit>
+    suspend fun silenceBuzzer(deviceId: String): Result<Unit>
 }

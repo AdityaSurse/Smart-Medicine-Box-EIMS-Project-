@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowForward
+import androidx.compose.material.icons.automirrored.outlined.VolumeOff
 import androidx.compose.material.icons.outlined.Alarm
 import androidx.compose.material.icons.outlined.Analytics
 import androidx.compose.material.icons.outlined.Close
@@ -27,11 +28,14 @@ import androidx.compose.material.icons.outlined.Inventory2
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Verified
+import androidx.compose.material.icons.outlined.WarningAmber
 import androidx.compose.material.icons.outlined.WaterDrop
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -42,6 +46,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import com.aditya.smartmedbox.core.designsystem.component.DoseStatus
 import com.aditya.smartmedbox.core.designsystem.component.SmartMedBoxDoseCard
 import com.aditya.smartmedbox.core.designsystem.component.SmartMedBoxEmptyState
@@ -176,6 +182,56 @@ private fun DashboardContent(state: DashboardUiState.Success, onEvent: (Dashboar
             )
         }
 
+        if (state.isTelemetryStale) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(CardShape)
+                    .background(MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.5f))
+                    .border(spacing.hairlineBorder, MaterialTheme.colorScheme.error, CardShape)
+                    .padding(spacing.medium)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Row(
+                        modifier = Modifier.weight(1f),
+                        horizontalArrangement = Arrangement.spacedBy(spacing.small),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.WarningAmber,
+                            contentDescription = "Warning",
+                            tint = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Column {
+                            Text(
+                                text = "Telemetry May Be Stale",
+                                style = MaterialTheme.typography.titleSmall,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onErrorContainer
+                            )
+                            Text(
+                                text = "Last device ping was ${state.lastSeenText}. Verify 5V power and Wi-Fi.",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onErrorContainer
+                            )
+                        }
+                    }
+                    TextButton(onClick = { onEvent(DashboardUiEvent.Refresh) }) {
+                        Text(
+                            text = "Sync",
+                            color = MaterialTheme.colorScheme.error,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+            }
+        }
+
         // 1. TOP GREETING & SMART BOX STATUS
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -195,7 +251,18 @@ private fun DashboardContent(state: DashboardUiState.Success, onEvent: (Dashboar
                 )
             }
 
-            // Box Online Status Tag
+            // Box Online / Stale Status Tag
+            val indicatorColor = if (state.isTelemetryStale) {
+                MaterialTheme.colorScheme.error
+            } else {
+                MaterialTheme.colorScheme.secondary
+            }
+            val statusLabel = if (state.isTelemetryStale) {
+                "STALE • ${state.lastSeenText}"
+            } else {
+                "ONLINE • ${state.lastSeenText}"
+            }
+
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(spacing.extraSmall),
@@ -204,15 +271,15 @@ private fun DashboardContent(state: DashboardUiState.Success, onEvent: (Dashboar
                     .background(MaterialTheme.colorScheme.surfaceContainerLowest)
                     .border(spacing.hairlineBorder, MaterialTheme.colorScheme.outlineVariant, PillShape)
                     .padding(horizontal = spacing.small, vertical = spacing.extraSmall)
-                    .semantics { contentDescription = "Smart box status online" }
+                    .semantics { contentDescription = "Smart box status $statusLabel" }
             ) {
                 Box(
                     modifier = Modifier
                         .size(spacing.small)
-                        .background(MaterialTheme.colorScheme.secondary, CircleShape)
+                        .background(indicatorColor, CircleShape)
                 )
                 Text(
-                    text = "BOX ONLINE",
+                    text = statusLabel,
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurface
                 )
@@ -278,6 +345,34 @@ private fun DashboardContent(state: DashboardUiState.Success, onEvent: (Dashboar
                         SmartMedBoxStatusChip(status = chipStatus)
                     },
                     modifier = Modifier.weight(1f)
+                )
+            }
+        }
+
+        // Remote Actions Strip
+        OutlinedButton(
+            onClick = { onEvent(DashboardUiEvent.SilenceBuzzer) },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(48.dp),
+            shape = CardShape,
+            colors = ButtonDefaults.outlinedButtonColors(
+                contentColor = MaterialTheme.colorScheme.primary
+            )
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(spacing.small)
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Outlined.VolumeOff,
+                    contentDescription = null,
+                    modifier = Modifier.size(18.dp)
+                )
+                Text(
+                    text = "Silence Smart Box Buzzer",
+                    style = MaterialTheme.typography.labelLarge,
+                    fontWeight = FontWeight.SemiBold
                 )
             }
         }

@@ -33,9 +33,21 @@ class FakeDeviceRepository @Inject constructor() : DeviceRepository {
         return Result.success(Unit)
     }
 
-    override suspend fun pairDevice(deviceId: String): Result<Unit> {
+    override suspend fun pairDevice(deviceId: String, pairingToken: String): Result<Unit> {
         delay(800)
-        deviceState.value = deviceState.value?.copy(isPaired = true)
+        val current = deviceState.value
+        deviceState.value = (current ?: SmartBoxDevice(deviceId = deviceId)).copy(
+            deviceId = deviceId,
+            pairingCode = pairingToken.ifBlank { "8820" },
+            isPaired = true,
+            isNearby = true
+        )
+        return Result.success(Unit)
+    }
+
+    override suspend fun unpairDevice(deviceId: String): Result<Unit> {
+        delay(400)
+        deviceState.value = null
         return Result.success(Unit)
     }
 

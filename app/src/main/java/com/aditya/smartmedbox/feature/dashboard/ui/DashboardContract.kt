@@ -26,13 +26,16 @@ sealed interface DashboardUiState {
         val weeklyAdherencePercent: Int = 94,
         val missedThisWeekCount: Int = 1,
         val isExactAlarmPermissionRequired: Boolean = false,
-        val isNotificationPermissionRequired: Boolean = false
+        val isNotificationPermissionRequired: Boolean = false,
+        val isTelemetryStale: Boolean = false,
+        val lastSeenText: String = "Just now"
     ) : DashboardUiState
 }
 
 sealed interface DashboardUiEvent {
     data object Refresh : DashboardUiEvent
     data class DispenseNow(val tray: String) : DashboardUiEvent
+    data object SilenceBuzzer : DashboardUiEvent
     data object ClearError : DashboardUiEvent
     data object RequestExactAlarmPermission : DashboardUiEvent
     data object DismissExactAlarmBanner : DashboardUiEvent

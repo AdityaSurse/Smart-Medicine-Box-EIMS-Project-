@@ -46,6 +46,7 @@ class FirestoreSyncEngineTest {
             override suspend fun signIn(email: String, password: String) = Result.success(User(uid = "test_user_1", email = email))
             override suspend fun signUp(email: String, password: String) = Result.success(User(uid = "test_user_1", email = email))
             override suspend fun signInWithGoogle(idToken: String) = Result.success(User(uid = "test_user_1", email = "test@med.care"))
+            override suspend fun updateLinkedDeviceId(deviceId: String?) = Result.success(Unit)
             override suspend fun signOut() = Result.success(Unit)
         }
 

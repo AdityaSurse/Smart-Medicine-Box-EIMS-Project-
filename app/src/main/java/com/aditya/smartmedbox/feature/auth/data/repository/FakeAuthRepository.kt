@@ -70,6 +70,12 @@ class FakeAuthRepository @Inject constructor() : AuthRepository {
         return Result.success(user)
     }
 
+    override suspend fun updateLinkedDeviceId(deviceId: String?): Result<Unit> {
+        val current = _currentUser.value ?: return Result.failure(IllegalStateException("No authenticated user"))
+        _currentUser.value = current.copy(linkedDeviceId = deviceId)
+        return Result.success(Unit)
+    }
+
     override suspend fun signOut(): Result<Unit> {
         _currentUser.value = null
         return Result.success(Unit)

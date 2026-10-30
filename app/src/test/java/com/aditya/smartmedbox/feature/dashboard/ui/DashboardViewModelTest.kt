@@ -233,4 +233,41 @@ class DashboardViewModelTest {
             assertFalse(updatedItem.isNotificationPermissionRequired)
         }
     }
+
+    @Test
+    fun `onEvent SilenceBuzzer calls telemetryRepository silenceBuzzer and emits snackbar effect`() = runTest {
+        io.mockk.coEvery { telemetryRepository.silenceBuzzer(any()) } returns Result.success(Unit)
+
+        viewModel = createViewModel()
+
+        viewModel.effect.test {
+            viewModel.onEvent(DashboardUiEvent.SilenceBuzzer)
+
+            val item = awaitItem()
+            assertTrue(item is DashboardUiEffect.ShowSnackbar)
+            assertTrue((item as DashboardUiEffect.ShowSnackbar).message.contains("Buzzer silence"))
+        }
+        io.mockk.coVerify(exactly = 1) { telemetryRepository.silenceBuzzer("DG-4081") }
+    }
+
+    @Test
+    fun `uiState reflects isTelemetryStale and lastSeenText from telemetry model`() = runTest {
+        every { telemetryRepository.observeTelemetry(any()) } returns flowOf(
+            DeviceTelemetry(
+                deviceId = "DG-4081",
+                isOnline = true,
+                isStale = true,
+                lastSeenFormatted = "12m ago"
+            )
+        )
+
+        viewModel = createViewModel()
+
+        viewModel.uiState.test {
+            assertEquals(DashboardUiState.Loading, awaitItem())
+            val item = awaitItem() as DashboardUiState.Success
+            assertTrue(item.isTelemetryStale)
+            assertEquals("12m ago", item.lastSeenText)
+        }
+    }
 }

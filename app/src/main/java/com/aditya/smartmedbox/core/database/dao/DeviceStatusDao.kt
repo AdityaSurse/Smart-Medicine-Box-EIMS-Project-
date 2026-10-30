@@ -14,9 +14,18 @@ interface DeviceStatusDao {
 
     fun getDeviceStatusFlow(deviceId: String = "DG_BOX_4081"): Flow<DeviceStatusEntity?> = getDeviceStatus(deviceId)
 
+    @Query("SELECT * FROM device_status LIMIT 1")
+    fun getLatestDeviceStatus(): Flow<DeviceStatusEntity?>
+
     @Query("UPDATE device_status SET isOnline = :isOnline, lastSeenTimestamp = :timestamp WHERE deviceId = :deviceId")
     suspend fun updateOnlineStatus(deviceId: String, isOnline: Boolean, timestamp: Long)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertDeviceStatus(status: DeviceStatusEntity)
+
+    @Query("DELETE FROM device_status WHERE deviceId = :deviceId")
+    suspend fun deleteDevice(deviceId: String)
+
+    @Query("DELETE FROM device_status")
+    suspend fun clearAllDevices()
 }

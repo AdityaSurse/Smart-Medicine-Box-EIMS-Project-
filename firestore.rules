@@ -64,6 +64,16 @@ service cloud.firestore {
           allow create: if isOwner(uid) && isValidEvent(request.resource.data);
           allow update, delete: if isOwner(uid);
         }
+
+        // Remote device commands (e.g. silence buzzer, dispense)
+        match /commands/{commandId} {
+          allow read, write: if isOwner(uid);
+        }
+      }
+
+      // FCM device push tokens
+      match /fcmTokens/{token} {
+        allow read, write: if isOwner(uid);
       }
 
       // Medicines inventory
