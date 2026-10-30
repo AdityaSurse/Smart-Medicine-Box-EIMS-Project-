@@ -169,6 +169,13 @@ private fun DashboardContent(state: DashboardUiState.Success, onEvent: (Dashboar
             )
         }
 
+        if (state.isNotificationPermissionRequired) {
+            NotificationPermissionBanner(
+                onEnableClick = { onEvent(DashboardUiEvent.RequestNotificationPermission) },
+                onDismissClick = { onEvent(DashboardUiEvent.DismissNotificationBanner) }
+            )
+        }
+
         // 1. TOP GREETING & SMART BOX STATUS
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -480,6 +487,59 @@ private fun ExactAlarmPermissionBanner(onEnableClick: () -> Unit, onDismissClick
                     imageVector = Icons.Outlined.Close,
                     contentDescription = "Dismiss notice",
                     tint = MaterialTheme.colorScheme.onErrorContainer
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun NotificationPermissionBanner(onEnableClick: () -> Unit, onDismissClick: () -> Unit, modifier: Modifier = Modifier) {
+    val spacing = LocalSpacing.current
+
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(CardShape)
+            .background(MaterialTheme.colorScheme.tertiaryContainer)
+            .border(spacing.hairlineBorder, MaterialTheme.colorScheme.tertiary, CardShape)
+            .padding(spacing.medium)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(spacing.small),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.Notifications,
+                contentDescription = "Notifications Notice",
+                tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                modifier = Modifier.size(spacing.large)
+            )
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = "Medication Alerts Disabled",
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.onTertiaryContainer
+                )
+                Text(
+                    text = "Enable notifications so you never miss a dose or temperature alert.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onTertiaryContainer
+                )
+            }
+            TextButton(onClick = onEnableClick) {
+                Text(
+                    text = "ENABLE",
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.tertiary
+                )
+            }
+            IconButton(onClick = onDismissClick) {
+                Icon(
+                    imageVector = Icons.Outlined.Close,
+                    contentDescription = "Dismiss notice",
+                    tint = MaterialTheme.colorScheme.onTertiaryContainer
                 )
             }
         }

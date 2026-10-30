@@ -25,7 +25,8 @@ sealed interface DashboardUiState {
         val caregiverNoteAuthor: String = "Updated by Sarah • 3 hours ago",
         val weeklyAdherencePercent: Int = 94,
         val missedThisWeekCount: Int = 1,
-        val isExactAlarmPermissionRequired: Boolean = false
+        val isExactAlarmPermissionRequired: Boolean = false,
+        val isNotificationPermissionRequired: Boolean = false
     ) : DashboardUiState
 }
 
@@ -35,6 +36,8 @@ sealed interface DashboardUiEvent {
     data object ClearError : DashboardUiEvent
     data object RequestExactAlarmPermission : DashboardUiEvent
     data object DismissExactAlarmBanner : DashboardUiEvent
+    data object RequestNotificationPermission : DashboardUiEvent
+    data object DismissNotificationBanner : DashboardUiEvent
 }
 
 sealed interface DashboardUiEffect {
@@ -42,4 +45,5 @@ sealed interface DashboardUiEffect {
     data object NavigateToSchedule : DashboardUiEffect
     data object NavigateToHistory : DashboardUiEffect
     data object OpenExactAlarmSettings : DashboardUiEffect
+    data object NavigateToNotificationRationale : DashboardUiEffect
 }

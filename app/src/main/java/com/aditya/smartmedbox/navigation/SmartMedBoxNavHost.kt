@@ -13,8 +13,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navDeepLink
 import com.aditya.smartmedbox.feature.alerts.ui.AlertsScreen
 import com.aditya.smartmedbox.feature.alerts.ui.AlertsViewModel
+import com.aditya.smartmedbox.feature.alerts.ui.NotificationPermissionRationaleScreen
 import com.aditya.smartmedbox.feature.auth.ui.AuthScreen
 import com.aditya.smartmedbox.feature.auth.ui.AuthUiState
 import com.aditya.smartmedbox.feature.auth.ui.AuthViewModel
@@ -40,7 +42,8 @@ fun SmartMedBoxAppScreen(navController: NavHostController = rememberNavControlle
         currentRoute?.contains("Onboarding") == true ||
         currentRoute?.contains("AddEditMedicine") == true ||
         currentRoute?.contains("Device") == true ||
-        currentRoute?.contains("Alerts") == true
+        currentRoute?.contains("Alerts") == true ||
+        currentRoute?.contains("NotificationRationale") == true
 
     // Auth-gated navigation: redirect unauthenticated sessions to login
     androidx.compose.runtime.LaunchedEffect(currentUser) {
@@ -87,7 +90,9 @@ fun SmartMedBoxAppScreen(navController: NavHostController = rememberNavControlle
                 )
             }
 
-            composable<Screen.Dashboard> {
+            composable<Screen.Dashboard>(
+                deepLinks = listOf(navDeepLink { uriPattern = "smartmedbox://dashboard" })
+            ) {
                 val viewModel: DashboardViewModel = hiltViewModel()
                 val uiState by viewModel.uiState.collectAsStateWithLifecycle()
                 val context = androidx.compose.ui.platform.LocalContext.current
@@ -105,6 +110,9 @@ fun SmartMedBoxAppScreen(navController: NavHostController = rememberNavControlle
                             is com.aditya.smartmedbox.feature.dashboard.ui.DashboardUiEffect.NavigateToHistory -> {
                                 navController.navigate(Screen.History)
                             }
+                            is com.aditya.smartmedbox.feature.dashboard.ui.DashboardUiEffect.NavigateToNotificationRationale -> {
+                                navController.navigate(Screen.NotificationRationale)
+                            }
                             else -> Unit
                         }
                     }
@@ -117,7 +125,9 @@ fun SmartMedBoxAppScreen(navController: NavHostController = rememberNavControlle
                 )
             }
 
-            composable<Screen.Schedule> {
+            composable<Screen.Schedule>(
+                deepLinks = listOf(navDeepLink { uriPattern = "smartmedbox://schedule" })
+            ) {
                 val viewModel: ScheduleViewModel = hiltViewModel()
                 val uiState by viewModel.uiState.collectAsStateWithLifecycle()
                 ScheduleScreen(
@@ -127,7 +137,9 @@ fun SmartMedBoxAppScreen(navController: NavHostController = rememberNavControlle
                 )
             }
 
-            composable<Screen.Medicines> {
+            composable<Screen.Medicines>(
+                deepLinks = listOf(navDeepLink { uriPattern = "smartmedbox://medicines" })
+            ) {
                 val viewModel: com.aditya.smartmedbox.feature.medicines.ui.MedicinesViewModel = hiltViewModel()
                 val uiState by viewModel.uiState.collectAsStateWithLifecycle()
                 com.aditya.smartmedbox.feature.medicines.ui.MedicinesScreen(
@@ -148,7 +160,9 @@ fun SmartMedBoxAppScreen(navController: NavHostController = rememberNavControlle
                 )
             }
 
-            composable<Screen.History> {
+            composable<Screen.History>(
+                deepLinks = listOf(navDeepLink { uriPattern = "smartmedbox://history" })
+            ) {
                 val viewModel: com.aditya.smartmedbox.feature.history.ui.HistoryViewModel = hiltViewModel()
                 val uiState by viewModel.uiState.collectAsStateWithLifecycle()
                 com.aditya.smartmedbox.feature.history.ui.HistoryScreen(
@@ -157,7 +171,9 @@ fun SmartMedBoxAppScreen(navController: NavHostController = rememberNavControlle
                 )
             }
 
-            composable<Screen.Alerts> {
+            composable<Screen.Alerts>(
+                deepLinks = listOf(navDeepLink { uriPattern = "smartmedbox://alerts" })
+            ) {
                 val viewModel: AlertsViewModel = hiltViewModel()
                 val uiState by viewModel.uiState.collectAsStateWithLifecycle()
                 AlertsScreen(
@@ -167,7 +183,9 @@ fun SmartMedBoxAppScreen(navController: NavHostController = rememberNavControlle
                 )
             }
 
-            composable<Screen.Device> {
+            composable<Screen.Device>(
+                deepLinks = listOf(navDeepLink { uriPattern = "smartmedbox://device" })
+            ) {
                 val viewModel: DeviceViewModel = hiltViewModel()
                 val uiState by viewModel.uiState.collectAsStateWithLifecycle()
                 DeviceScreen(
@@ -185,6 +203,15 @@ fun SmartMedBoxAppScreen(navController: NavHostController = rememberNavControlle
                     onEvent = viewModel::onEvent,
                     onNavigateToPairDevice = { navController.navigate(Screen.Device) },
                     onNavigateToAlerts = { navController.navigate(Screen.Alerts) }
+                )
+            }
+
+            composable<Screen.NotificationRationale>(
+                deepLinks = listOf(navDeepLink { uriPattern = "smartmedbox://notifications/permission" })
+            ) {
+                NotificationPermissionRationaleScreen(
+                    onPermissionGranted = { navController.popBackStack() },
+                    onDismiss = { navController.popBackStack() }
                 )
             }
         }

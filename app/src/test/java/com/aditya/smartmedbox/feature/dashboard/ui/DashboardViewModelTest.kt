@@ -1,6 +1,8 @@
 package com.aditya.smartmedbox.feature.dashboard.ui
 
+import android.content.Context
 import app.cash.turbine.test
+import com.aditya.smartmedbox.core.notification.NotificationPermissionChecker
 import com.aditya.smartmedbox.core.util.DispatcherProvider
 import com.aditya.smartmedbox.feature.dashboard.domain.model.DeviceTelemetry
 import com.aditya.smartmedbox.feature.dashboard.domain.repository.TelemetryRepository
@@ -37,6 +39,8 @@ class DashboardViewModelTest {
     private val getWeeklyMissedCountUseCase: GetWeeklyMissedCountUseCase = mockk()
     private val computeTimeLeftUseCase: ComputeTimeLeftUseCase = mockk()
     private val doseAlarmScheduler: DoseAlarmScheduler = mockk()
+    private val notificationPermissionChecker: NotificationPermissionChecker = mockk()
+    private val context: Context = mockk(relaxed = true)
 
     private val dispatchers = object : DispatcherProvider {
         override val main = testDispatcher
@@ -59,6 +63,7 @@ class DashboardViewModelTest {
         every { getWeeklyMissedCountUseCase(any()) } returns flowOf(0)
         every { computeTimeLeftUseCase(any(), any()) } returns "2h 15m"
         every { doseAlarmScheduler.canScheduleExactAlarms() } returns true
+        every { notificationPermissionChecker.hasNotificationPermission(any()) } returns true
     }
 
     @After
@@ -74,7 +79,9 @@ class DashboardViewModelTest {
             getWeeklyMissedCountUseCase = getWeeklyMissedCountUseCase,
             computeTimeLeftUseCase = computeTimeLeftUseCase,
             doseAlarmScheduler = doseAlarmScheduler,
-            dispatchers = dispatchers
+            context = context,
+            dispatchers = dispatchers,
+            notificationPermissionChecker = notificationPermissionChecker
         )
     }
 
@@ -180,6 +187,50 @@ class DashboardViewModelTest {
 
             val updatedItem = awaitItem() as DashboardUiState.Success
             assertFalse(updatedItem.isExactAlarmPermissionRequired)
+        }
+    }
+
+    @Test
+    fun `uiState flags isNotificationPermissionRequired when permission is not granted`() = runTest {
+        every { notificationPermissionChecker.hasNotificationPermission(any()) } returns false
+
+        viewModel = createViewModel()
+
+        viewModel.uiState.test {
+            assertEquals(DashboardUiState.Loading, awaitItem())
+
+            val item = awaitItem()
+            assertTrue(item is DashboardUiState.Success)
+            val success = item as DashboardUiState.Success
+            assertTrue(success.isNotificationPermissionRequired)
+        }
+    }
+
+    @Test
+    fun `onEvent RequestNotificationPermission emits NavigateToNotificationRationale effect`() = runTest {
+        viewModel = createViewModel()
+
+        viewModel.effect.test {
+            viewModel.onEvent(DashboardUiEvent.RequestNotificationPermission)
+            assertEquals(DashboardUiEffect.NavigateToNotificationRationale, awaitItem())
+        }
+    }
+
+    @Test
+    fun `onEvent DismissNotificationBanner hides notification permission banner in Success state`() = runTest {
+        every { notificationPermissionChecker.hasNotificationPermission(any()) } returns false
+
+        viewModel = createViewModel()
+
+        viewModel.uiState.test {
+            assertEquals(DashboardUiState.Loading, awaitItem())
+            val item = awaitItem() as DashboardUiState.Success
+            assertTrue(item.isNotificationPermissionRequired)
+
+            viewModel.onEvent(DashboardUiEvent.DismissNotificationBanner)
+
+            val updatedItem = awaitItem() as DashboardUiState.Success
+            assertFalse(updatedItem.isNotificationPermissionRequired)
         }
     }
 }

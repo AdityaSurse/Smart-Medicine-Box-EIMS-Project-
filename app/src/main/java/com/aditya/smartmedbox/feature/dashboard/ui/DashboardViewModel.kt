@@ -1,8 +1,10 @@
 package com.aditya.smartmedbox.feature.dashboard.ui
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aditya.smartmedbox.core.designsystem.component.DoseStatus as ComponentDoseStatus
+import com.aditya.smartmedbox.core.notification.NotificationPermissionChecker
 import com.aditya.smartmedbox.core.util.DispatcherProvider
 import com.aditya.smartmedbox.feature.dashboard.domain.repository.TelemetryRepository
 import com.aditya.smartmedbox.feature.dashboard.domain.usecase.ComputeTimeLeftUseCase
@@ -12,6 +14,7 @@ import com.aditya.smartmedbox.feature.history.domain.usecase.GetWeeklyMissedCoun
 import com.aditya.smartmedbox.feature.schedule.domain.alarm.DoseAlarmScheduler
 import com.aditya.smartmedbox.feature.schedule.domain.usecase.GetTodayScheduleUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -34,22 +37,41 @@ class DashboardViewModel @Inject constructor(
     private val getWeeklyMissedCountUseCase: GetWeeklyMissedCountUseCase,
     private val computeTimeLeftUseCase: ComputeTimeLeftUseCase,
     private val doseAlarmScheduler: DoseAlarmScheduler,
-    private val dispatchers: DispatcherProvider
+    @ApplicationContext private val context: Context,
+    private val dispatchers: DispatcherProvider,
+    private val notificationPermissionChecker: NotificationPermissionChecker
 ) : ViewModel() {
 
     private val _isRefreshing = MutableStateFlow(false)
     private val _errorMessage = MutableStateFlow<String?>(null)
     private val _isExactAlarmBannerDismissed = MutableStateFlow(false)
+    private val _isNotificationBannerDismissed = MutableStateFlow(false)
 
     private val timeFormatter = SimpleDateFormat("h:mm a", Locale.getDefault())
+
+    private data class DashboardFlags(
+        val first: Boolean,
+        val second: String?,
+        val third: Boolean,
+        val fourth: Boolean
+    )
 
     val uiState: StateFlow<DashboardUiState> = combine(
         telemetryRepository.observeTelemetry("DG-4081"),
         getTodayScheduleUseCase(),
         getNextDoseUseCase(),
         getWeeklyMissedCountUseCase(),
-        combine(_isRefreshing, _errorMessage, _isExactAlarmBannerDismissed) { r, e, b -> Triple(r, e, b) }
-    ) { telemetry, todayEvents, nextDose, missedCount, (refreshing, error, bannerDismissed) ->
+        combine(
+            _isRefreshing,
+            _errorMessage,
+            _isExactAlarmBannerDismissed,
+            _isNotificationBannerDismissed
+        ) { r, e, ea, nb -> DashboardFlags(r, e, ea, nb) }
+    ) { telemetry, todayEvents, nextDose, missedCount, flags ->
+        val refreshing = flags.first
+        val error = flags.second
+        val alarmBannerDismissed = flags.third
+        val notifBannerDismissed = flags.fourth
         when {
             error != null -> DashboardUiState.Error(error)
             !telemetry.isOnline -> DashboardUiState.Offline
@@ -100,7 +122,8 @@ class DashboardViewModel @Inject constructor(
                     .toInt()
                     .coerceIn(0, 100)
 
-                val isExactAlarmRequired = !doseAlarmScheduler.canScheduleExactAlarms() && !bannerDismissed
+                val isExactAlarmRequired = !doseAlarmScheduler.canScheduleExactAlarms() && !alarmBannerDismissed
+                val isNotificationRequired = !notificationPermissionChecker.hasNotificationPermission(context) && !notifBannerDismissed
 
                 DashboardUiState.Success(
                     telemetry = updatedTelemetry,
@@ -108,7 +131,8 @@ class DashboardViewModel @Inject constructor(
                     scheduleLedger = scheduleLedger,
                     weeklyAdherencePercent = adherencePercent,
                     missedThisWeekCount = missedCount,
-                    isExactAlarmPermissionRequired = isExactAlarmRequired
+                    isExactAlarmPermissionRequired = isExactAlarmRequired,
+                    isNotificationPermissionRequired = isNotificationRequired
                 )
             }
         }
@@ -133,6 +157,14 @@ class DashboardViewModel @Inject constructor(
             }
             is DashboardUiEvent.DismissExactAlarmBanner -> {
                 _isExactAlarmBannerDismissed.value = true
+            }
+            is DashboardUiEvent.RequestNotificationPermission -> {
+                viewModelScope.launch(dispatchers.main) {
+                    _effect.emit(DashboardUiEffect.NavigateToNotificationRationale)
+                }
+            }
+            is DashboardUiEvent.DismissNotificationBanner -> {
+                _isNotificationBannerDismissed.value = true
             }
         }
     }

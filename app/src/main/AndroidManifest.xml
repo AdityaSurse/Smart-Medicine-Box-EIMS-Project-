@@ -31,6 +31,12 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="smartmedbox" />
+            </intent-filter>
         </activity>
 
         <receiver
@@ -38,6 +44,15 @@
             android:exported="false">
             <intent-filter>
                 <action android:name="com.aditya.smartmedbox.ACTION_DOSE_ALARM" />
+            </intent-filter>
+        </receiver>
+
+        <receiver
+            android:name=".core.notification.NotificationActionReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.aditya.smartmedbox.ACTION_MARK_AS_TAKEN" />
+                <action android:name="com.aditya.smartmedbox.ACTION_SNOOZE_DOSE" />
             </intent-filter>
         </receiver>
 
@@ -51,6 +66,14 @@
                 <action android:name="android.intent.action.TIMEZONE_CHANGED" />
             </intent-filter>
         </receiver>
+
+        <service
+            android:name=".core.firebase.fcm.SmartMedBoxFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
 
         <provider
             android:name="androidx.startup.InitializationProvider"
