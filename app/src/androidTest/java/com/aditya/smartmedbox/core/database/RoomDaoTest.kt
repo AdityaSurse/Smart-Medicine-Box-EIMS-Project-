@@ -122,7 +122,7 @@ class RoomDaoTest {
         )
         doseEventDao.upsertEvent(event)
 
-        doseEventDao.logDose("evt_test_1", DoseStatus.TAKEN.name, 1700000050L, 0.5f)
+        doseEventDao.logDose("evt_test_1", DoseStatus.TAKEN, 1700000050L, 0.5f)
 
         doseEventDao.getEventById("evt_test_1").test {
             val item = awaitItem()

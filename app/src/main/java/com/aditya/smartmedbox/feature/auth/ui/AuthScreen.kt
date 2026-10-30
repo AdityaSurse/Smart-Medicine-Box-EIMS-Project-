@@ -33,7 +33,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -104,7 +104,7 @@ fun AuthScreen(uiState: AuthUiState, onEvent: (AuthUiEvent) -> Unit, onNavigateT
 private fun AuthFormContent(state: AuthUiState.Content, onEvent: (AuthUiEvent) -> Unit, onNavigateToDashboard: () -> Unit) {
     val spacing = LocalSpacing.current
     val scrollState = rememberScrollState()
-    var passwordVisible by remember { mutableStateOf(false) }
+    var passwordVisible by rememberSaveable { mutableStateOf(false) }
 
     Column(
         modifier = Modifier

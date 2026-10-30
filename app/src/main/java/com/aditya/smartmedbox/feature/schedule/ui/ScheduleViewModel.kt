@@ -14,6 +14,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 @HiltViewModel
@@ -48,17 +50,17 @@ class ScheduleViewModel @Inject constructor(
                     day.copy(isSelected = day.dayNumber == selectedDay)
                 }
                 Triple(updatedDays, selectedDay, Pair(feedback, isSaving))
-            }.collect { (days, selectedDay, feedbackAndSaving) ->
+            }.flatMapLatest { (days, selectedDay, feedbackAndSaving) ->
                 val (feedback, isSaving) = feedbackAndSaving
-                scheduleRepository.getSchedulesForDay(selectedDay).collect { schedules ->
+                scheduleRepository.getSchedulesForDay(selectedDay).map { schedules ->
                     if (schedules.isEmpty()) {
-                        _uiState.value = ScheduleUiState.Empty(
+                        ScheduleUiState.Empty(
                             days = days,
                             selectedDayNumber = selectedDay,
                             message = "No regimens scheduled for this day."
                         )
                     } else {
-                        _uiState.value = ScheduleUiState.Success(
+                        ScheduleUiState.Success(
                             days = days,
                             selectedDayNumber = selectedDay,
                             schedules = schedules,
@@ -68,6 +70,8 @@ class ScheduleViewModel @Inject constructor(
                         )
                     }
                 }
+            }.collect { state ->
+                _uiState.value = state
             }
         }
     }

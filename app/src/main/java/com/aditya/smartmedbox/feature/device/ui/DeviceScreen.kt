@@ -52,6 +52,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -186,7 +187,7 @@ fun DeviceScreen(uiState: DeviceUiState, onEvent: (DeviceUiEvent) -> Unit, modif
 @Composable
 private fun UnpairedDeviceContent(state: DeviceUiState.Empty, onEvent: (DeviceUiEvent) -> Unit) {
     val spacing = LocalSpacing.current
-    var showQrDialog by remember { mutableStateOf(false) }
+    var showQrDialog by rememberSaveable { mutableStateOf(false) }
     var deviceIdInput by remember { mutableStateOf(state.manualDeviceId.ifBlank { "DG-4081" }) }
     var pairingTokenInput by remember { mutableStateOf(state.manualPairingToken.ifBlank { "8820" }) }
 
@@ -377,7 +378,7 @@ private fun UnpairedDeviceContent(state: DeviceUiState.Empty, onEvent: (DeviceUi
 private fun DevicePairingContent(state: DeviceUiState.Success, onEvent: (DeviceUiEvent) -> Unit, onNavigateToAddMedicine: () -> Unit) {
     val spacing = LocalSpacing.current
     val device = state.device
-    var showUnpairDialog by remember { mutableStateOf(false) }
+    var showUnpairDialog by rememberSaveable { mutableStateOf(false) }
 
     if (showUnpairDialog) {
         AlertDialog(

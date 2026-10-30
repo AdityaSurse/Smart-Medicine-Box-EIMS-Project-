@@ -103,10 +103,14 @@ class AuthViewModel @Inject constructor(
 
         viewModelScope.launch(dispatchers.io) {
             _isLoading.value = true
-            val result = if (_isSignUpMode.value) {
-                authRepository.signUp(email, password)
-            } else {
-                authRepository.signIn(email, password)
+            val result = try {
+                if (_isSignUpMode.value) {
+                    authRepository.signUp(email, password)
+                } else {
+                    authRepository.signIn(email, password)
+                }
+            } catch (e: Exception) {
+                Result.failure(e)
             }
             _isLoading.value = false
 
@@ -122,7 +126,11 @@ class AuthViewModel @Inject constructor(
     private fun signInWithGoogle(idToken: String) {
         viewModelScope.launch(dispatchers.io) {
             _isLoading.value = true
-            val result = authRepository.signInWithGoogle(idToken)
+            val result = try {
+                authRepository.signInWithGoogle(idToken)
+            } catch (e: Exception) {
+                Result.failure(e)
+            }
             _isLoading.value = false
 
             if (result.isSuccess) {

@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class NotificationActionReceiver : BroadcastReceiver() {
+open class NotificationActionReceiver : BroadcastReceiver() {
 
     companion object {
         const val ACTION_MARK_AS_TAKEN = "com.aditya.smartmedbox.ACTION_MARK_AS_TAKEN"

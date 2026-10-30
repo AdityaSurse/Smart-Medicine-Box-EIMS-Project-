@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -52,6 +53,7 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -61,8 +63,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -282,6 +286,7 @@ fun AddEditMedicineScreen(uiState: AddEditMedicineUiState, onEvent: (AddEditMedi
                                     modifier = Modifier
                                         .weight(1f)
                                         .height(52.dp)
+                                        .minimumInteractiveComponentSize()
                                         .clip(RoundedCornerShape(10.dp))
                                         .background(
                                             if (isSelected) {
@@ -295,6 +300,10 @@ fun AddEditMedicineScreen(uiState: AddEditMedicineUiState, onEvent: (AddEditMedi
                                             if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant,
                                             RoundedCornerShape(10.dp)
                                         )
+                                        .semantics {
+                                            role = Role.RadioButton
+                                            contentDescription = "Compartment Bay $bayNumber, ${if (isSelected) "selected" else "not selected"}"
+                                        }
                                         .clickable { onEvent(AddEditMedicineUiEvent.BaySelected(bayNumber)) },
                                     contentAlignment = Alignment.Center
                                 ) {
@@ -362,6 +371,7 @@ fun AddEditMedicineScreen(uiState: AddEditMedicineUiState, onEvent: (AddEditMedi
                         }
 
                         val dayLabels = listOf("M", "T", "W", "T", "F", "S", "S")
+                        val fullDayNames = listOf("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.spacedBy(spacing.extraSmall)
@@ -371,7 +381,8 @@ fun AddEditMedicineScreen(uiState: AddEditMedicineUiState, onEvent: (AddEditMedi
                                 Box(
                                     modifier = Modifier
                                         .weight(1f)
-                                        .size(42.dp)
+                                        .sizeIn(minWidth = 48.dp, minHeight = 48.dp)
+                                        .minimumInteractiveComponentSize()
                                         .clip(CircleShape)
                                         .background(
                                             if (isActive) {
@@ -385,6 +396,10 @@ fun AddEditMedicineScreen(uiState: AddEditMedicineUiState, onEvent: (AddEditMedi
                                             if (isActive) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant,
                                             CircleShape
                                         )
+                                        .semantics {
+                                            role = Role.Checkbox
+                                            contentDescription = "${fullDayNames[index]}, ${if (isActive) "active" else "inactive"}"
+                                        }
                                         .clickable { onEvent(AddEditMedicineUiEvent.DayToggled(index)) },
                                     contentAlignment = Alignment.Center
                                 ) {

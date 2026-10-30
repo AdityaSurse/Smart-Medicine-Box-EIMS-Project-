@@ -68,7 +68,11 @@ class OnboardingViewModel @Inject constructor(
     private fun confirmPairing(code: String) {
         viewModelScope.launch(dispatchers.io) {
             _isPairingInProgress.value = true
-            val result = repository.pairDevice(code)
+            val result = try {
+                repository.pairDevice(code)
+            } catch (e: Exception) {
+                Result.failure(e)
+            }
             _isPairingInProgress.value = false
             if (result.isSuccess) {
                 _isPairingSuccess.value = true

@@ -8,7 +8,6 @@ import android.content.Intent
 import android.media.AudioAttributes
 import android.media.RingtoneManager
 import android.net.Uri
-import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.aditya.smartmedbox.MainActivity
@@ -40,62 +39,60 @@ class DoseNotificationManager @Inject constructor(
     private val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
     fun initChannels() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-            val audioAttributes = AudioAttributes.Builder()
-                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                .setUsage(AudioAttributes.USAGE_NOTIFICATION_EVENT)
-                .build()
+        val soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+        val audioAttributes = AudioAttributes.Builder()
+            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+            .setUsage(AudioAttributes.USAGE_NOTIFICATION_EVENT)
+            .build()
 
-            // 1. Dose Reminder Channel (High)
-            val reminderChannel = NotificationChannel(
-                CHANNEL_DOSE_REMINDERS,
-                "Dose Reminder",
-                NotificationManager.IMPORTANCE_HIGH
-            ).apply {
-                description = "Urgent alerts for scheduled medication times"
-                enableVibration(true)
-                vibrationPattern = longArrayOf(0, 500, 200, 500)
-                setSound(soundUri, audioAttributes)
-            }
-
-            // 2. Missed Dose Channel (High)
-            val missedChannel = NotificationChannel(
-                CHANNEL_MISSED_DOSES,
-                "Missed Dose",
-                NotificationManager.IMPORTANCE_HIGH
-            ).apply {
-                description = "Alerts when scheduled medication grace period expires"
-                enableVibration(true)
-                vibrationPattern = longArrayOf(0, 300, 150, 300)
-                setSound(soundUri, audioAttributes)
-            }
-
-            // 3. Device Alerts Channel (Default)
-            val deviceAlertsChannel = NotificationChannel(
-                CHANNEL_DEVICE_ALERTS,
-                "Device Alerts",
-                NotificationManager.IMPORTANCE_DEFAULT
-            ).apply {
-                description = "Box connectivity, battery, and environmental alerts"
-                enableVibration(true)
-            }
-
-            // 4. Low Stock Channel (Low)
-            val lowStockChannel = NotificationChannel(
-                CHANNEL_LOW_STOCK,
-                "Low Stock",
-                NotificationManager.IMPORTANCE_LOW
-            ).apply {
-                description = "Medicine inventory refill reminders"
-                enableVibration(false)
-            }
-
-            notificationManager.createNotificationChannel(reminderChannel)
-            notificationManager.createNotificationChannel(missedChannel)
-            notificationManager.createNotificationChannel(deviceAlertsChannel)
-            notificationManager.createNotificationChannel(lowStockChannel)
+        // 1. Dose Reminder Channel (High)
+        val reminderChannel = NotificationChannel(
+            CHANNEL_DOSE_REMINDERS,
+            "Dose Reminder",
+            NotificationManager.IMPORTANCE_HIGH
+        ).apply {
+            description = "Urgent alerts for scheduled medication times"
+            enableVibration(true)
+            vibrationPattern = longArrayOf(0, 500, 200, 500)
+            setSound(soundUri, audioAttributes)
         }
+
+        // 2. Missed Dose Channel (High)
+        val missedChannel = NotificationChannel(
+            CHANNEL_MISSED_DOSES,
+            "Missed Dose",
+            NotificationManager.IMPORTANCE_HIGH
+        ).apply {
+            description = "Alerts when scheduled medication grace period expires"
+            enableVibration(true)
+            vibrationPattern = longArrayOf(0, 300, 150, 300)
+            setSound(soundUri, audioAttributes)
+        }
+
+        // 3. Device Alerts Channel (Default)
+        val deviceAlertsChannel = NotificationChannel(
+            CHANNEL_DEVICE_ALERTS,
+            "Device Alerts",
+            NotificationManager.IMPORTANCE_DEFAULT
+        ).apply {
+            description = "Box connectivity, battery, and environmental alerts"
+            enableVibration(true)
+        }
+
+        // 4. Low Stock Channel (Low)
+        val lowStockChannel = NotificationChannel(
+            CHANNEL_LOW_STOCK,
+            "Low Stock",
+            NotificationManager.IMPORTANCE_LOW
+        ).apply {
+            description = "Medicine inventory refill reminders"
+            enableVibration(false)
+        }
+
+        notificationManager.createNotificationChannel(reminderChannel)
+        notificationManager.createNotificationChannel(missedChannel)
+        notificationManager.createNotificationChannel(deviceAlertsChannel)
+        notificationManager.createNotificationChannel(lowStockChannel)
     }
 
     fun showDoseReminderNotification(
