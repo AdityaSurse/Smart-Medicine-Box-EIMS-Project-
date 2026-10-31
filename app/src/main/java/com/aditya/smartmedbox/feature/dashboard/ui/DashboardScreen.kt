@@ -47,7 +47,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import com.aditya.smartmedbox.core.designsystem.component.DoseStatus
 import com.aditya.smartmedbox.core.designsystem.component.SmartMedBoxDoseCard
 import com.aditya.smartmedbox.core.designsystem.component.SmartMedBoxEmptyState
@@ -205,11 +204,11 @@ private fun DashboardContent(state: DashboardUiState.Success, onEvent: (Dashboar
                             imageVector = Icons.Outlined.WarningAmber,
                             contentDescription = "Warning",
                             tint = MaterialTheme.colorScheme.error,
-                            modifier = Modifier.size(20.dp)
+                            modifier = Modifier.size(spacing.iconLarge)
                         )
                         Column {
                             Text(
-                                text = "Telemetry May Be Stale",
+                                text = "Telemetry Stale: Smart Box Disconnected",
                                 style = MaterialTheme.typography.titleSmall,
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.onErrorContainer
@@ -294,6 +293,7 @@ private fun DashboardContent(state: DashboardUiState.Success, onEvent: (Dashboar
             trayLabel = state.telemetry.nextDoseTray,
             progressFraction = state.telemetry.cycleProgressFraction,
             progressSubtext = "Last taken ${state.telemetry.lastTakenTime}" to "Due ${state.telemetry.nextDoseTime}",
+            latchStatusText = "Bay latch primed for ${state.telemetry.nextDoseTime}",
             actionButtonText = "Dispense Now",
             onActionClick = { onEvent(DashboardUiEvent.DispenseNow(state.telemetry.nextDoseTray)) }
         )
@@ -354,7 +354,7 @@ private fun DashboardContent(state: DashboardUiState.Success, onEvent: (Dashboar
             onClick = { onEvent(DashboardUiEvent.SilenceBuzzer) },
             modifier = Modifier
                 .fillMaxWidth()
-                .height(48.dp),
+                .height(spacing.minTouchTarget),
             shape = CardShape,
             colors = ButtonDefaults.outlinedButtonColors(
                 contentColor = MaterialTheme.colorScheme.primary
@@ -367,7 +367,7 @@ private fun DashboardContent(state: DashboardUiState.Success, onEvent: (Dashboar
                 Icon(
                     imageVector = Icons.AutoMirrored.Outlined.VolumeOff,
                     contentDescription = null,
-                    modifier = Modifier.size(18.dp)
+                    modifier = Modifier.size(spacing.iconMedium)
                 )
                 Text(
                     text = "Silence Smart Box Buzzer",

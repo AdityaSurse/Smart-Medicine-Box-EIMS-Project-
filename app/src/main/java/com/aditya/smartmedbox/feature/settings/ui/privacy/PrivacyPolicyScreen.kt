@@ -32,7 +32,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import com.aditya.smartmedbox.R
 import com.aditya.smartmedbox.core.designsystem.component.SmartMedBoxTopAppBar
 import com.aditya.smartmedbox.core.designsystem.theme.CardShape
@@ -101,7 +100,7 @@ private fun PrivacySectionCard(icon: ImageVector, title: String, body: String, m
         color = MaterialTheme.colorScheme.surface,
         modifier = modifier
             .fillMaxWidth()
-            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, CardShape)
+            .border(spacing.hairlineBorder, MaterialTheme.colorScheme.outlineVariant, CardShape)
     ) {
         Column(
             modifier = Modifier.padding(spacing.medium),
@@ -113,7 +112,7 @@ private fun PrivacySectionCard(icon: ImageVector, title: String, body: String, m
             ) {
                 Column(
                     modifier = Modifier
-                        .size(36.dp)
+                        .size(spacing.barColumnWidth)
                         .clip(CircleShape)
                         .background(MaterialTheme.colorScheme.secondaryContainer),
                     verticalArrangement = Arrangement.Center,
@@ -123,7 +122,7 @@ private fun PrivacySectionCard(icon: ImageVector, title: String, body: String, m
                         imageVector = icon,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.onSecondaryContainer,
-                        modifier = Modifier.size(20.dp)
+                        modifier = Modifier.size(spacing.iconLarge)
                     )
                 }
                 Text(

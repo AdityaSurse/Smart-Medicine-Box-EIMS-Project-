@@ -61,7 +61,6 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import com.aditya.smartmedbox.core.designsystem.component.SmartMedBoxEmptyState
 import com.aditya.smartmedbox.core.designsystem.component.SmartMedBoxErrorState
 import com.aditya.smartmedbox.core.designsystem.component.SmartMedBoxLoadingState
@@ -299,7 +298,7 @@ private fun ScheduleContent(
                     imageVector = Icons.Default.Lock,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.size(16.dp)
+                    modifier = Modifier.size(spacing.iconSmall)
                 )
                 Spacer(modifier = Modifier.width(spacing.small))
                 Text(
@@ -342,7 +341,7 @@ private fun WeeklyLedgerHeader(days: List<ScheduleDay>, selectedDay: Int, isTray
                 modifier = Modifier
                     .clip(PillShape)
                     .background(MaterialTheme.colorScheme.surfaceContainer)
-                    .border(1.dp, MaterialTheme.colorScheme.outlineVariant, PillShape)
+                    .border(spacing.hairlineBorder, MaterialTheme.colorScheme.outlineVariant, PillShape)
                     .padding(horizontal = spacing.medium, vertical = spacing.extraSmall),
                 contentAlignment = Alignment.Center
             ) {
@@ -352,7 +351,7 @@ private fun WeeklyLedgerHeader(days: List<ScheduleDay>, selectedDay: Int, isTray
                 ) {
                     Box(
                         modifier = Modifier
-                            .size(8.dp)
+                            .size(spacing.small)
                             .clip(CircleShape)
                             .background(
                                 if (isTraySynced) {
@@ -381,7 +380,7 @@ private fun WeeklyLedgerHeader(days: List<ScheduleDay>, selectedDay: Int, isTray
         // 7-Day Horizontal Strip
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(6.dp)
+            horizontalArrangement = Arrangement.spacedBy(spacing.indicatorDot)
         ) {
             days.forEach { day ->
                 val isSelected = day.dayNumber == selectedDay
@@ -406,7 +405,7 @@ private fun WeeklyLedgerHeader(days: List<ScheduleDay>, selectedDay: Int, isTray
                         .weight(1f)
                         .clip(CardShape)
                         .background(bg)
-                        .border(1.dp, MaterialTheme.colorScheme.outlineVariant, CardShape)
+                        .border(spacing.hairlineBorder, MaterialTheme.colorScheme.outlineVariant, CardShape)
                         .clickable { onSelectDay(day.dayNumber) }
                         .padding(vertical = spacing.small)
                         .semantics {
@@ -425,7 +424,7 @@ private fun WeeklyLedgerHeader(days: List<ScheduleDay>, selectedDay: Int, isTray
                             color = textDayColor,
                             fontWeight = FontWeight.Bold
                         )
-                        Spacer(modifier = Modifier.height(2.dp))
+                        Spacer(modifier = Modifier.height(spacing.micro))
                         Text(
                             text = "${day.dayNumber}",
                             style = MaterialTheme.typography.headlineMedium,
@@ -448,7 +447,7 @@ private fun ScheduleMedicationCard(schedule: PrescriptionSchedule, onToggleActiv
             .fillMaxWidth()
             .clip(CardShape)
             .background(MaterialTheme.colorScheme.surfaceContainerLowest)
-            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, CardShape)
+            .border(spacing.hairlineBorder, MaterialTheme.colorScheme.outlineVariant, CardShape)
             .padding(spacing.large)
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(spacing.medium)) {
@@ -464,7 +463,7 @@ private fun ScheduleMedicationCard(schedule: PrescriptionSchedule, onToggleActiv
                 ) {
                     Box(
                         modifier = Modifier
-                            .size(40.dp)
+                            .size(spacing.avatarSize)
                             .clip(CircleShape)
                             .background(MaterialTheme.colorScheme.surfaceContainer),
                         contentAlignment = Alignment.Center
@@ -473,7 +472,7 @@ private fun ScheduleMedicationCard(schedule: PrescriptionSchedule, onToggleActiv
                             imageVector = Icons.Default.Medication,
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.onSurface,
-                            modifier = Modifier.size(20.dp)
+                            modifier = Modifier.size(spacing.iconLarge)
                         )
                     }
 
@@ -492,7 +491,7 @@ private fun ScheduleMedicationCard(schedule: PrescriptionSchedule, onToggleActiv
                                 modifier = Modifier
                                     .clip(ControlShape)
                                     .background(MaterialTheme.colorScheme.surfaceContainer)
-                                    .padding(horizontal = spacing.small, vertical = 2.dp)
+                                    .padding(horizontal = spacing.small, vertical = spacing.micro)
                             ) {
                                 Text(
                                     text = schedule.trayBay.uppercase(),
@@ -502,7 +501,7 @@ private fun ScheduleMedicationCard(schedule: PrescriptionSchedule, onToggleActiv
                                 )
                             }
                         }
-                        Spacer(modifier = Modifier.height(2.dp))
+                        Spacer(modifier = Modifier.height(spacing.micro))
                         Text(
                             text = "${schedule.dosageStrength} • ${schedule.formFactor}",
                             style = MaterialTheme.typography.bodyMedium,
@@ -540,7 +539,7 @@ private fun ScheduleMedicationCard(schedule: PrescriptionSchedule, onToggleActiv
                             modifier = Modifier
                                 .clip(PillShape)
                                 .background(MaterialTheme.colorScheme.surfaceContainer)
-                                .border(1.dp, MaterialTheme.colorScheme.outlineVariant, PillShape)
+                                .border(spacing.hairlineBorder, MaterialTheme.colorScheme.outlineVariant, PillShape)
                                 .padding(horizontal = spacing.medium, vertical = spacing.extraSmall)
                         ) {
                             Row(
@@ -551,7 +550,7 @@ private fun ScheduleMedicationCard(schedule: PrescriptionSchedule, onToggleActiv
                                     imageVector = Icons.Default.Schedule,
                                     contentDescription = null,
                                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    modifier = Modifier.size(14.dp)
+                                    modifier = Modifier.size(spacing.iconSmall)
                                 )
                                 Text(
                                     text = time,
@@ -570,7 +569,7 @@ private fun ScheduleMedicationCard(schedule: PrescriptionSchedule, onToggleActiv
                 ) {
                     Box(
                         modifier = Modifier
-                            .size(6.dp)
+                            .size(spacing.indicatorDot)
                             .clip(CircleShape)
                             .background(MaterialTheme.colorScheme.secondary)
                     )
@@ -618,7 +617,7 @@ private fun NewRegimenFormCard(
             .fillMaxWidth()
             .clip(CardShape)
             .background(MaterialTheme.colorScheme.surfaceContainerLowest)
-            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, CardShape)
+            .border(spacing.hairlineBorder, MaterialTheme.colorScheme.outlineVariant, CardShape)
             .padding(spacing.large)
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(spacing.medium)) {
@@ -643,7 +642,7 @@ private fun NewRegimenFormCard(
                 }
                 Box(
                     modifier = Modifier
-                        .size(36.dp)
+                        .size(spacing.barColumnWidth)
                         .clip(CircleShape)
                         .background(MaterialTheme.colorScheme.surfaceContainer),
                     contentAlignment = Alignment.Center
@@ -652,7 +651,7 @@ private fun NewRegimenFormCard(
                         imageVector = Icons.Default.EditNote,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.size(20.dp)
+                        modifier = Modifier.size(spacing.iconLarge)
                     )
                 }
             }
@@ -699,10 +698,10 @@ private fun NewRegimenFormCard(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(52.dp)
+                        .height(spacing.inputHeight)
                         .clip(ControlShape)
                         .background(MaterialTheme.colorScheme.surfaceContainerLow)
-                        .border(1.dp, MaterialTheme.colorScheme.outlineVariant, ControlShape)
+                        .border(spacing.hairlineBorder, MaterialTheme.colorScheme.outlineVariant, ControlShape)
                         .padding(horizontal = spacing.extraSmall),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
@@ -710,7 +709,7 @@ private fun NewRegimenFormCard(
                     IconButton(
                         onClick = { if (dosageMg > 5) dosageMg -= 5 },
                         modifier = Modifier
-                            .size(44.dp)
+                            .size(spacing.controlSize)
                             .clip(ControlShape)
                             .background(MaterialTheme.colorScheme.surfaceContainer)
                     ) {
@@ -731,7 +730,7 @@ private fun NewRegimenFormCard(
                     IconButton(
                         onClick = { if (dosageMg < 1000) dosageMg += 5 },
                         modifier = Modifier
-                            .size(44.dp)
+                            .size(spacing.controlSize)
                             .clip(ControlShape)
                             .background(MaterialTheme.colorScheme.surfaceContainer)
                     ) {
@@ -790,10 +789,10 @@ private fun NewRegimenFormCard(
                         Box(
                             modifier = Modifier
                                 .weight(1f)
-                                .height(50.dp)
+                                .height(spacing.buttonHeight)
                                 .clip(ControlShape)
                                 .background(bayBg)
-                                .border(1.dp, MaterialTheme.colorScheme.outlineVariant, ControlShape)
+                                .border(spacing.hairlineBorder, MaterialTheme.colorScheme.outlineVariant, ControlShape)
                                 .clickable { selectedBay = bay }
                                 .semantics {
                                     role = Role.Button
@@ -839,7 +838,7 @@ private fun NewRegimenFormCard(
                             modifier = Modifier
                                 .clip(ControlShape)
                                 .background(MaterialTheme.colorScheme.surfaceContainer)
-                                .border(1.dp, MaterialTheme.colorScheme.outlineVariant, ControlShape)
+                                .border(spacing.hairlineBorder, MaterialTheme.colorScheme.outlineVariant, ControlShape)
                                 .padding(horizontal = spacing.medium, vertical = spacing.small)
                         ) {
                             Row(
@@ -850,7 +849,7 @@ private fun NewRegimenFormCard(
                                     imageVector = Icons.Default.Alarm,
                                     contentDescription = null,
                                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    modifier = Modifier.size(18.dp)
+                                    modifier = Modifier.size(spacing.iconMedium)
                                 )
                                 Text(
                                     text = time,
@@ -861,13 +860,13 @@ private fun NewRegimenFormCard(
                                 if (timesList.size > 1) {
                                     IconButton(
                                         onClick = { timesList.removeAt(index) },
-                                        modifier = Modifier.size(20.dp)
+                                        modifier = Modifier.size(spacing.iconLarge)
                                     ) {
                                         Icon(
                                             imageVector = Icons.Default.Close,
                                             contentDescription = "Remove time $time",
                                             tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                            modifier = Modifier.size(14.dp)
+                                            modifier = Modifier.size(spacing.iconSmall)
                                         )
                                     }
                                 }
@@ -936,7 +935,7 @@ private fun NewRegimenFormCard(
                                 .aspectRatio(1f)
                                 .clip(CircleShape)
                                 .background(dayBg)
-                                .border(1.dp, MaterialTheme.colorScheme.outlineVariant, CircleShape)
+                                .border(spacing.hairlineBorder, MaterialTheme.colorScheme.outlineVariant, CircleShape)
                                 .clickable {
                                     if (isDaySelected) {
                                         if (repeatDays.size > 1) repeatDays.remove(dayLetter)
@@ -1040,7 +1039,7 @@ private fun NewRegimenFormCard(
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(52.dp),
+                    .height(spacing.buttonHeight),
                 shape = ControlShape,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primary,

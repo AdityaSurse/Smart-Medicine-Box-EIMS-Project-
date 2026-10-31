@@ -33,7 +33,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.unit.dp
 import com.aditya.smartmedbox.core.designsystem.component.DoseStatus
 import com.aditya.smartmedbox.core.designsystem.component.SmartMedBoxEmptyState
 import com.aditya.smartmedbox.core.designsystem.component.SmartMedBoxErrorState
@@ -295,7 +294,7 @@ private fun HistoryContent(state: HistoryUiState.Content, onEvent: (HistoryUiEve
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(112.dp)
+                        .height(spacing.radarSize)
                         .padding(top = spacing.small),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.Bottom
@@ -363,6 +362,163 @@ private fun HistoryContent(state: HistoryUiState.Content, onEvent: (HistoryUiEve
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
+                }
+            }
+        }
+
+        // 4. STORAGE ENVIRONMENT (BOX SENSORS)
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(CardShape)
+                .background(MaterialTheme.colorScheme.surfaceContainerLow)
+                .border(spacing.hairlineBorder, MaterialTheme.colorScheme.outlineVariant, CardShape)
+                .padding(spacing.medium)
+        ) {
+            Column(verticalArrangement = Arrangement.spacedBy(spacing.small)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "STORAGE ENVIRONMENT (BOX SENSORS)",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(spacing.extraSmall)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(spacing.indicatorDot)
+                                .clip(PillShape)
+                                .background(MaterialTheme.colorScheme.secondary)
+                        )
+                        Text(
+                            text = "SYNC OK",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.secondary
+                        )
+                    }
+                }
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(spacing.small)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .clip(ControlShape)
+                            .background(MaterialTheme.colorScheme.surfaceContainer)
+                            .padding(spacing.medium)
+                    ) {
+                        Column {
+                            Text(
+                                text = "INTERNAL TEMP",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Row(
+                                verticalAlignment = Alignment.Bottom,
+                                horizontalArrangement = Arrangement.spacedBy(spacing.extraSmall),
+                                modifier = Modifier.padding(top = spacing.micro)
+                            ) {
+                                Text(
+                                    text = state.stats.chamberTemp,
+                                    style = MaterialTheme.typography.headlineMedium,
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                                Text(
+                                    text = "Normal",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.secondary
+                                )
+                            }
+                        }
+                    }
+
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .clip(ControlShape)
+                            .background(MaterialTheme.colorScheme.surfaceContainer)
+                            .padding(spacing.medium)
+                    ) {
+                        Column {
+                            Text(
+                                text = "REL. HUMIDITY",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Row(
+                                verticalAlignment = Alignment.Bottom,
+                                horizontalArrangement = Arrangement.spacedBy(spacing.extraSmall),
+                                modifier = Modifier.padding(top = spacing.micro)
+                            ) {
+                                Text(
+                                    text = state.stats.chamberHumidity,
+                                    style = MaterialTheme.typography.headlineMedium,
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                                Text(
+                                    text = "Optimal",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.secondary
+                                )
+                            }
+                        }
+                    }
+                }
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(ControlShape)
+                        .background(MaterialTheme.colorScheme.surfaceContainer)
+                        .padding(spacing.medium)
+                ) {
+                    Column(verticalArrangement = Arrangement.spacedBy(spacing.extraSmall)) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(
+                                text = "7-DAY STABILITY CURVE",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Text(
+                                text = "Min 24°C / Max 29°C",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = spacing.extraSmall),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(
+                                text = "OCT 10",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Text(
+                                text = "OCT 13",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Text(
+                                text = "TODAY",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -473,28 +629,30 @@ private fun WeeklyBarColumn(day: DailyAdherence) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(spacing.extraSmall),
-        modifier = Modifier.width(36.dp)
+        modifier = Modifier.width(spacing.barColumnWidth)
     ) {
         Column(
             modifier = Modifier
-                .width(16.dp)
-                .height(80.dp),
+                .width(spacing.medium)
+                .height(spacing.barChartHeight),
             verticalArrangement = Arrangement.Bottom
         ) {
             if (day.missedCount > 0) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(18.dp)
+                        .height(spacing.iconMedium)
                         .clip(ControlShape)
                         .background(MaterialTheme.colorScheme.error)
                 )
-                Spacer(modifier = Modifier.height(2.dp))
+                Spacer(modifier = Modifier.height(spacing.micro))
             }
+            val maxBarHeight = spacing.barChartHeight - spacing.iconMedium
+            val takenHeight = (spacing.iconMedium * day.takenCount).coerceAtMost(maxBarHeight)
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height((day.takenCount * 18).dp.coerceAtMost(62.dp))
+                    .height(takenHeight)
                     .clip(ControlShape)
                     .background(MaterialTheme.colorScheme.secondary)
             )

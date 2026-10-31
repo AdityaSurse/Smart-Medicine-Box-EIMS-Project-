@@ -13,7 +13,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Inventory2
+import androidx.compose.material.icons.outlined.LockOpen
 import androidx.compose.material.icons.outlined.Medication
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -37,6 +39,7 @@ fun SmartMedBoxDoseCard(
     status: DoseStatus? = null,
     progressFraction: Float? = null,
     progressSubtext: Pair<String, String>? = null,
+    latchStatusText: String? = null,
     actionButtonText: String? = null,
     onActionClick: (() -> Unit)? = null,
     onClick: (() -> Unit)? = null
@@ -180,8 +183,17 @@ fun SmartMedBoxDoseCard(
                 }
             }
 
-            // Bottom action row or status chip
-            if (status != null || (actionButtonText != null && onActionClick != null)) {
+            // Bottom action row or status chip / Quick Action Tray Trigger
+            val hasAction = actionButtonText != null && onActionClick != null
+            val hasLatch = latchStatusText != null
+            val hasBottomRow = status != null || hasAction || hasLatch
+            if (hasBottomRow) {
+                if (hasAction || hasLatch) {
+                    HorizontalDivider(
+                        thickness = spacing.hairlineBorder,
+                        color = MaterialTheme.colorScheme.outlineVariant
+                    )
+                }
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -189,6 +201,24 @@ fun SmartMedBoxDoseCard(
                 ) {
                     if (status != null) {
                         SmartMedBoxStatusChip(status = status)
+                    } else if (latchStatusText != null) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(spacing.small),
+                            modifier = Modifier.weight(1f, fill = false)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Outlined.LockOpen,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.size(spacing.iconMedium)
+                            )
+                            Text(
+                                text = latchStatusText,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
                     }
 
                     if (actionButtonText != null && onActionClick != null) {

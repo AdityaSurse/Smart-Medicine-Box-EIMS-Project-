@@ -69,7 +69,6 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import com.aditya.smartmedbox.R
 import com.aditya.smartmedbox.core.designsystem.component.SmartMedBoxEmptyState
 import com.aditya.smartmedbox.core.designsystem.component.SmartMedBoxErrorState
@@ -234,7 +233,7 @@ private fun SettingsContent(
                     modifier = Modifier
                         .clip(PillShape)
                         .background(MaterialTheme.colorScheme.surfaceContainer)
-                        .border(1.dp, MaterialTheme.colorScheme.outlineVariant, PillShape)
+                        .border(spacing.hairlineBorder, MaterialTheme.colorScheme.outlineVariant, PillShape)
                         .padding(horizontal = spacing.medium, vertical = spacing.extraSmall)
                 ) {
                     Row(
@@ -243,7 +242,7 @@ private fun SettingsContent(
                     ) {
                         Box(
                             modifier = Modifier
-                                .size(8.dp)
+                                .size(spacing.small)
                                 .clip(CircleShape)
                                 .background(MaterialTheme.colorScheme.secondary)
                         )
@@ -342,7 +341,7 @@ private fun ConnectedDeviceSection(settings: DeviceSettings, onPairNewBay: () ->
             .fillMaxWidth()
             .clip(CardShape)
             .background(MaterialTheme.colorScheme.surfaceContainerLow)
-            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, CardShape)
+            .border(spacing.hairlineBorder, MaterialTheme.colorScheme.outlineVariant, CardShape)
             .padding(spacing.medium)
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(spacing.medium)) {
@@ -357,7 +356,7 @@ private fun ConnectedDeviceSection(settings: DeviceSettings, onPairNewBay: () ->
                 ) {
                     Box(
                         modifier = Modifier
-                            .size(48.dp)
+                            .size(spacing.huge)
                             .clip(ControlShape)
                             .background(MaterialTheme.colorScheme.surfaceContainer),
                         contentAlignment = Alignment.Center
@@ -366,7 +365,7 @@ private fun ConnectedDeviceSection(settings: DeviceSettings, onPairNewBay: () ->
                             imageVector = Icons.Default.Inventory2,
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.onSurface,
-                            modifier = Modifier.size(24.dp)
+                            modifier = Modifier.size(spacing.large)
                         )
                     }
 
@@ -383,7 +382,7 @@ private fun ConnectedDeviceSection(settings: DeviceSettings, onPairNewBay: () ->
                         ) {
                             Box(
                                 modifier = Modifier
-                                    .size(6.dp)
+                                    .size(spacing.indicatorDot)
                                     .clip(CircleShape)
                                     .background(MaterialTheme.colorScheme.secondary)
                             )
@@ -401,7 +400,7 @@ private fun ConnectedDeviceSection(settings: DeviceSettings, onPairNewBay: () ->
                     modifier = Modifier
                         .clip(PillShape)
                         .background(MaterialTheme.colorScheme.surfaceContainer)
-                        .padding(horizontal = spacing.small, vertical = 2.dp)
+                        .padding(horizontal = spacing.small, vertical = spacing.micro)
                 ) {
                     Text(
                         text = settings.hardwareId,
@@ -415,7 +414,7 @@ private fun ConnectedDeviceSection(settings: DeviceSettings, onPairNewBay: () ->
             // Hardware Bay Compartment Graphic (4 bays)
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(6.dp)
+                horizontalArrangement = Arrangement.spacedBy(spacing.indicatorDot)
             ) {
                 settings.bays.forEach { bay ->
                     val isTaken = bay.isTaken
@@ -435,7 +434,7 @@ private fun ConnectedDeviceSection(settings: DeviceSettings, onPairNewBay: () ->
                             .weight(1f)
                             .clip(ControlShape)
                             .background(bayBg)
-                            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, ControlShape)
+                            .border(spacing.hairlineBorder, MaterialTheme.colorScheme.outlineVariant, ControlShape)
                             .padding(vertical = spacing.small),
                         contentAlignment = Alignment.Center
                     ) {
@@ -460,8 +459,8 @@ private fun ConnectedDeviceSection(settings: DeviceSettings, onPairNewBay: () ->
                                 contentDescription = null,
                                 tint = if (isTaken) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.outline,
                                 modifier = Modifier
-                                    .size(16.dp)
-                                    .padding(top = 2.dp)
+                                    .size(spacing.medium)
+                                    .padding(top = spacing.micro)
                             )
                         }
                     }
@@ -486,7 +485,7 @@ private fun ConnectedDeviceSection(settings: DeviceSettings, onPairNewBay: () ->
                         imageVector = Icons.Default.Sync,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.size(18.dp)
+                        modifier = Modifier.size(spacing.iconMedium)
                     )
                     Text(
                         text = "Last sync ${settings.lastSyncTime}",
@@ -503,7 +502,7 @@ private fun ConnectedDeviceSection(settings: DeviceSettings, onPairNewBay: () ->
                         imageVector = Icons.Default.Battery5Bar,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.secondary,
-                        modifier = Modifier.size(18.dp)
+                        modifier = Modifier.size(spacing.iconMedium)
                     )
                     Text(
                         text = "${settings.batteryPercent}%",
@@ -518,7 +517,7 @@ private fun ConnectedDeviceSection(settings: DeviceSettings, onPairNewBay: () ->
                 onClick = onPairNewBay,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(48.dp),
+                    .height(spacing.huge),
                 shape = ControlShape,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.surfaceContainer,
@@ -532,7 +531,7 @@ private fun ConnectedDeviceSection(settings: DeviceSettings, onPairNewBay: () ->
                     Icon(
                         imageVector = Icons.Default.SwapHoriz,
                         contentDescription = null,
-                        modifier = Modifier.size(20.dp)
+                        modifier = Modifier.size(spacing.iconLarge)
                     )
                     Text(
                         text = "Pair New Apothecary Bay",
@@ -554,7 +553,7 @@ private fun HardwareNetworkSection(settings: DeviceSettings, onSelectSnooze: (In
             .fillMaxWidth()
             .clip(CardShape)
             .background(MaterialTheme.colorScheme.surfaceContainerLow)
-            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, CardShape)
+            .border(spacing.hairlineBorder, MaterialTheme.colorScheme.outlineVariant, CardShape)
             .padding(spacing.medium)
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(spacing.medium)) {
@@ -573,7 +572,7 @@ private fun HardwareNetworkSection(settings: DeviceSettings, onSelectSnooze: (In
                     imageVector = Icons.Default.WifiTethering,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.size(18.dp)
+                    modifier = Modifier.size(spacing.iconMedium)
                 )
             }
 
@@ -595,7 +594,7 @@ private fun HardwareNetworkSection(settings: DeviceSettings, onSelectSnooze: (In
                         imageVector = Icons.Default.Wifi,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.size(22.dp)
+                        modifier = Modifier.size(spacing.iconExtraLarge)
                     )
                     Column {
                         Text(
@@ -617,7 +616,7 @@ private fun HardwareNetworkSection(settings: DeviceSettings, onSelectSnooze: (In
                     imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier.size(spacing.iconLarge)
                 )
             }
 
@@ -639,7 +638,7 @@ private fun HardwareNetworkSection(settings: DeviceSettings, onSelectSnooze: (In
                         imageVector = Icons.AutoMirrored.Filled.VolumeUp,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.size(22.dp)
+                        modifier = Modifier.size(spacing.iconExtraLarge)
                     )
                     Column {
                         Text(
@@ -660,7 +659,7 @@ private fun HardwareNetworkSection(settings: DeviceSettings, onSelectSnooze: (In
                 IconButton(
                     onClick = onTestTone,
                     modifier = Modifier
-                        .size(44.dp)
+                        .size(spacing.controlSize)
                         .clip(ControlShape)
                         .background(MaterialTheme.colorScheme.surfaceContainerHighest)
                 ) {
@@ -668,7 +667,7 @@ private fun HardwareNetworkSection(settings: DeviceSettings, onSelectSnooze: (In
                         imageVector = Icons.Default.MusicNote,
                         contentDescription = "Test tone chime",
                         tint = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.size(20.dp)
+                        modifier = Modifier.size(spacing.iconLarge)
                     )
                 }
             }
@@ -698,7 +697,7 @@ private fun HardwareNetworkSection(settings: DeviceSettings, onSelectSnooze: (In
                         .fillMaxWidth()
                         .clip(ControlShape)
                         .background(MaterialTheme.colorScheme.surfaceContainer)
-                        .padding(4.dp),
+                        .padding(spacing.extraSmall),
                     horizontalArrangement = Arrangement.spacedBy(spacing.extraSmall)
                 ) {
                     listOf(5, 10, 15).forEach { minutes ->
@@ -717,7 +716,7 @@ private fun HardwareNetworkSection(settings: DeviceSettings, onSelectSnooze: (In
                         Box(
                             modifier = Modifier
                                 .weight(1f)
-                                .height(44.dp)
+                                .height(spacing.controlSize)
                                 .clip(ControlShape)
                                 .background(btnBg)
                                 .clickable { onSelectSnooze(minutes) }
@@ -750,7 +749,7 @@ private fun CareCircleSection(settings: DeviceSettings) {
             .fillMaxWidth()
             .clip(CardShape)
             .background(MaterialTheme.colorScheme.surfaceContainerLow)
-            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, CardShape)
+            .border(spacing.hairlineBorder, MaterialTheme.colorScheme.outlineVariant, CardShape)
             .padding(spacing.medium)
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(spacing.medium)) {
@@ -769,7 +768,7 @@ private fun CareCircleSection(settings: DeviceSettings) {
                     imageVector = Icons.Default.Favorite,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.size(18.dp)
+                    modifier = Modifier.size(spacing.iconMedium)
                 )
             }
 
@@ -793,7 +792,7 @@ private fun CareCircleSection(settings: DeviceSettings) {
                             ) {
                                 Box(
                                     modifier = Modifier
-                                        .size(44.dp)
+                                        .size(spacing.controlSize)
                                         .clip(CircleShape)
                                         .background(MaterialTheme.colorScheme.secondaryContainer),
                                     contentAlignment = Alignment.Center
@@ -826,15 +825,15 @@ private fun CareCircleSection(settings: DeviceSettings) {
                                 modifier = Modifier
                                     .clip(PillShape)
                                     .background(MaterialTheme.colorScheme.secondaryContainer)
-                                    .padding(horizontal = spacing.small, vertical = 2.dp)
+                                    .padding(horizontal = spacing.small, vertical = spacing.micro)
                             ) {
                                 Row(
                                     verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                                    horizontalArrangement = Arrangement.spacedBy(spacing.extraSmall)
                                 ) {
                                     Box(
                                         modifier = Modifier
-                                            .size(6.dp)
+                                            .size(spacing.indicatorDot)
                                             .clip(CircleShape)
                                             .background(MaterialTheme.colorScheme.secondary)
                                     )
@@ -861,7 +860,7 @@ private fun CareCircleSection(settings: DeviceSettings) {
                                     imageVector = Icons.Default.Call,
                                     contentDescription = null,
                                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    modifier = Modifier.size(18.dp)
+                                    modifier = Modifier.size(spacing.iconMedium)
                                 )
                                 Text(
                                     text = caregiver.phoneNumber,
@@ -873,7 +872,7 @@ private fun CareCircleSection(settings: DeviceSettings) {
                             IconButton(
                                 onClick = { },
                                 modifier = Modifier
-                                    .size(44.dp)
+                                    .size(spacing.controlSize)
                                     .clip(ControlShape)
                                     .background(MaterialTheme.colorScheme.surfaceContainerHighest)
                             ) {
@@ -881,7 +880,7 @@ private fun CareCircleSection(settings: DeviceSettings) {
                                     imageVector = Icons.Default.Call,
                                     contentDescription = "Call caregiver",
                                     tint = MaterialTheme.colorScheme.onSurface,
-                                    modifier = Modifier.size(20.dp)
+                                    modifier = Modifier.size(spacing.iconLarge)
                                 )
                             }
                         }
@@ -893,7 +892,7 @@ private fun CareCircleSection(settings: DeviceSettings) {
                 onClick = { },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(48.dp),
+                    .height(spacing.huge),
                 shape = ControlShape,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.surfaceContainer,
@@ -907,7 +906,7 @@ private fun CareCircleSection(settings: DeviceSettings) {
                     Icon(
                         imageVector = Icons.Default.PersonAdd,
                         contentDescription = null,
-                        modifier = Modifier.size(20.dp)
+                        modifier = Modifier.size(spacing.iconLarge)
                     )
                     Text(
                         text = "+ Add caregiver contact",
@@ -930,7 +929,7 @@ private fun RefillThresholdSection(currentThreshold: Int, onThresholdChange: (In
             .fillMaxWidth()
             .clip(CardShape)
             .background(MaterialTheme.colorScheme.surfaceContainerLow)
-            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, CardShape)
+            .border(spacing.hairlineBorder, MaterialTheme.colorScheme.outlineVariant, CardShape)
             .padding(spacing.medium)
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(spacing.medium)) {
@@ -949,7 +948,7 @@ private fun RefillThresholdSection(currentThreshold: Int, onThresholdChange: (In
                     imageVector = Icons.Default.Medication,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.size(18.dp)
+                    modifier = Modifier.size(spacing.iconMedium)
                 )
             }
 
@@ -976,7 +975,7 @@ private fun RefillThresholdSection(currentThreshold: Int, onThresholdChange: (In
                             modifier = Modifier
                                 .clip(PillShape)
                                 .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-                                .padding(horizontal = spacing.medium, vertical = 2.dp)
+                                .padding(horizontal = spacing.medium, vertical = spacing.micro)
                         ) {
                             Text(
                                 text = "${sliderVal.toInt()} tablets",
@@ -1049,7 +1048,7 @@ private fun VisualEnvironmentSection(isDark: Boolean, onToggleTheme: (Boolean) -
             .fillMaxWidth()
             .clip(CardShape)
             .background(MaterialTheme.colorScheme.surfaceContainerLow)
-            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, CardShape)
+            .border(spacing.hairlineBorder, MaterialTheme.colorScheme.outlineVariant, CardShape)
             .padding(spacing.medium)
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(spacing.medium)) {
@@ -1068,7 +1067,7 @@ private fun VisualEnvironmentSection(isDark: Boolean, onToggleTheme: (Boolean) -
                     imageVector = Icons.Default.Palette,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.size(18.dp)
+                    modifier = Modifier.size(spacing.iconMedium)
                 )
             }
 
@@ -1099,15 +1098,15 @@ private fun VisualEnvironmentSection(isDark: Boolean, onToggleTheme: (Boolean) -
                     modifier = Modifier
                         .clip(PillShape)
                         .background(MaterialTheme.colorScheme.surfaceContainerHighest)
-                        .padding(4.dp),
-                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                        .padding(spacing.extraSmall),
+                    horizontalArrangement = Arrangement.spacedBy(spacing.extraSmall)
                 ) {
                     val boneBg = if (!isDark) MaterialTheme.colorScheme.primary else androidx.compose.ui.graphics.Color.Transparent
                     val boneTextColor = if (!isDark) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
 
                     Box(
                         modifier = Modifier
-                            .height(40.dp)
+                            .height(spacing.avatarSize)
                             .clip(PillShape)
                             .background(boneBg)
                             .clickable { onToggleTheme(false) }
@@ -1122,7 +1121,7 @@ private fun VisualEnvironmentSection(isDark: Boolean, onToggleTheme: (Boolean) -
                                 imageVector = Icons.Default.LightMode,
                                 contentDescription = null,
                                 tint = boneTextColor,
-                                modifier = Modifier.size(16.dp)
+                                modifier = Modifier.size(spacing.medium)
                             )
                             Text(
                                 text = "Bone",
@@ -1138,7 +1137,7 @@ private fun VisualEnvironmentSection(isDark: Boolean, onToggleTheme: (Boolean) -
 
                     Box(
                         modifier = Modifier
-                            .height(40.dp)
+                            .height(spacing.avatarSize)
                             .clip(PillShape)
                             .background(charBg)
                             .clickable { onToggleTheme(true) }
@@ -1153,7 +1152,7 @@ private fun VisualEnvironmentSection(isDark: Boolean, onToggleTheme: (Boolean) -
                                 imageVector = Icons.Default.DarkMode,
                                 contentDescription = null,
                                 tint = charTextColor,
-                                modifier = Modifier.size(16.dp)
+                                modifier = Modifier.size(spacing.medium)
                             )
                             Text(
                                 text = "Char",
@@ -1178,7 +1177,7 @@ private fun SystemInfoSection(settings: DeviceSettings, onSignOut: () -> Unit) {
             .fillMaxWidth()
             .clip(CardShape)
             .background(MaterialTheme.colorScheme.surfaceContainerLow)
-            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, CardShape)
+            .border(spacing.hairlineBorder, MaterialTheme.colorScheme.outlineVariant, CardShape)
             .padding(spacing.large)
     ) {
         Column(
@@ -1188,7 +1187,7 @@ private fun SystemInfoSection(settings: DeviceSettings, onSignOut: () -> Unit) {
         ) {
             Box(
                 modifier = Modifier
-                    .size(40.dp)
+                    .size(spacing.avatarSize)
                     .clip(CircleShape)
                     .background(MaterialTheme.colorScheme.surfaceContainer),
                 contentAlignment = Alignment.Center
@@ -1197,7 +1196,7 @@ private fun SystemInfoSection(settings: DeviceSettings, onSignOut: () -> Unit) {
                     imageVector = Icons.Default.VerifiedUser,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier.size(spacing.iconLarge)
                 )
             }
 
@@ -1219,7 +1218,7 @@ private fun SystemInfoSection(settings: DeviceSettings, onSignOut: () -> Unit) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = spacing.small)
-                    .height(44.dp),
+                    .height(spacing.controlSize),
                 shape = PillShape,
                 colors = androidx.compose.material3.ButtonDefaults.outlinedButtonColors(
                     contentColor = MaterialTheme.colorScheme.error

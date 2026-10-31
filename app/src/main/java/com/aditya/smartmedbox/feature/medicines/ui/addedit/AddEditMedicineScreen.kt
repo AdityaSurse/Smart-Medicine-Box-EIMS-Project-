@@ -22,7 +22,6 @@ import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -71,9 +70,9 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.aditya.smartmedbox.core.designsystem.component.SmartMedBoxTopAppBar
 import com.aditya.smartmedbox.core.designsystem.theme.CardShape
+import com.aditya.smartmedbox.core.designsystem.theme.ControlShape
 import com.aditya.smartmedbox.core.designsystem.theme.LocalSpacing
 import com.aditya.smartmedbox.core.designsystem.theme.PillShape
 import com.aditya.smartmedbox.core.designsystem.theme.SmartMedBoxTheme
@@ -122,7 +121,7 @@ fun AddEditMedicineScreen(uiState: AddEditMedicineUiState, onEvent: (AddEditMedi
                 colors = CardDefaults.cardColors(
                     containerColor = MaterialTheme.colorScheme.surfaceContainerLowest
                 ),
-                border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+                border = androidx.compose.foundation.BorderStroke(spacing.hairlineBorder, MaterialTheme.colorScheme.outlineVariant),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Column(
@@ -155,7 +154,7 @@ fun AddEditMedicineScreen(uiState: AddEditMedicineUiState, onEvent: (AddEditMedi
 
                         Box(
                             modifier = Modifier
-                                .size(36.dp)
+                                .size(spacing.barColumnWidth)
                                 .clip(CircleShape)
                                 .background(MaterialTheme.colorScheme.surfaceContainer),
                             contentAlignment = Alignment.Center
@@ -164,7 +163,7 @@ fun AddEditMedicineScreen(uiState: AddEditMedicineUiState, onEvent: (AddEditMedi
                                 imageVector = Icons.Default.EditNote,
                                 contentDescription = null,
                                 tint = MaterialTheme.colorScheme.onSurface,
-                                modifier = Modifier.size(20.dp)
+                                modifier = Modifier.size(spacing.iconLarge)
                             )
                         }
                     }
@@ -189,7 +188,7 @@ fun AddEditMedicineScreen(uiState: AddEditMedicineUiState, onEvent: (AddEditMedi
                                 )
                             },
                             singleLine = true,
-                            shape = RoundedCornerShape(10.dp),
+                            shape = ControlShape,
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
                                 unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
@@ -198,7 +197,7 @@ fun AddEditMedicineScreen(uiState: AddEditMedicineUiState, onEvent: (AddEditMedi
                             ),
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(52.dp)
+                                .height(spacing.inputHeight)
                         )
                     }
 
@@ -213,9 +212,9 @@ fun AddEditMedicineScreen(uiState: AddEditMedicineUiState, onEvent: (AddEditMedi
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(52.dp)
-                                .background(MaterialTheme.colorScheme.surfaceContainerLow, RoundedCornerShape(10.dp))
-                                .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(10.dp))
+                                .height(spacing.inputHeight)
+                                .background(MaterialTheme.colorScheme.surfaceContainerLow, ControlShape)
+                                .border(spacing.hairlineBorder, MaterialTheme.colorScheme.outlineVariant, ControlShape)
                                 .padding(horizontal = spacing.small),
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.SpaceBetween
@@ -223,8 +222,8 @@ fun AddEditMedicineScreen(uiState: AddEditMedicineUiState, onEvent: (AddEditMedi
                             IconButton(
                                 onClick = { onEvent(AddEditMedicineUiEvent.DosageDecrement) },
                                 modifier = Modifier
-                                    .size(40.dp)
-                                    .background(MaterialTheme.colorScheme.surfaceContainer, RoundedCornerShape(8.dp))
+                                    .size(spacing.avatarSize)
+                                    .background(MaterialTheme.colorScheme.surfaceContainer, ControlShape)
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Remove,
@@ -243,8 +242,8 @@ fun AddEditMedicineScreen(uiState: AddEditMedicineUiState, onEvent: (AddEditMedi
                             IconButton(
                                 onClick = { onEvent(AddEditMedicineUiEvent.DosageIncrement) },
                                 modifier = Modifier
-                                    .size(40.dp)
-                                    .background(MaterialTheme.colorScheme.surfaceContainer, RoundedCornerShape(8.dp))
+                                    .size(spacing.avatarSize)
+                                    .background(MaterialTheme.colorScheme.surfaceContainer, ControlShape)
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Add,
@@ -285,9 +284,9 @@ fun AddEditMedicineScreen(uiState: AddEditMedicineUiState, onEvent: (AddEditMedi
                                 Box(
                                     modifier = Modifier
                                         .weight(1f)
-                                        .height(52.dp)
+                                        .height(spacing.inputHeight)
                                         .minimumInteractiveComponentSize()
-                                        .clip(RoundedCornerShape(10.dp))
+                                        .clip(ControlShape)
                                         .background(
                                             if (isSelected) {
                                                 MaterialTheme.colorScheme.primary
@@ -296,9 +295,9 @@ fun AddEditMedicineScreen(uiState: AddEditMedicineUiState, onEvent: (AddEditMedi
                                             }
                                         )
                                         .border(
-                                            1.dp,
+                                            spacing.hairlineBorder,
                                             if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant,
-                                            RoundedCornerShape(10.dp)
+                                            ControlShape
                                         )
                                         .semantics {
                                             role = Role.RadioButton
@@ -381,7 +380,7 @@ fun AddEditMedicineScreen(uiState: AddEditMedicineUiState, onEvent: (AddEditMedi
                                 Box(
                                     modifier = Modifier
                                         .weight(1f)
-                                        .sizeIn(minWidth = 48.dp, minHeight = 48.dp)
+                                        .sizeIn(minWidth = spacing.minTouchTarget, minHeight = spacing.minTouchTarget)
                                         .minimumInteractiveComponentSize()
                                         .clip(CircleShape)
                                         .background(
@@ -392,7 +391,7 @@ fun AddEditMedicineScreen(uiState: AddEditMedicineUiState, onEvent: (AddEditMedi
                                             }
                                         )
                                         .border(
-                                            1.dp,
+                                            spacing.hairlineBorder,
                                             if (isActive) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant,
                                             CircleShape
                                         )
@@ -444,7 +443,7 @@ fun AddEditMedicineScreen(uiState: AddEditMedicineUiState, onEvent: (AddEditMedi
                                 },
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                                 singleLine = true,
-                                shape = RoundedCornerShape(10.dp),
+                                shape = ControlShape,
                                 colors = OutlinedTextFieldDefaults.colors(
                                     focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
                                     unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
@@ -453,7 +452,7 @@ fun AddEditMedicineScreen(uiState: AddEditMedicineUiState, onEvent: (AddEditMedi
                                 ),
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .height(52.dp)
+                                    .height(spacing.inputHeight)
                             )
                         }
 
@@ -478,7 +477,7 @@ fun AddEditMedicineScreen(uiState: AddEditMedicineUiState, onEvent: (AddEditMedi
                                     )
                                 },
                                 singleLine = true,
-                                shape = RoundedCornerShape(10.dp),
+                                shape = ControlShape,
                                 colors = OutlinedTextFieldDefaults.colors(
                                     focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
                                     unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
@@ -487,7 +486,7 @@ fun AddEditMedicineScreen(uiState: AddEditMedicineUiState, onEvent: (AddEditMedi
                                 ),
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .height(52.dp)
+                                    .height(spacing.inputHeight)
                             )
                         }
                     }
@@ -496,26 +495,26 @@ fun AddEditMedicineScreen(uiState: AddEditMedicineUiState, onEvent: (AddEditMedi
                     Button(
                         onClick = { onEvent(AddEditMedicineUiEvent.Save) },
                         enabled = uiState.isSaveEnabled && !uiState.isLoading,
-                        shape = RoundedCornerShape(12.dp),
+                        shape = CardShape,
                         colors = ButtonDefaults.buttonColors(
                             containerColor = if (uiState.isSaved) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.primary,
                             contentColor = MaterialTheme.colorScheme.onPrimary
                         ),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(52.dp)
+                            .height(spacing.buttonHeight)
                     ) {
                         if (uiState.isLoading) {
                             CircularProgressIndicator(
-                                modifier = Modifier.size(20.dp),
+                                modifier = Modifier.size(spacing.iconLarge),
                                 color = MaterialTheme.colorScheme.onPrimary,
-                                strokeWidth = 2.dp
+                                strokeWidth = spacing.micro
                             )
                         } else if (uiState.isSaved) {
                             Icon(
                                 imageVector = Icons.Default.CheckCircle,
                                 contentDescription = null,
-                                modifier = Modifier.size(20.dp)
+                                modifier = Modifier.size(spacing.iconLarge)
                             )
                             Spacer(modifier = Modifier.width(spacing.extraSmall))
                             Text(
@@ -527,7 +526,7 @@ fun AddEditMedicineScreen(uiState: AddEditMedicineUiState, onEvent: (AddEditMedi
                             Icon(
                                 imageVector = Icons.Default.Verified,
                                 contentDescription = null,
-                                modifier = Modifier.size(20.dp)
+                                modifier = Modifier.size(spacing.iconLarge)
                             )
                             Spacer(modifier = Modifier.width(spacing.extraSmall))
                             Text(
@@ -552,7 +551,7 @@ fun AddEditMedicineScreen(uiState: AddEditMedicineUiState, onEvent: (AddEditMedi
                     imageVector = Icons.Default.Lock,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.size(16.dp)
+                    modifier = Modifier.size(spacing.iconSmall)
                 )
                 Spacer(modifier = Modifier.width(spacing.extraSmall))
                 Text(
@@ -579,9 +578,9 @@ private fun OptInFlowRow(timings: List<String>, onRemoveTime: (String) -> Unit, 
         ) {
             timings.forEach { time ->
                 Surface(
-                    shape = RoundedCornerShape(8.dp),
+                    shape = ControlShape,
                     color = MaterialTheme.colorScheme.surfaceContainer,
-                    modifier = Modifier.height(44.dp)
+                    modifier = Modifier.height(spacing.controlSize)
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -591,7 +590,7 @@ private fun OptInFlowRow(timings: List<String>, onRemoveTime: (String) -> Unit, 
                             imageVector = Icons.Default.Alarm,
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.size(16.dp)
+                            modifier = Modifier.size(spacing.iconSmall)
                         )
                         Spacer(modifier = Modifier.width(spacing.extraSmall))
                         Text(
@@ -603,13 +602,13 @@ private fun OptInFlowRow(timings: List<String>, onRemoveTime: (String) -> Unit, 
                         Spacer(modifier = Modifier.width(spacing.extraSmall))
                         IconButton(
                             onClick = { onRemoveTime(time) },
-                            modifier = Modifier.size(24.dp)
+                            modifier = Modifier.size(spacing.large)
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Close,
                                 contentDescription = "Remove $time",
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier.size(14.dp)
+                                modifier = Modifier.size(spacing.iconSmall)
                             )
                         }
                     }
@@ -621,7 +620,7 @@ private fun OptInFlowRow(timings: List<String>, onRemoveTime: (String) -> Unit, 
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
-                .clip(RoundedCornerShape(6.dp))
+                .clip(ControlShape)
                 .clickable { showQuickAddMenu = !showQuickAddMenu }
                 .padding(vertical = spacing.extraSmall)
         ) {
@@ -629,7 +628,7 @@ private fun OptInFlowRow(timings: List<String>, onRemoveTime: (String) -> Unit, 
                 imageVector = Icons.Default.AddCircleOutline,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(18.dp)
+                modifier = Modifier.size(spacing.iconMedium)
             )
             Spacer(modifier = Modifier.width(spacing.extraSmall))
             Text(
@@ -647,7 +646,7 @@ private fun OptInFlowRow(timings: List<String>, onRemoveTime: (String) -> Unit, 
                 verticalArrangement = Arrangement.spacedBy(spacing.extraSmall),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.surfaceContainerLow, RoundedCornerShape(8.dp))
+                    .background(MaterialTheme.colorScheme.surfaceContainerLow, ControlShape)
                     .padding(spacing.small)
             ) {
                 suggestions.filter { !timings.contains(it) }.forEach { sugg ->
@@ -663,7 +662,7 @@ private fun OptInFlowRow(timings: List<String>, onRemoveTime: (String) -> Unit, 
                             text = "+ $sugg",
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.onSurface,
-                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                            modifier = Modifier.padding(horizontal = spacing.small, vertical = spacing.extraSmall)
                         )
                     }
                 }

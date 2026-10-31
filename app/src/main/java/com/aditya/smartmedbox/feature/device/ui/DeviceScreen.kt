@@ -65,7 +65,6 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.unit.dp
 import com.aditya.smartmedbox.core.designsystem.component.SmartMedBoxErrorState
 import com.aditya.smartmedbox.core.designsystem.component.SmartMedBoxLoadingState
 import com.aditya.smartmedbox.core.designsystem.theme.CardShape
@@ -94,7 +93,7 @@ fun DeviceScreen(uiState: DeviceUiState, onEvent: (DeviceUiEvent) -> Unit, modif
                 ) {
                     Box(
                         modifier = Modifier
-                            .size(36.dp)
+                            .size(spacing.barColumnWidth)
                             .clip(ControlShape)
                             .background(MaterialTheme.colorScheme.primaryContainer),
                         contentAlignment = Alignment.Center
@@ -103,7 +102,7 @@ fun DeviceScreen(uiState: DeviceUiState, onEvent: (DeviceUiEvent) -> Unit, modif
                             imageVector = Icons.Default.MedicalServices,
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.surface,
-                            modifier = Modifier.size(20.dp)
+                            modifier = Modifier.size(spacing.iconLarge)
                         )
                     }
                     Text(
@@ -274,7 +273,7 @@ private fun UnpairedDeviceContent(state: DeviceUiState.Empty, onEvent: (DeviceUi
             onClick = { showQrDialog = true },
             modifier = Modifier
                 .fillMaxWidth()
-                .height(54.dp),
+                .height(spacing.heroButtonHeight),
             shape = CardShape,
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.primary,
@@ -288,7 +287,7 @@ private fun UnpairedDeviceContent(state: DeviceUiState.Empty, onEvent: (DeviceUi
                 Icon(
                     imageVector = Icons.Default.QrCodeScanner,
                     contentDescription = null,
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier.size(spacing.iconLarge)
                 )
                 Text(
                     text = "Scan Box QR Code",
@@ -304,7 +303,7 @@ private fun UnpairedDeviceContent(state: DeviceUiState.Empty, onEvent: (DeviceUi
                 .fillMaxWidth()
                 .clip(CardShape)
                 .background(MaterialTheme.colorScheme.surfaceContainerLowest)
-                .border(1.dp, MaterialTheme.colorScheme.outlineVariant, CardShape)
+                .border(spacing.hairlineBorder, MaterialTheme.colorScheme.outlineVariant, CardShape)
                 .padding(spacing.medium)
         ) {
             Column(verticalArrangement = Arrangement.spacedBy(spacing.medium)) {
@@ -351,15 +350,15 @@ private fun UnpairedDeviceContent(state: DeviceUiState.Empty, onEvent: (DeviceUi
                     },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(48.dp),
+                        .height(spacing.huge),
                     shape = ControlShape,
                     enabled = !state.isPairing && deviceIdInput.isNotBlank()
                 ) {
                     if (state.isPairing) {
                         CircularProgressIndicator(
-                            modifier = Modifier.size(18.dp),
+                            modifier = Modifier.size(spacing.iconMedium),
                             color = MaterialTheme.colorScheme.onPrimary,
-                            strokeWidth = 2.dp
+                            strokeWidth = spacing.micro
                         )
                     } else {
                         Text(
@@ -449,7 +448,7 @@ private fun DevicePairingContent(state: DeviceUiState.Success, onEvent: (DeviceU
             ) {
                 Box(
                     modifier = Modifier
-                        .size(8.dp)
+                        .size(spacing.small)
                         .clip(CircleShape)
                         .background(MaterialTheme.colorScheme.secondary)
                 )
@@ -485,7 +484,7 @@ private fun DevicePairingContent(state: DeviceUiState.Success, onEvent: (DeviceU
                 onClick = onNavigateToAddMedicine,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(54.dp),
+                    .height(spacing.heroButtonHeight),
                 shape = CardShape,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primary,
@@ -504,7 +503,7 @@ private fun DevicePairingContent(state: DeviceUiState.Success, onEvent: (DeviceU
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                         contentDescription = null,
-                        modifier = Modifier.size(20.dp)
+                        modifier = Modifier.size(spacing.iconLarge)
                     )
                 }
             }
@@ -513,7 +512,7 @@ private fun DevicePairingContent(state: DeviceUiState.Success, onEvent: (DeviceU
                 onClick = { onEvent(DeviceUiEvent.StartWifiProvisioning) },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(48.dp),
+                    .height(spacing.huge),
                 shape = CardShape
             ) {
                 Row(
@@ -523,7 +522,7 @@ private fun DevicePairingContent(state: DeviceUiState.Success, onEvent: (DeviceU
                     Icon(
                         imageVector = Icons.Default.Wifi,
                         contentDescription = null,
-                        modifier = Modifier.size(18.dp)
+                        modifier = Modifier.size(spacing.iconMedium)
                     )
                     Text(
                         text = "Provision Box Wi-Fi",
@@ -537,7 +536,7 @@ private fun DevicePairingContent(state: DeviceUiState.Success, onEvent: (DeviceU
                 onClick = { showUnpairDialog = true },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(48.dp),
+                    .height(spacing.huge),
                 shape = CardShape,
                 colors = ButtonDefaults.outlinedButtonColors(
                     contentColor = MaterialTheme.colorScheme.error
@@ -550,7 +549,7 @@ private fun DevicePairingContent(state: DeviceUiState.Success, onEvent: (DeviceU
                     Icon(
                         imageVector = Icons.Default.LinkOff,
                         contentDescription = null,
-                        modifier = Modifier.size(18.dp)
+                        modifier = Modifier.size(spacing.iconMedium)
                     )
                     Text(
                         text = "Unpair Smart Box",
@@ -607,8 +606,8 @@ private fun WifiProvisioningDialog(availableNetworks: List<WifiNetwork>, provisi
                         horizontalArrangement = Arrangement.spacedBy(spacing.small)
                     ) {
                         CircularProgressIndicator(
-                            modifier = Modifier.size(20.dp),
-                            strokeWidth = 2.dp
+                            modifier = Modifier.size(spacing.iconLarge),
+                            strokeWidth = spacing.micro
                         )
                         Text(
                             text = provisioningStage,
@@ -656,7 +655,7 @@ private fun WifiProvisioningDialog(availableNetworks: List<WifiNetwork>, provisi
                             Icon(
                                 imageVector = Icons.Default.Lock,
                                 contentDescription = "Secured",
-                                modifier = Modifier.size(14.dp),
+                                modifier = Modifier.size(spacing.iconSmall),
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
@@ -701,7 +700,7 @@ private fun ThreeStepProgressIndicator(currentStep: Int = 2) {
             .fillMaxWidth()
             .clip(CardShape)
             .background(MaterialTheme.colorScheme.surfaceContainerLowest)
-            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, CardShape)
+            .border(spacing.hairlineBorder, MaterialTheme.colorScheme.outlineVariant, CardShape)
             .padding(spacing.medium)
     ) {
         Row(
@@ -716,7 +715,7 @@ private fun ThreeStepProgressIndicator(currentStep: Int = 2) {
             ) {
                 Box(
                     modifier = Modifier
-                        .size(28.dp)
+                        .size(spacing.stepNodeSize)
                         .clip(CircleShape)
                         .background(MaterialTheme.colorScheme.secondaryContainer),
                     contentAlignment = Alignment.Center
@@ -725,7 +724,7 @@ private fun ThreeStepProgressIndicator(currentStep: Int = 2) {
                         imageVector = Icons.Default.Check,
                         contentDescription = "Step 1 Welcome completed",
                         tint = MaterialTheme.colorScheme.onSecondaryContainer,
-                        modifier = Modifier.size(16.dp)
+                        modifier = Modifier.size(spacing.medium)
                     )
                 }
                 Text(
@@ -740,7 +739,7 @@ private fun ThreeStepProgressIndicator(currentStep: Int = 2) {
             Box(
                 modifier = Modifier
                     .weight(1f)
-                    .height(2.dp)
+                    .height(spacing.micro)
                     .background(MaterialTheme.colorScheme.secondary)
                     .padding(horizontal = spacing.extraSmall)
             )
@@ -752,7 +751,7 @@ private fun ThreeStepProgressIndicator(currentStep: Int = 2) {
             ) {
                 Box(
                     modifier = Modifier
-                        .size(28.dp)
+                        .size(spacing.stepNodeSize)
                         .clip(CircleShape)
                         .background(if (isStep2Active) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceContainer),
                     contentAlignment = Alignment.Center
@@ -776,7 +775,7 @@ private fun ThreeStepProgressIndicator(currentStep: Int = 2) {
             Box(
                 modifier = Modifier
                     .weight(1f)
-                    .height(2.dp)
+                    .height(spacing.micro)
                     .background(MaterialTheme.colorScheme.outlineVariant)
                     .padding(horizontal = spacing.extraSmall)
             )
@@ -788,7 +787,7 @@ private fun ThreeStepProgressIndicator(currentStep: Int = 2) {
             ) {
                 Box(
                     modifier = Modifier
-                        .size(28.dp)
+                        .size(spacing.stepNodeSize)
                         .clip(CircleShape)
                         .background(MaterialTheme.colorScheme.surfaceContainerHigh),
                     contentAlignment = Alignment.Center
@@ -831,7 +830,7 @@ private fun ConcentricRadarScanningVisual() {
             .fillMaxWidth()
             .clip(CardShape)
             .background(MaterialTheme.colorScheme.surfaceContainerLowest)
-            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, CardShape)
+            .border(spacing.hairlineBorder, MaterialTheme.colorScheme.outlineVariant, CardShape)
             .padding(spacing.large),
         contentAlignment = Alignment.Center
     ) {
@@ -840,7 +839,7 @@ private fun ConcentricRadarScanningVisual() {
             verticalArrangement = Arrangement.spacedBy(spacing.medium)
         ) {
             Box(
-                modifier = Modifier.size(112.dp),
+                modifier = Modifier.size(spacing.radarSize),
                 contentAlignment = Alignment.Center
             ) {
                 // Concentric circles
@@ -855,7 +854,7 @@ private fun ConcentricRadarScanningVisual() {
                 // Center Bluetooth node
                 Box(
                     modifier = Modifier
-                        .size(44.dp)
+                        .size(spacing.controlSize)
                         .clip(CircleShape)
                         .background(MaterialTheme.colorScheme.secondaryContainer),
                     contentAlignment = Alignment.Center
@@ -864,7 +863,7 @@ private fun ConcentricRadarScanningVisual() {
                         imageVector = Icons.AutoMirrored.Filled.BluetoothSearching,
                         contentDescription = "Bluetooth searching signal",
                         tint = MaterialTheme.colorScheme.onSecondaryContainer,
-                        modifier = Modifier.size(22.dp)
+                        modifier = Modifier.size(spacing.iconExtraLarge)
                     )
                 }
             }
@@ -875,7 +874,7 @@ private fun ConcentricRadarScanningVisual() {
             ) {
                 Box(
                     modifier = Modifier
-                        .size(8.dp)
+                        .size(spacing.small)
                         .clip(CircleShape)
                         .background(MaterialTheme.colorScheme.secondary)
                 )
@@ -899,7 +898,7 @@ private fun DiscoveredBoxCard(device: SmartBoxDevice) {
             .fillMaxWidth()
             .clip(CardShape)
             .background(MaterialTheme.colorScheme.surfaceContainerLowest)
-            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, CardShape)
+            .border(spacing.hairlineBorder, MaterialTheme.colorScheme.outlineVariant, CardShape)
             .padding(spacing.medium)
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(spacing.medium)) {
@@ -911,15 +910,15 @@ private fun DiscoveredBoxCard(device: SmartBoxDevice) {
                 // Smart Box 7-bay vector graphic canvas
                 Box(
                     modifier = Modifier
-                        .size(56.dp)
+                        .size(spacing.cardThumbnailSize)
                         .clip(ControlShape)
                         .background(MaterialTheme.colorScheme.surfaceContainerLow)
-                        .border(1.dp, MaterialTheme.colorScheme.outlineVariant, ControlShape),
+                        .border(spacing.hairlineBorder, MaterialTheme.colorScheme.outlineVariant, ControlShape),
                     contentAlignment = Alignment.Center
                 ) {
                     val lineColor = MaterialTheme.colorScheme.onSurface
                     val lidDotColor = MaterialTheme.colorScheme.secondary
-                    Canvas(modifier = Modifier.size(40.dp)) {
+                    Canvas(modifier = Modifier.size(spacing.avatarSize)) {
                         drawRoundRect(
                             color = lineColor,
                             topLeft = Offset(4f, 8f),
@@ -968,15 +967,15 @@ private fun DiscoveredBoxCard(device: SmartBoxDevice) {
                             modifier = Modifier
                                 .clip(PillShape)
                                 .background(MaterialTheme.colorScheme.secondaryContainer)
-                                .padding(horizontal = spacing.small, vertical = 2.dp)
+                                .padding(horizontal = spacing.small, vertical = spacing.micro)
                         ) {
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(4.dp)
+                                horizontalArrangement = Arrangement.spacedBy(spacing.extraSmall)
                             ) {
                                 Box(
                                     modifier = Modifier
-                                        .size(6.dp)
+                                        .size(spacing.indicatorDot)
                                         .clip(CircleShape)
                                         .background(MaterialTheme.colorScheme.secondary)
                                 )
@@ -990,7 +989,7 @@ private fun DiscoveredBoxCard(device: SmartBoxDevice) {
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(2.dp))
+                    Spacer(modifier = Modifier.height(spacing.micro))
                     Text(
                         text = device.connectionType,
                         style = MaterialTheme.typography.bodySmall,
@@ -1004,13 +1003,13 @@ private fun DiscoveredBoxCard(device: SmartBoxDevice) {
                     ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(2.dp)
+                            horizontalArrangement = Arrangement.spacedBy(spacing.micro)
                         ) {
                             Icon(
                                 imageVector = Icons.Default.SignalCellularAlt,
                                 contentDescription = null,
                                 tint = MaterialTheme.colorScheme.secondary,
-                                modifier = Modifier.size(14.dp)
+                                modifier = Modifier.size(spacing.iconSmall)
                             )
                             Text(
                                 text = device.signalStrength,
@@ -1039,7 +1038,7 @@ private fun DiscoveredBoxCard(device: SmartBoxDevice) {
                     .fillMaxWidth()
                     .clip(ControlShape)
                     .background(MaterialTheme.colorScheme.surfaceContainerLow)
-                    .border(1.dp, MaterialTheme.colorScheme.outlineVariant, ControlShape)
+                    .border(spacing.hairlineBorder, MaterialTheme.colorScheme.outlineVariant, ControlShape)
                     .padding(horizontal = spacing.medium, vertical = spacing.small),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
@@ -1052,7 +1051,7 @@ private fun DiscoveredBoxCard(device: SmartBoxDevice) {
                         imageVector = Icons.Default.Verified,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.secondary,
-                        modifier = Modifier.size(18.dp)
+                        modifier = Modifier.size(spacing.iconMedium)
                     )
                     Text(
                         text = "Pairing code verified",
@@ -1066,7 +1065,7 @@ private fun DiscoveredBoxCard(device: SmartBoxDevice) {
                     modifier = Modifier
                         .clip(ControlShape)
                         .background(MaterialTheme.colorScheme.surfaceContainer)
-                        .padding(horizontal = spacing.small, vertical = 2.dp)
+                        .padding(horizontal = spacing.small, vertical = spacing.micro)
                 ) {
                     Text(
                         text = device.pairingCode,

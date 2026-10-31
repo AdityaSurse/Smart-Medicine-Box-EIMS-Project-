@@ -53,11 +53,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import com.aditya.smartmedbox.core.designsystem.component.SmartMedBoxEmptyState
 import com.aditya.smartmedbox.core.designsystem.component.SmartMedBoxErrorState
 import com.aditya.smartmedbox.core.designsystem.component.SmartMedBoxLoadingState
@@ -205,7 +203,7 @@ private fun AlertsContent(alerts: List<AdherenceAlert>, toastMessage: String?, i
                             .fillMaxWidth()
                             .clip(CardShape)
                             .background(MaterialTheme.colorScheme.secondary)
-                            .border(1.dp, MaterialTheme.colorScheme.secondaryContainer, CardShape)
+                            .border(spacing.hairlineBorder, MaterialTheme.colorScheme.secondaryContainer, CardShape)
                             .padding(spacing.medium),
                         contentAlignment = Alignment.Center
                     ) {
@@ -217,7 +215,7 @@ private fun AlertsContent(alerts: List<AdherenceAlert>, toastMessage: String?, i
                                 imageVector = Icons.Default.Verified,
                                 contentDescription = null,
                                 tint = MaterialTheme.colorScheme.onSecondary,
-                                modifier = Modifier.size(20.dp)
+                                modifier = Modifier.size(spacing.iconLarge)
                             )
                             Text(
                                 text = toastMessage,
@@ -278,7 +276,7 @@ private fun UrgentMissedDoseBanner(alert: AdherenceAlert, isTaken: Boolean, onTa
                     .fillMaxWidth()
                     .clip(PillShape)
                     .background(onAlertColor.copy(alpha = 0.12f))
-                    .border(1.dp, onAlertColor.copy(alpha = 0.25f), PillShape)
+                    .border(spacing.hairlineBorder, onAlertColor.copy(alpha = 0.25f), PillShape)
                     .padding(horizontal = spacing.medium, vertical = spacing.small),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
@@ -289,7 +287,7 @@ private fun UrgentMissedDoseBanner(alert: AdherenceAlert, isTaken: Boolean, onTa
                 ) {
                     Box(
                         modifier = Modifier
-                            .size(10.dp)
+                            .size(spacing.pulseDot)
                             .alpha(pulseAlpha)
                             .clip(CircleShape)
                             .background(onAlertColor)
@@ -310,13 +308,13 @@ private fun UrgentMissedDoseBanner(alert: AdherenceAlert, isTaken: Boolean, onTa
                         imageVector = Icons.AutoMirrored.Filled.VolumeUp,
                         contentDescription = "Audible alarm ringing",
                         tint = onAlertColor,
-                        modifier = Modifier.size(18.dp)
+                        modifier = Modifier.size(spacing.iconMedium)
                     )
                     Icon(
                         imageVector = Icons.Default.Vibration,
                         contentDescription = "Vibration active",
                         tint = onAlertColor,
-                        modifier = Modifier.size(18.dp)
+                        modifier = Modifier.size(spacing.iconMedium)
                     )
                 }
             }
@@ -343,7 +341,7 @@ private fun UrgentMissedDoseBanner(alert: AdherenceAlert, isTaken: Boolean, onTa
                         imageVector = Icons.Default.Schedule,
                         contentDescription = null,
                         tint = onAlertColor.copy(alpha = 0.9f),
-                        modifier = Modifier.size(16.dp)
+                        modifier = Modifier.size(spacing.iconSmall)
                     )
                     Text(
                         text = "Scheduled ${alert.scheduledTime} (${alert.delayMinutes} minutes ago)",
@@ -359,8 +357,8 @@ private fun UrgentMissedDoseBanner(alert: AdherenceAlert, isTaken: Boolean, onTa
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(CardShape)
-                    .background(Color.Black.copy(alpha = 0.18f))
-                    .border(1.dp, onAlertColor.copy(alpha = 0.25f), CardShape)
+                    .background(MaterialTheme.colorScheme.scrim.copy(alpha = 0.18f))
+                    .border(spacing.hairlineBorder, onAlertColor.copy(alpha = 0.25f), CardShape)
                     .padding(spacing.medium)
             ) {
                 Column(verticalArrangement = Arrangement.spacedBy(spacing.medium)) {
@@ -376,14 +374,14 @@ private fun UrgentMissedDoseBanner(alert: AdherenceAlert, isTaken: Boolean, onTa
                                 color = onAlertColor.copy(alpha = 0.75f),
                                 fontWeight = FontWeight.Bold
                             )
-                            Spacer(modifier = Modifier.height(2.dp))
+                            Spacer(modifier = Modifier.height(spacing.micro))
                             Text(
                                 text = alert.medicineName,
                                 style = MaterialTheme.typography.headlineMedium,
                                 color = onAlertColor,
                                 fontWeight = FontWeight.Bold
                             )
-                            Spacer(modifier = Modifier.height(2.dp))
+                            Spacer(modifier = Modifier.height(spacing.micro))
                             Text(
                                 text = "${alert.dosage} • ${alert.instructions}",
                                 style = MaterialTheme.typography.bodyMedium,
@@ -393,17 +391,17 @@ private fun UrgentMissedDoseBanner(alert: AdherenceAlert, isTaken: Boolean, onTa
 
                         Box(
                             modifier = Modifier
-                                .size(48.dp)
+                                .size(spacing.minTouchTarget)
                                 .clip(ControlShape)
                                 .background(onAlertColor.copy(alpha = 0.15f))
-                                .border(1.dp, onAlertColor.copy(alpha = 0.25f), ControlShape),
+                                .border(spacing.hairlineBorder, onAlertColor.copy(alpha = 0.25f), ControlShape),
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Medication,
                                 contentDescription = null,
                                 tint = onAlertColor,
-                                modifier = Modifier.size(28.dp)
+                                modifier = Modifier.size(spacing.stepNodeSize)
                             )
                         }
                     }
@@ -413,14 +411,14 @@ private fun UrgentMissedDoseBanner(alert: AdherenceAlert, isTaken: Boolean, onTa
                     // Compartment Visualizer Mini Ledger (4 trays)
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                        horizontalArrangement = Arrangement.spacedBy(spacing.indicatorDot)
                     ) {
                         alert.trays.forEach { tray ->
                             val isUnopened = tray.isMissedOrUnopened
                             val trayBg = if (isUnopened) {
                                 MaterialTheme.colorScheme.surface
                             } else {
-                                Color.Black.copy(alpha = 0.2f)
+                                MaterialTheme.colorScheme.scrim.copy(alpha = 0.2f)
                             }
                             val trayTextColor = if (isUnopened) {
                                 alertContainerColor
@@ -438,8 +436,8 @@ private fun UrgentMissedDoseBanner(alert: AdherenceAlert, isTaken: Boolean, onTa
                                     .weight(1f)
                                     .clip(ControlShape)
                                     .background(trayBg)
-                                    .border(1.dp, onAlertColor.copy(alpha = 0.2f), ControlShape)
-                                    .padding(vertical = spacing.small, horizontal = 2.dp),
+                                    .border(spacing.hairlineBorder, onAlertColor.copy(alpha = 0.2f), ControlShape)
+                                    .padding(vertical = spacing.small, horizontal = spacing.micro),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Column(
@@ -477,7 +475,7 @@ private fun UrgentMissedDoseBanner(alert: AdherenceAlert, isTaken: Boolean, onTa
                     onClick = onTakeDose,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(54.dp),
+                        .height(spacing.heroButtonHeight),
                     shape = ControlShape,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.surface,
@@ -506,7 +504,7 @@ private fun UrgentMissedDoseBanner(alert: AdherenceAlert, isTaken: Boolean, onTa
                     onClick = onSnooze,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(54.dp),
+                        .height(spacing.heroButtonHeight),
                     shape = ControlShape,
                     colors = ButtonDefaults.outlinedButtonColors(
                         contentColor = onAlertColor
@@ -597,7 +595,7 @@ private fun LockscreenNotificationMirror(alert: AdherenceAlert?, onTakeDose: () 
                 .fillMaxWidth()
                 .clip(CardShape)
                 .background(MaterialTheme.colorScheme.surfaceContainerLowest)
-                .border(1.dp, MaterialTheme.colorScheme.outlineVariant, CardShape)
+                .border(spacing.hairlineBorder, MaterialTheme.colorScheme.outlineVariant, CardShape)
                 .padding(spacing.medium)
         ) {
             Column(verticalArrangement = Arrangement.spacedBy(spacing.small)) {
@@ -613,7 +611,7 @@ private fun LockscreenNotificationMirror(alert: AdherenceAlert?, onTakeDose: () 
                     ) {
                         Box(
                             modifier = Modifier
-                                .size(20.dp)
+                                .size(spacing.iconLarge)
                                 .clip(ControlShape)
                                 .background(MaterialTheme.colorScheme.primary),
                             contentAlignment = Alignment.Center
@@ -622,7 +620,7 @@ private fun LockscreenNotificationMirror(alert: AdherenceAlert?, onTakeDose: () 
                                 imageVector = Icons.Default.Medication,
                                 contentDescription = null,
                                 tint = MaterialTheme.colorScheme.onPrimary,
-                                modifier = Modifier.size(12.dp)
+                                modifier = Modifier.size(spacing.gutterMobile)
                             )
                         }
                         Text(
@@ -648,7 +646,7 @@ private fun LockscreenNotificationMirror(alert: AdherenceAlert?, onTakeDose: () 
                         imageVector = Icons.Default.Emergency,
                         contentDescription = "Emergency alert",
                         tint = MaterialTheme.colorScheme.error,
-                        modifier = Modifier.size(18.dp)
+                        modifier = Modifier.size(spacing.iconMedium)
                     )
                 }
 
@@ -677,7 +675,7 @@ private fun LockscreenNotificationMirror(alert: AdherenceAlert?, onTakeDose: () 
                         onClick = onTakeDose,
                         modifier = Modifier
                             .weight(1f)
-                            .height(38.dp),
+                            .height(spacing.controlSize),
                         shape = PillShape,
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.secondary,
@@ -691,7 +689,7 @@ private fun LockscreenNotificationMirror(alert: AdherenceAlert?, onTakeDose: () 
                             Icon(
                                 imageVector = Icons.Default.Check,
                                 contentDescription = null,
-                                modifier = Modifier.size(16.dp)
+                                modifier = Modifier.size(spacing.iconSmall)
                             )
                             Text(
                                 text = "Took Dose",
@@ -705,7 +703,7 @@ private fun LockscreenNotificationMirror(alert: AdherenceAlert?, onTakeDose: () 
                         onClick = onSnooze,
                         modifier = Modifier
                             .weight(1f)
-                            .height(38.dp),
+                            .height(spacing.controlSize),
                         shape = PillShape,
                         colors = ButtonDefaults.outlinedButtonColors(
                             contentColor = MaterialTheme.colorScheme.onSurface
@@ -721,7 +719,7 @@ private fun LockscreenNotificationMirror(alert: AdherenceAlert?, onTakeDose: () 
                             Icon(
                                 imageVector = Icons.Default.Schedule,
                                 contentDescription = null,
-                                modifier = Modifier.size(16.dp)
+                                modifier = Modifier.size(spacing.iconSmall)
                             )
                             Text(
                                 text = "Snooze 10m",

@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Clear
@@ -56,13 +55,13 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.aditya.smartmedbox.R
 import com.aditya.smartmedbox.core.designsystem.component.SmartMedBoxEmptyState
 import com.aditya.smartmedbox.core.designsystem.component.SmartMedBoxErrorState
 import com.aditya.smartmedbox.core.designsystem.component.SmartMedBoxLoadingState
 import com.aditya.smartmedbox.core.designsystem.component.SmartMedBoxTopAppBar
 import com.aditya.smartmedbox.core.designsystem.theme.CardShape
+import com.aditya.smartmedbox.core.designsystem.theme.ControlShape
 import com.aditya.smartmedbox.core.designsystem.theme.LocalSpacing
 import com.aditya.smartmedbox.core.designsystem.theme.PillShape
 import com.aditya.smartmedbox.core.designsystem.theme.SmartMedBoxTheme
@@ -91,11 +90,11 @@ fun MedicinesScreen(
                     ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(horizontal = spacing.small, vertical = 4.dp)
+                            modifier = Modifier.padding(horizontal = spacing.small, vertical = spacing.extraSmall)
                         ) {
                             Box(
                                 modifier = Modifier
-                                    .size(8.dp)
+                                    .size(spacing.small)
                                     .clip(CircleShape)
                                     .background(MaterialTheme.colorScheme.secondary)
                             )
@@ -116,7 +115,7 @@ fun MedicinesScreen(
                 onClick = onNavigateToAddMedicine,
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.onPrimary,
-                shape = RoundedCornerShape(16.dp),
+                shape = CardShape,
                 modifier = Modifier
                     .semantics { contentDescription = "Add new medication schedule" }
             ) {
@@ -208,7 +207,7 @@ private fun MedicinesContent(state: MedicinesUiState.Success, onEvent: (Medicine
             start = spacing.marginMobile,
             end = spacing.marginMobile,
             top = spacing.small,
-            bottom = 88.dp // Space for FAB
+            bottom = spacing.barChartHeight + spacing.small // Space for FAB
         ),
         verticalArrangement = Arrangement.spacedBy(spacing.medium)
     ) {
@@ -246,7 +245,7 @@ private fun MedicinesContent(state: MedicinesUiState.Success, onEvent: (Medicine
                         }
                     },
                     singleLine = true,
-                    shape = RoundedCornerShape(12.dp),
+                    shape = ControlShape,
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
                         unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
@@ -255,7 +254,7 @@ private fun MedicinesContent(state: MedicinesUiState.Success, onEvent: (Medicine
                     ),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(52.dp)
+                        .height(spacing.inputHeight)
                 )
 
                 Row(
@@ -277,7 +276,7 @@ private fun MedicinesContent(state: MedicinesUiState.Success, onEvent: (Medicine
                                 Icon(
                                     imageVector = Icons.Default.WarningAmber,
                                     contentDescription = null,
-                                    modifier = Modifier.size(16.dp)
+                                    modifier = Modifier.size(spacing.iconSmall)
                                 )
                             }
                         },
@@ -324,7 +323,7 @@ private fun MedicineCard(medicine: Medicine, onToggleActive: () -> Unit, onEdit:
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainerLowest
         ),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+        border = BorderStroke(spacing.hairlineBorder, MaterialTheme.colorScheme.outlineVariant),
         modifier = modifier.fillMaxWidth()
     ) {
         Column(
@@ -347,7 +346,7 @@ private fun MedicineCard(medicine: Medicine, onToggleActive: () -> Unit, onEdit:
                     // Tactile pill container
                     Box(
                         modifier = Modifier
-                            .size(42.dp)
+                            .size(spacing.avatarSize)
                             .clip(CircleShape)
                             .background(MaterialTheme.colorScheme.surfaceContainer),
                         contentAlignment = Alignment.Center
@@ -361,7 +360,7 @@ private fun MedicineCard(medicine: Medicine, onToggleActive: () -> Unit, onEdit:
                             painter = painterResource(id = iconRes),
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.onSurface,
-                            modifier = Modifier.size(22.dp)
+                            modifier = Modifier.size(spacing.iconExtraLarge)
                         )
                     }
 
@@ -377,15 +376,15 @@ private fun MedicineCard(medicine: Medicine, onToggleActive: () -> Unit, onEdit:
                                 color = MaterialTheme.colorScheme.onSurface
                             )
                             Surface(
-                                shape = RoundedCornerShape(4.dp),
+                                shape = ControlShape,
                                 color = MaterialTheme.colorScheme.surfaceContainer,
-                                modifier = Modifier.padding(start = 2.dp)
+                                modifier = Modifier.padding(start = spacing.micro)
                             ) {
                                 Text(
                                     text = medicine.compartmentLabel,
                                     style = MaterialTheme.typography.labelSmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                                    modifier = Modifier.padding(horizontal = spacing.indicatorDot, vertical = spacing.micro)
                                 )
                             }
                         }
@@ -423,10 +422,10 @@ private fun MedicineCard(medicine: Medicine, onToggleActive: () -> Unit, onEdit:
                         } else {
                             MaterialTheme.colorScheme.surfaceContainerLow
                         },
-                        shape = RoundedCornerShape(8.dp)
+                        shape = ControlShape
                     )
                     .border(
-                        width = 1.dp,
+                        width = spacing.hairlineBorder,
                         color = if (isLowStock) {
                             MaterialTheme.colorScheme.error.copy(
                                 alpha = 0.3f
@@ -434,10 +433,10 @@ private fun MedicineCard(medicine: Medicine, onToggleActive: () -> Unit, onEdit:
                         } else {
                             MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
                         },
-                        shape = RoundedCornerShape(8.dp)
+                        shape = ControlShape
                     )
-                    .padding(horizontal = spacing.small, vertical = 6.dp),
-                verticalArrangement = Arrangement.spacedBy(4.dp)
+                    .padding(horizontal = spacing.small, vertical = spacing.indicatorDot),
+                verticalArrangement = Arrangement.spacedBy(spacing.extraSmall)
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -452,7 +451,7 @@ private fun MedicineCard(medicine: Medicine, onToggleActive: () -> Unit, onEdit:
                             imageVector = if (isLowStock) Icons.Default.WarningAmber else Icons.Default.Inventory2,
                             contentDescription = null,
                             tint = if (isLowStock) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.size(16.dp)
+                            modifier = Modifier.size(spacing.iconSmall)
                         )
                         Text(
                             text = if (isLowStock) "LOW SUPPLY ALERT" else "SUPPLY REMAINING",
@@ -474,7 +473,7 @@ private fun MedicineCard(medicine: Medicine, onToggleActive: () -> Unit, onEdit:
                     progress = { (medicine.currentStock.toFloat() / medicine.totalStock.coerceAtLeast(1).toFloat()).coerceIn(0f, 1f) },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(4.dp)
+                        .height(spacing.extraSmall)
                         .clip(PillShape),
                     color = if (isLowStock) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.secondary,
                     trackColor = MaterialTheme.colorScheme.surfaceVariant
@@ -496,19 +495,19 @@ private fun MedicineCard(medicine: Medicine, onToggleActive: () -> Unit, onEdit:
                         Surface(
                             shape = PillShape,
                             color = MaterialTheme.colorScheme.surfaceContainer,
-                            modifier = Modifier.padding(end = 4.dp)
+                            modifier = Modifier.padding(end = spacing.extraSmall)
                         ) {
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                                modifier = Modifier.padding(horizontal = spacing.small, vertical = spacing.extraSmall)
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Schedule,
                                     contentDescription = null,
                                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    modifier = Modifier.size(14.dp)
+                                    modifier = Modifier.size(spacing.iconSmall)
                                 )
-                                Spacer(modifier = Modifier.width(4.dp))
+                                Spacer(modifier = Modifier.width(spacing.extraSmall))
                                 Text(
                                     text = time,
                                     style = MaterialTheme.typography.labelSmall,
@@ -525,25 +524,25 @@ private fun MedicineCard(medicine: Medicine, onToggleActive: () -> Unit, onEdit:
                 ) {
                     IconButton(
                         onClick = onEdit,
-                        modifier = Modifier.size(36.dp)
+                        modifier = Modifier.size(spacing.barColumnWidth)
                     ) {
                         Icon(
                             imageVector = Icons.Default.Edit,
                             contentDescription = "Edit ${medicine.name}",
                             tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.size(18.dp)
+                            modifier = Modifier.size(spacing.iconMedium)
                         )
                     }
 
                     IconButton(
                         onClick = onDelete,
-                        modifier = Modifier.size(36.dp)
+                        modifier = Modifier.size(spacing.barColumnWidth)
                     ) {
                         Icon(
                             imageVector = Icons.Default.DeleteOutline,
                             contentDescription = "Delete ${medicine.name}",
                             tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.size(18.dp)
+                            modifier = Modifier.size(spacing.iconMedium)
                         )
                     }
                 }

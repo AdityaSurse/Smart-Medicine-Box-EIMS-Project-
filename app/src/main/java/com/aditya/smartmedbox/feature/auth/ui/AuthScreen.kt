@@ -44,7 +44,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.unit.dp
 import com.aditya.smartmedbox.core.designsystem.component.SmartMedBoxLoadingState
 import com.aditya.smartmedbox.core.designsystem.component.SmartMedBoxPrimaryButton
 import com.aditya.smartmedbox.core.designsystem.component.SmartMedBoxTopAppBar
@@ -344,7 +343,7 @@ private fun AuthFormContent(state: AuthUiState.Content, onEvent: (AuthUiEvent) -
             enabled = !state.isLoading,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(48.dp),
+                .height(spacing.minTouchTarget),
             shape = PillShape
         ) {
             Text(
