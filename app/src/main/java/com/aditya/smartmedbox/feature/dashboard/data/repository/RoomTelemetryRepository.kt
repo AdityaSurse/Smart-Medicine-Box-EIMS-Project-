@@ -72,7 +72,11 @@ class RoomTelemetryRepository @Inject constructor(
             if (user != null) {
                 val remoteTelemetry = firestoreDeviceDataSource.observeLatestTelemetry(user.uid, deviceId).firstOrNull()
                 if (remoteTelemetry != null) {
-                    deviceStatusDao.updateOnlineStatus(deviceId, isOnline = true, timestamp = System.currentTimeMillis())
+                    deviceStatusDao.updateOnlineStatus(
+                        deviceId,
+                        isOnline = true,
+                        timestamp = System.currentTimeMillis()
+                    )
                 }
             }
 

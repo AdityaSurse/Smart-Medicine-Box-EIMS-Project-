@@ -42,4 +42,3 @@ object HistoryExporter {
         return sb.toString()
     }
 }
-
