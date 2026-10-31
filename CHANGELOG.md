@@ -131,3 +131,4 @@ and this project adheres to [Conventional Commits](https://www.conventionalcommi
 - Standardized Detekt and KtLint configuration files (`e56abb2`).
 - Resolved Compose UI parameter signatures in `DashboardScreen` and `AlertsScreen` (`f878da6`).
 - Replaced deprecated icon and outlined button border APIs with Material 3 standard implementations (`f878da6`).
+

@@ -58,3 +58,4 @@ flowchart TD
 | **[DATA_CONTRACT.md](DATA_CONTRACT.md)** | Firmware & Cloud Engineers | Cloud Firestore, JSON, MQTT/HTTP | **Active (v1.0)** |
 | **[PROVISIONING.md](PROVISIONING.md)** | Embedded & Mobile Engineers | BLE GATT, SoftAP, Curve25519, AES-GCM | **Active (v1.0)** |
 | **[QA_REPORT.md](QA_REPORT.md)** | QA, Android Engineers & Clinicians | JUnit 4, Turbine, LeakCanary, StrictMode | **Verified** |
+
