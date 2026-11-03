@@ -1,5 +1,10 @@
 package com.aditya.smartmedbox.feature.dashboard.ui
 
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -21,13 +26,16 @@ import androidx.compose.material.icons.automirrored.outlined.ArrowForward
 import androidx.compose.material.icons.automirrored.outlined.VolumeOff
 import androidx.compose.material.icons.outlined.Alarm
 import androidx.compose.material.icons.outlined.Analytics
+import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.DeviceThermostat
 import androidx.compose.material.icons.outlined.EditNote
 import androidx.compose.material.icons.outlined.Inventory2
+import androidx.compose.material.icons.outlined.Lock
+import androidx.compose.material.icons.outlined.LockOpen
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Person
-import androidx.compose.material.icons.outlined.Verified
+import androidx.compose.material.icons.outlined.Sync
 import androidx.compose.material.icons.outlined.WarningAmber
 import androidx.compose.material.icons.outlined.WaterDrop
 import androidx.compose.material3.ButtonDefaults
@@ -41,6 +49,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -54,7 +63,6 @@ import com.aditya.smartmedbox.core.designsystem.component.SmartMedBoxErrorState
 import com.aditya.smartmedbox.core.designsystem.component.SmartMedBoxIntakeLogRow
 import com.aditya.smartmedbox.core.designsystem.component.SmartMedBoxLoadingState
 import com.aditya.smartmedbox.core.designsystem.component.SmartMedBoxMetricCard
-import com.aditya.smartmedbox.core.designsystem.component.SmartMedBoxStatusChip
 import com.aditya.smartmedbox.core.designsystem.component.SmartMedBoxTopAppBar
 import com.aditya.smartmedbox.core.designsystem.theme.CardShape
 import com.aditya.smartmedbox.core.designsystem.theme.ControlShape
@@ -231,7 +239,74 @@ private fun DashboardContent(state: DashboardUiState.Success, onEvent: (Dashboar
             }
         }
 
-        // 1. TOP GREETING & SMART BOX STATUS
+        // 1. HARDWARE LIVE SYNCED STATUS BAR
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(CardShape)
+                .background(MaterialTheme.colorScheme.surfaceContainerLow)
+                .border(
+                    width = spacing.hairlineBorder,
+                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
+                    shape = CardShape
+                )
+                .padding(horizontal = spacing.medium, vertical = spacing.small),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(spacing.small)
+            ) {
+                val infiniteTransition = rememberInfiniteTransition(label = "NodePulse")
+                val pulseAlpha by infiniteTransition.animateFloat(
+                    initialValue = 0.35f,
+                    targetValue = 1.0f,
+                    animationSpec = infiniteRepeatable(
+                        animation = tween(1200),
+                        repeatMode = RepeatMode.Reverse
+                    ),
+                    label = "PulseAlpha"
+                )
+                val dotBaseColor = if (state.isTelemetryStale) {
+                    MaterialTheme.colorScheme.error
+                } else {
+                    MaterialTheme.colorScheme.primary
+                }
+                Box(
+                    modifier = Modifier
+                        .size(spacing.indicatorDot)
+                        .clip(CircleShape)
+                        .background(dotBaseColor.copy(alpha = pulseAlpha))
+                )
+                Text(
+                    text = "ESP32-WROOM-32 • NODE_01",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(spacing.extraSmall)
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.Sync,
+                    contentDescription = null,
+                    tint = if (state.isTelemetryStale) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(spacing.iconSmall)
+                )
+                Text(
+                    text = if (state.isTelemetryStale) "STALE (${state.lastSeenText})" else "LIVE SYNCED",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = if (state.isTelemetryStale) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        }
+
+        // 2. TOP GREETING & REGIMEN TITLE
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -239,14 +314,16 @@ private fun DashboardContent(state: DashboardUiState.Success, onEvent: (Dashboar
         ) {
             Column {
                 Text(
-                    text = "TODAY'S PROTOCOL",
+                    text = "TODAY'S REGIMEN",
                     style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontWeight = FontWeight.Bold
                 )
                 Text(
                     text = "Good evening, ${state.telemetry.patientName}",
                     style = MaterialTheme.typography.headlineLarge,
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontWeight = FontWeight.Bold
                 )
             }
 
@@ -257,9 +334,9 @@ private fun DashboardContent(state: DashboardUiState.Success, onEvent: (Dashboar
                 MaterialTheme.colorScheme.secondary
             }
             val statusLabel = if (state.isTelemetryStale) {
-                "STALE • ${state.lastSeenText}"
+                "DISCONNECTED"
             } else {
-                "ONLINE • ${state.lastSeenText}"
+                "ONLINE"
             }
 
             Row(
@@ -268,24 +345,30 @@ private fun DashboardContent(state: DashboardUiState.Success, onEvent: (Dashboar
                 modifier = Modifier
                     .clip(PillShape)
                     .background(MaterialTheme.colorScheme.surfaceContainerLowest)
-                    .border(spacing.hairlineBorder, MaterialTheme.colorScheme.outlineVariant, PillShape)
-                    .padding(horizontal = spacing.small, vertical = spacing.extraSmall)
+                    .border(
+                        width = spacing.hairlineBorder,
+                        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
+                        shape = PillShape
+                    )
+                    .padding(horizontal = spacing.small, vertical = spacing.micro)
                     .semantics { contentDescription = "Smart box status $statusLabel" }
             ) {
                 Box(
                     modifier = Modifier
-                        .size(spacing.small)
-                        .background(indicatorColor, CircleShape)
+                        .size(spacing.indicatorDot)
+                        .clip(CircleShape)
+                        .background(indicatorColor)
                 )
                 Text(
                     text = statusLabel,
                     style = MaterialTheme.typography.labelSmall,
+                    fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface
                 )
             }
         }
 
-        // 2. HERO NEXT DOSE CARD
+        // 3. HERO NEXT DOSE CARD (WITH PRECISION CIRCULAR COUNTDOWN RING)
         SmartMedBoxDoseCard(
             medicineName = state.telemetry.nextDoseMedicine,
             dosage = "${state.telemetry.nextDoseDosage} • ${state.telemetry.nextDoseTime}",
@@ -298,24 +381,33 @@ private fun DashboardContent(state: DashboardUiState.Success, onEvent: (Dashboar
             onActionClick = { onEvent(DashboardUiEvent.DispenseNow(state.telemetry.nextDoseTray)) }
         )
 
-        // 3. PHYSICAL COMPARTMENT & BOX ENVIRONMENT BENTO TILES (2X2)
+        // 4. CAPSULE DOSE TIMELINE (TODAY'S SCHEDULE AT A GLANCE)
+        if (state.scheduleLedger.isNotEmpty()) {
+            CapsuleDoseTimeline(ledger = state.scheduleLedger)
+        }
+
+        // 5. PHYSICAL COMPARTMENT & BOX ENVIRONMENT BENTO TILES (2X2)
         Column(verticalArrangement = Arrangement.spacedBy(spacing.small)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(spacing.small)
             ) {
                 SmartMedBoxMetricCard(
-                    label = "Internal Temp",
+                    label = "DHT22 Temp",
                     value = "${state.telemetry.temperatureCelsius}°C",
                     icon = Icons.Outlined.DeviceThermostat,
-                    subtext = "Optimal",
+                    badgeText = "CHAMBER A",
+                    subtext = "Normal (15-30°C)",
+                    showStatusDot = true,
                     modifier = Modifier.weight(1f)
                 )
                 SmartMedBoxMetricCard(
                     label = "Humidity",
                     value = "${state.telemetry.humidityPercent.toInt()}%",
                     icon = Icons.Outlined.WaterDrop,
-                    subtext = "Dry seal",
+                    badgeText = "SAFE",
+                    subtext = "Optimal (<65% RH)",
+                    showStatusDot = true,
                     modifier = Modifier.weight(1f)
                 )
             }
@@ -324,26 +416,24 @@ private fun DashboardContent(state: DashboardUiState.Success, onEvent: (Dashboar
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(spacing.small)
             ) {
+                val totalCapacity = 30f
+                val gaugeFraction = (state.telemetry.tabletsRemaining / totalCapacity).coerceIn(0f, 1f)
                 SmartMedBoxMetricCard(
-                    label = "Remaining",
-                    value = "${state.telemetry.tabletsRemaining}",
+                    label = "Load Cell",
+                    value = "${state.telemetry.tabletsRemaining} pills",
                     icon = Icons.Outlined.Inventory2,
-                    subtext = "tablets",
+                    badgeText = "BAY 01-04",
+                    subtext = "Gross: 42.6g",
+                    verticalGaugeFraction = gaugeFraction,
                     modifier = Modifier.weight(1f)
                 )
                 SmartMedBoxMetricCard(
-                    label = "Cadence",
-                    value = state.telemetry.cadenceStatus,
-                    icon = Icons.Outlined.Verified,
-                    statusIndicator = {
-                        val chipStatus = when {
-                            state.telemetry.cadenceStatus.contains("missed", ignoreCase = true) -> DoseStatus.MISSED
-                            state.telemetry.cadenceStatus.contains("pending", ignoreCase = true) ||
-                                state.telemetry.cadenceStatus.contains("due", ignoreCase = true) -> DoseStatus.PENDING
-                            else -> DoseStatus.ON_TIME
-                        }
-                        SmartMedBoxStatusChip(status = chipStatus)
-                    },
+                    label = "Security",
+                    value = if (state.telemetry.isBoxOpen) "Lid Open" else "Lid Closed",
+                    icon = if (state.telemetry.isBoxOpen) Icons.Outlined.LockOpen else Icons.Outlined.Lock,
+                    badgeText = if (state.telemetry.isBoxOpen) "BREACH" else "LATCHED",
+                    subtext = if (state.telemetry.isBoxOpen) "Reed switch unsealed" else "Magnet switch locked",
+                    showStatusDot = true,
                     modifier = Modifier.weight(1f)
                 )
             }
@@ -636,6 +726,137 @@ private fun NotificationPermissionBanner(onEnableClick: () -> Unit, onDismissCli
                     contentDescription = "Dismiss notice",
                     tint = MaterialTheme.colorScheme.onTertiaryContainer
                 )
+            }
+        }
+    }
+}
+
+@Composable
+private fun CapsuleDoseTimeline(ledger: List<DashboardScheduleItem>, modifier: Modifier = Modifier) {
+    val spacing = LocalSpacing.current
+    if (ledger.isEmpty()) return
+
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(spacing.extraSmall)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "CYCLE TIMELINE • TODAY (${ledger.size} DOSES)",
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                fontWeight = FontWeight.Bold
+            )
+            val takenCount = ledger.count { it.status == DoseStatus.TAKEN }
+            Text(
+                text = "$takenCount OF ${ledger.size} CONSUMED",
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.primary,
+                fontWeight = FontWeight.Bold
+            )
+        }
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(spacing.extraSmall)
+        ) {
+            ledger.take(5).forEach { item ->
+                val isTaken = item.status == DoseStatus.TAKEN
+                val isMissed = item.status == DoseStatus.MISSED
+
+                val bg = when {
+                    isTaken -> MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.45f)
+                    isMissed -> MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.5f)
+                    else -> MaterialTheme.colorScheme.surfaceContainerLow
+                }
+                val contentColor = when {
+                    isTaken -> MaterialTheme.colorScheme.onSecondaryContainer
+                    isMissed -> MaterialTheme.colorScheme.onErrorContainer
+                    else -> MaterialTheme.colorScheme.onSurface
+                }
+                val badgeText = when {
+                    isTaken -> "TAKEN"
+                    isMissed -> "MISSED"
+                    else -> "WAIT"
+                }
+                val icon = when {
+                    isTaken -> Icons.Outlined.Check
+                    isMissed -> Icons.Outlined.Close
+                    else -> Icons.Outlined.Alarm
+                }
+
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .clip(PillShape)
+                        .background(bg)
+                        .border(
+                            width = spacing.hairlineBorder,
+                            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
+                            shape = PillShape
+                        )
+                        .padding(horizontal = spacing.micro, vertical = spacing.small),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(spacing.extraSmall)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(spacing.large)
+                            .clip(CircleShape)
+                            .background(
+                                when {
+                                    isTaken -> MaterialTheme.colorScheme.secondary
+                                    isMissed -> MaterialTheme.colorScheme.error
+                                    else -> MaterialTheme.colorScheme.surfaceContainerHighest
+                                }
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = icon,
+                            contentDescription = null,
+                            tint = if (isTaken || isMissed) MaterialTheme.colorScheme.surfaceContainerLowest else MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.size(spacing.iconSmall)
+                        )
+                    }
+
+                    Text(
+                        text = item.time,
+                        style = MaterialTheme.typography.labelSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = contentColor
+                    )
+
+                    Text(
+                        text = item.medicineName.take(4),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = contentColor
+                    )
+
+                    Box(
+                        modifier = Modifier
+                            .clip(PillShape)
+                            .background(
+                                when {
+                                    isTaken -> MaterialTheme.colorScheme.secondary.copy(alpha = 0.15f)
+                                    isMissed -> MaterialTheme.colorScheme.error.copy(alpha = 0.15f)
+                                    else -> MaterialTheme.colorScheme.surfaceContainerHighest
+                                }
+                            )
+                            .padding(horizontal = spacing.extraSmall, vertical = spacing.micro)
+                    ) {
+                        Text(
+                            text = badgeText,
+                            style = MaterialTheme.typography.labelSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = contentColor
+                        )
+                    }
+                }
             }
         }
     }

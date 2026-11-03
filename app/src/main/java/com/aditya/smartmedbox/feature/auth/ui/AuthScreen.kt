@@ -1,7 +1,9 @@
 package com.aditya.smartmedbox.feature.auth.ui
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,11 +27,11 @@ import androidx.compose.material.icons.outlined.VisibilityOff
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -38,6 +40,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.ImeAction
@@ -119,7 +122,12 @@ private fun AuthFormContent(state: AuthUiState.Content, onEvent: (AuthUiEvent) -
             modifier = Modifier
                 .size(spacing.huge + spacing.small)
                 .clip(ControlShape)
-                .background(MaterialTheme.colorScheme.primaryContainer),
+                .background(MaterialTheme.colorScheme.primaryContainer)
+                .border(
+                    width = spacing.hairlineBorder,
+                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
+                    shape = ControlShape
+                ),
             contentAlignment = Alignment.Center
         ) {
             Icon(
@@ -147,13 +155,19 @@ private fun AuthFormContent(state: AuthUiState.Content, onEvent: (AuthUiEvent) -
             modifier = Modifier.padding(horizontal = spacing.small)
         )
 
-        // 2. TOGGLE TABS (SIGN IN / REGISTER)
+        // 2. TOGGLE TABS (SIGN IN / REGISTER) - Segmented Control Pill
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(PillShape)
                 .background(MaterialTheme.colorScheme.surfaceContainer)
-                .padding(spacing.extraSmall)
+                .border(
+                    width = spacing.hairlineBorder,
+                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
+                    shape = PillShape
+                )
+                .padding(spacing.extraSmall),
+            horizontalArrangement = Arrangement.spacedBy(spacing.extraSmall)
         ) {
             val signInSelected = !state.isSignUpMode
             Box(
@@ -164,26 +178,24 @@ private fun AuthFormContent(state: AuthUiState.Content, onEvent: (AuthUiEvent) -
                         if (signInSelected) {
                             MaterialTheme.colorScheme.primary
                         } else {
-                            MaterialTheme.colorScheme.surfaceContainer
+                            Color.Transparent
                         }
                     )
+                    .clickable {
+                        if (state.isSignUpMode) onEvent(AuthUiEvent.ToggleAuthMode)
+                    }
                     .padding(vertical = spacing.small),
                 contentAlignment = Alignment.Center
             ) {
-                TextButton(
-                    onClick = { if (state.isSignUpMode) onEvent(AuthUiEvent.ToggleAuthMode) },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(
-                        text = "Sign In",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = if (signInSelected) {
-                            MaterialTheme.colorScheme.onPrimary
-                        } else {
-                            MaterialTheme.colorScheme.onSurfaceVariant
-                        }
-                    )
-                }
+                Text(
+                    text = "Sign In",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = if (signInSelected) {
+                        MaterialTheme.colorScheme.onPrimary
+                    } else {
+                        MaterialTheme.colorScheme.onSurfaceVariant
+                    }
+                )
             }
 
             val registerSelected = state.isSignUpMode
@@ -195,26 +207,24 @@ private fun AuthFormContent(state: AuthUiState.Content, onEvent: (AuthUiEvent) -
                         if (registerSelected) {
                             MaterialTheme.colorScheme.primary
                         } else {
-                            MaterialTheme.colorScheme.surfaceContainer
+                            Color.Transparent
                         }
                     )
+                    .clickable {
+                        if (!state.isSignUpMode) onEvent(AuthUiEvent.ToggleAuthMode)
+                    }
                     .padding(vertical = spacing.small),
                 contentAlignment = Alignment.Center
             ) {
-                TextButton(
-                    onClick = { if (!state.isSignUpMode) onEvent(AuthUiEvent.ToggleAuthMode) },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(
-                        text = "Register",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = if (registerSelected) {
-                            MaterialTheme.colorScheme.onPrimary
-                        } else {
-                            MaterialTheme.colorScheme.onSurfaceVariant
-                        }
-                    )
-                }
+                Text(
+                    text = "Register",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = if (registerSelected) {
+                        MaterialTheme.colorScheme.onPrimary
+                    } else {
+                        MaterialTheme.colorScheme.onSurfaceVariant
+                    }
+                )
             }
         }
 
@@ -224,7 +234,11 @@ private fun AuthFormContent(state: AuthUiState.Content, onEvent: (AuthUiEvent) -
                 .fillMaxWidth()
                 .clip(CardShape)
                 .background(MaterialTheme.colorScheme.surfaceContainerLowest)
-                .border(spacing.hairlineBorder, MaterialTheme.colorScheme.outlineVariant, CardShape)
+                .border(
+                    width = spacing.hairlineBorder,
+                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
+                    shape = CardShape
+                )
                 .padding(spacing.medium)
         ) {
             Column(verticalArrangement = Arrangement.spacedBy(spacing.medium)) {
@@ -255,7 +269,7 @@ private fun AuthFormContent(state: AuthUiState.Content, onEvent: (AuthUiEvent) -
                             focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
                             unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
                             focusedBorderColor = MaterialTheme.colorScheme.primary,
-                            unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant
+                            unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f)
                         ),
                         shape = ControlShape,
                         modifier = Modifier
@@ -304,7 +318,7 @@ private fun AuthFormContent(state: AuthUiState.Content, onEvent: (AuthUiEvent) -
                             focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
                             unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
                             focusedBorderColor = MaterialTheme.colorScheme.primary,
-                            unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant
+                            unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f)
                         ),
                         shape = ControlShape,
                         modifier = Modifier
@@ -335,7 +349,7 @@ private fun AuthFormContent(state: AuthUiState.Content, onEvent: (AuthUiEvent) -
             enabled = !state.isLoading
         )
 
-        androidx.compose.material3.OutlinedButton(
+        OutlinedButton(
             onClick = {
                 onEvent(AuthUiEvent.SignInWithGoogle())
                 onNavigateToDashboard()
@@ -343,12 +357,17 @@ private fun AuthFormContent(state: AuthUiState.Content, onEvent: (AuthUiEvent) -
             enabled = !state.isLoading,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(spacing.minTouchTarget),
-            shape = PillShape
+                .height(spacing.buttonHeight),
+            shape = PillShape,
+            border = BorderStroke(
+                width = spacing.hairlineBorder,
+                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.7f)
+            )
         ) {
             Text(
                 text = "Continue with Google",
-                style = MaterialTheme.typography.labelLarge
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onSurface
             )
         }
 
@@ -356,16 +375,24 @@ private fun AuthFormContent(state: AuthUiState.Content, onEvent: (AuthUiEvent) -
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(spacing.small),
-            modifier = Modifier.padding(top = spacing.small)
+            modifier = Modifier
+                .clip(PillShape)
+                .background(MaterialTheme.colorScheme.surfaceContainerLow)
+                .border(
+                    width = spacing.hairlineBorder,
+                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
+                    shape = PillShape
+                )
+                .padding(horizontal = spacing.medium, vertical = spacing.small)
         ) {
             Icon(
                 imageVector = Icons.Outlined.Lock,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.size(spacing.medium)
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(spacing.iconSmall)
             )
             Text(
-                text = "HIPAA & DISPENSER TELEMETRY ENCRYPTED",
+                text = "HARDWARE DISPENSER ENCRYPTED • HIPAA SECURE",
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

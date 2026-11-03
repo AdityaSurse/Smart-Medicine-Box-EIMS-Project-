@@ -1,5 +1,6 @@
 package com.aditya.smartmedbox.core.designsystem.component
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -7,23 +8,28 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Inventory2
 import androidx.compose.material.icons.outlined.LockOpen
 import androidx.compose.material.icons.outlined.Medication
+import androidx.compose.material.icons.outlined.WaterDrop
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.text.font.FontWeight
 import com.aditya.smartmedbox.core.designsystem.theme.CardShape
 import com.aditya.smartmedbox.core.designsystem.theme.ControlShape
 import com.aditya.smartmedbox.core.designsystem.theme.LocalSpacing
@@ -58,25 +64,26 @@ fun SmartMedBoxDoseCard(
             .background(MaterialTheme.colorScheme.surfaceContainerLowest)
             .border(
                 width = spacing.hairlineBorder,
-                color = MaterialTheme.colorScheme.outlineVariant,
+                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f),
                 shape = CardShape
             )
             .padding(spacing.medium)
     ) {
         Column(
             modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(spacing.medium)
+            verticalArrangement = Arrangement.spacedBy(spacing.small)
         ) {
-            // Header: Section label & Tray Tag
+            // Header: Protocol Tag + Tray Badge
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "NEXT DOSE",
+                    text = "REGIMEN PROTOCOL",
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.labelSmall
+                    style = MaterialTheme.typography.labelSmall,
+                    fontWeight = FontWeight.Bold
                 )
 
                 Row(
@@ -87,99 +94,119 @@ fun SmartMedBoxDoseCard(
                         .background(MaterialTheme.colorScheme.surfaceContainer)
                         .border(
                             width = spacing.hairlineBorder,
-                            color = MaterialTheme.colorScheme.outlineVariant,
+                            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
                             shape = PillShape
                         )
-                        .padding(horizontal = spacing.small, vertical = spacing.extraSmall)
+                        .padding(horizontal = spacing.small, vertical = spacing.micro)
                 ) {
-                    Icon(
-                        imageVector = Icons.Outlined.Inventory2,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.secondary,
-                        modifier = Modifier.size(spacing.medium)
+                    Box(
+                        modifier = Modifier
+                            .size(spacing.indicatorDot)
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.primary)
                     )
                     Text(
                         text = trayLabel.uppercase(),
                         color = MaterialTheme.colorScheme.onSurface,
-                        style = MaterialTheme.typography.labelSmall
+                        style = MaterialTheme.typography.labelSmall,
+                        fontWeight = FontWeight.Bold
                     )
                 }
             }
 
-            // Hero Metric & Medication Icon
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+            // Medicine Name Heading
+            Text(
+                text = medicineName,
+                color = MaterialTheme.colorScheme.primary,
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold
+            )
+
+            // Recessed Countdown & Precision Circular Gauge Well
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(ControlShape)
+                    .background(MaterialTheme.colorScheme.surfaceContainerLow)
+                    .padding(horizontal = spacing.medium, vertical = spacing.small)
             ) {
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = timeOrCountdown,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        style = MaterialTheme.typography.displayMedium
-                    )
-                    Text(
-                        text = "$medicineName • $dosage",
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.padding(top = spacing.extraSmall)
-                    )
-                }
-
-                Box(
-                    modifier = Modifier
-                        .size(spacing.huge)
-                        .clip(ControlShape)
-                        .background(MaterialTheme.colorScheme.surfaceContainer)
-                        .border(
-                            width = spacing.hairlineBorder,
-                            color = MaterialTheme.colorScheme.outlineVariant,
-                            shape = ControlShape
-                        ),
-                    contentAlignment = Alignment.Center
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(
-                        imageVector = Icons.Outlined.Medication,
-                        contentDescription = medicineName,
-                        tint = MaterialTheme.colorScheme.secondary,
-                        modifier = Modifier.size(spacing.large)
-                    )
-                }
-            }
-
-            // Timeline Progress bar (if provided)
-            if (progressFraction != null) {
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(spacing.extraSmall),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    LinearProgressIndicator(
-                        progress = { progressFraction },
-                        color = MaterialTheme.colorScheme.primary,
-                        trackColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(spacing.extraSmall)
-                            .clip(PillShape)
-                    )
-
-                    if (progressSubtext != null) {
+                    Column(
+                        modifier = Modifier.weight(1f, fill = false),
+                        verticalArrangement = Arrangement.spacedBy(spacing.micro)
+                    ) {
+                        Text(
+                            text = "TIME UNTIL DISPENSE",
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.labelSmall,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            text = timeOrCountdown,
+                            color = MaterialTheme.colorScheme.primary,
+                            style = MaterialTheme.typography.headlineLarge,
+                            fontWeight = FontWeight.Bold
+                        )
                         Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(spacing.extraSmall),
+                            modifier = Modifier.padding(top = spacing.micro)
                         ) {
-                            Text(
-                                text = progressSubtext.first.uppercase(),
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                style = MaterialTheme.typography.labelSmall
+                            Icon(
+                                imageVector = Icons.Outlined.WaterDrop,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(spacing.iconSmall)
                             )
                             Text(
-                                text = progressSubtext.second.uppercase(),
+                                text = dosage,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                style = MaterialTheme.typography.labelSmall
+                                style = MaterialTheme.typography.bodySmall
                             )
                         }
                     }
+
+                    if (progressFraction != null) {
+                        CircularDoseGauge(progressFraction = progressFraction)
+                    } else {
+                        Box(
+                            modifier = Modifier
+                                .size(spacing.huge)
+                                .clip(ControlShape)
+                                .background(MaterialTheme.colorScheme.surfaceContainer),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Outlined.Medication,
+                                contentDescription = medicineName,
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(spacing.large)
+                            )
+                        }
+                    }
+                }
+            }
+
+            // Subtext strip (if provided)
+            if (progressSubtext != null) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = progressSubtext.first.uppercase(),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.labelSmall
+                    )
+                    Text(
+                        text = progressSubtext.second.uppercase(),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.labelSmall
+                    )
                 }
             }
 
@@ -191,7 +218,7 @@ fun SmartMedBoxDoseCard(
                 if (hasAction || hasLatch) {
                     HorizontalDivider(
                         thickness = spacing.hairlineBorder,
-                        color = MaterialTheme.colorScheme.outlineVariant
+                        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
                     )
                 }
                 Row(
@@ -210,12 +237,12 @@ fun SmartMedBoxDoseCard(
                             Icon(
                                 imageVector = Icons.Outlined.LockOpen,
                                 contentDescription = null,
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                tint = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.size(spacing.iconMedium)
                             )
                             Text(
                                 text = latchStatusText,
-                                style = MaterialTheme.typography.bodyMedium,
+                                style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
@@ -229,6 +256,63 @@ fun SmartMedBoxDoseCard(
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun CircularDoseGauge(progressFraction: Float, modifier: Modifier = Modifier) {
+    val spacing = LocalSpacing.current
+    val trackColor = MaterialTheme.colorScheme.surfaceContainerHighest
+    val progressColor = MaterialTheme.colorScheme.primary
+    val percentInt = (progressFraction * 100).toInt().coerceIn(0, 100)
+
+    Box(
+        modifier = modifier
+            .size(spacing.bottomNavHeight)
+            .padding(spacing.extraSmall),
+        contentAlignment = Alignment.Center
+    ) {
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            val strokeWidthPx = spacing.micro.toPx() + spacing.hairlineBorder.toPx()
+            val diameter = size.minDimension - strokeWidthPx
+            val topLeft = Offset(strokeWidthPx / 2f, strokeWidthPx / 2f)
+            val arcSize = Size(diameter, diameter)
+
+            drawArc(
+                color = trackColor,
+                startAngle = 0f,
+                sweepAngle = 360f,
+                useCenter = false,
+                topLeft = topLeft,
+                size = arcSize,
+                style = Stroke(width = strokeWidthPx, cap = StrokeCap.Round)
+            )
+
+            val sweepAngle = (progressFraction * 360f).coerceIn(0f, 360f)
+            drawArc(
+                color = progressColor,
+                startAngle = -90f,
+                sweepAngle = sweepAngle,
+                useCenter = false,
+                topLeft = topLeft,
+                size = arcSize,
+                style = Stroke(width = strokeWidthPx, cap = StrokeCap.Round)
+            )
+        }
+
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                text = "$percentInt%",
+                style = MaterialTheme.typography.labelMedium,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary
+            )
+            Text(
+                text = "ELAPSED",
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
         }
     }
 }
