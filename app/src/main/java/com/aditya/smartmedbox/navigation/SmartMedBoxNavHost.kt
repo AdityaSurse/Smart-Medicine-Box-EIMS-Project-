@@ -134,6 +134,7 @@ fun SmartMedBoxAppScreen(navController: NavHostController = rememberNavControlle
                 ScheduleScreen(
                     uiState = uiState,
                     onEvent = viewModel::onEvent,
+                    uiEffect = viewModel.uiEffect,
                     onNavigateToAlerts = { navController.navigate(Screen.Alerts) }
                 )
             }

@@ -1,8 +1,6 @@
 package com.aditya.smartmedbox.feature.medicines.ui.addedit
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -27,7 +25,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.AddCircleOutline
 import androidx.compose.material.icons.filled.Alarm
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Close
@@ -37,6 +34,7 @@ import androidx.compose.material.icons.filled.Inventory2
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Medication
 import androidx.compose.material.icons.filled.Remove
+import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.Verified
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -47,6 +45,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
@@ -56,12 +55,11 @@ import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
@@ -70,6 +68,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
+import com.aditya.smartmedbox.core.designsystem.component.SmartMedBoxTimePickerHelper
 import com.aditya.smartmedbox.core.designsystem.component.SmartMedBoxTopAppBar
 import com.aditya.smartmedbox.core.designsystem.theme.CardShape
 import com.aditya.smartmedbox.core.designsystem.theme.ControlShape
@@ -567,20 +566,30 @@ fun AddEditMedicineScreen(uiState: AddEditMedicineUiState, onEvent: (AddEditMedi
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun OptInFlowRow(timings: List<String>, onRemoveTime: (String) -> Unit, onAddTime: (String) -> Unit) {
+    val context = LocalContext.current
     val spacing = LocalSpacing.current
-    var showQuickAddMenu by remember { mutableStateOf(false) }
 
-    Column(verticalArrangement = Arrangement.spacedBy(spacing.extraSmall)) {
+    Column(verticalArrangement = Arrangement.spacedBy(spacing.small)) {
         FlowRow(
-            horizontalArrangement = Arrangement.spacedBy(spacing.extraSmall),
-            verticalArrangement = Arrangement.spacedBy(spacing.extraSmall),
+            horizontalArrangement = Arrangement.spacedBy(spacing.small),
+            verticalArrangement = Arrangement.spacedBy(spacing.small),
             modifier = Modifier.fillMaxWidth()
         ) {
             timings.forEach { time ->
                 Surface(
                     shape = ControlShape,
                     color = MaterialTheme.colorScheme.surfaceContainer,
-                    modifier = Modifier.height(spacing.controlSize)
+                    border = BorderStroke(spacing.hairlineBorder, MaterialTheme.colorScheme.outlineVariant),
+                    modifier = Modifier
+                        .height(spacing.controlSize)
+                        .clickable {
+                            SmartMedBoxTimePickerHelper.showTimePickerDialog(context, time) { newTime ->
+                                if (newTime != time) {
+                                    onRemoveTime(time)
+                                    onAddTime(newTime)
+                                }
+                            }
+                        }
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -589,7 +598,7 @@ private fun OptInFlowRow(timings: List<String>, onRemoveTime: (String) -> Unit, 
                         Icon(
                             imageVector = Icons.Default.Alarm,
                             contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(spacing.iconSmall)
                         )
                         Spacer(modifier = Modifier.width(spacing.extraSmall))
@@ -616,53 +625,90 @@ private fun OptInFlowRow(timings: List<String>, onRemoveTime: (String) -> Unit, 
             }
         }
 
-        // Add another time CTA
+        // Action buttons: Custom Time picker & Current Time (testing)
         Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .clip(ControlShape)
-                .clickable { showQuickAddMenu = !showQuickAddMenu }
-                .padding(vertical = spacing.extraSmall)
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(spacing.small)
         ) {
-            Icon(
-                imageVector = Icons.Default.AddCircleOutline,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(spacing.iconMedium)
-            )
-            Spacer(modifier = Modifier.width(spacing.extraSmall))
-            Text(
-                text = "+ Add another time",
-                style = MaterialTheme.typography.labelMedium,
-                fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.primary
-            )
+            OutlinedButton(
+                onClick = {
+                    SmartMedBoxTimePickerHelper.showTimePickerDialog(context, "12:00 PM") { newTime ->
+                        if (!timings.contains(newTime)) {
+                            onAddTime(newTime)
+                        }
+                    }
+                },
+                modifier = Modifier
+                    .weight(1f)
+                    .height(spacing.buttonHeight),
+                shape = ControlShape,
+                border = BorderStroke(spacing.hairlineBorder, MaterialTheme.colorScheme.primary)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(spacing.iconSmall)
+                )
+                Spacer(modifier = Modifier.width(spacing.extraSmall))
+                Text(
+                    text = "Add time",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
+            OutlinedButton(
+                onClick = {
+                    val now = SmartMedBoxTimePickerHelper.getCurrentFormattedTime()
+                    if (!timings.contains(now)) {
+                        onAddTime(now)
+                    }
+                },
+                modifier = Modifier
+                    .weight(1f)
+                    .height(spacing.buttonHeight),
+                shape = ControlShape,
+                border = BorderStroke(spacing.hairlineBorder, MaterialTheme.colorScheme.secondary)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Schedule,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.secondary,
+                    modifier = Modifier.size(spacing.iconSmall)
+                )
+                Spacer(modifier = Modifier.width(spacing.extraSmall))
+                Text(
+                    text = "Now (testing)",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.secondary,
+                    fontWeight = FontWeight.Bold
+                )
+            }
         }
 
-        AnimatedVisibility(visible = showQuickAddMenu, enter = fadeIn(), exit = fadeOut()) {
-            val suggestions = listOf("08:00 AM", "12:30 PM", "06:00 PM", "08:00 PM", "10:00 PM")
+        // Quick Suggestions
+        val suggestions = listOf("08:00 AM", "12:30 PM", "06:00 PM", "08:00 PM", "10:00 PM")
+        val availableSuggestions = suggestions.filter { !timings.contains(it) }
+        if (availableSuggestions.isNotEmpty()) {
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(spacing.extraSmall),
                 verticalArrangement = Arrangement.spacedBy(spacing.extraSmall),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.surfaceContainerLow, ControlShape)
-                    .padding(spacing.small)
+                modifier = Modifier.fillMaxWidth()
             ) {
-                suggestions.filter { !timings.contains(it) }.forEach { sugg ->
+                availableSuggestions.forEach { sugg ->
                     Surface(
                         shape = PillShape,
-                        color = MaterialTheme.colorScheme.surfaceContainer,
-                        modifier = Modifier.clickable {
-                            onAddTime(sugg)
-                            showQuickAddMenu = false
-                        }
+                        color = MaterialTheme.colorScheme.surfaceContainerLow,
+                        border = BorderStroke(spacing.hairlineBorder, MaterialTheme.colorScheme.outlineVariant),
+                        modifier = Modifier.clickable { onAddTime(sugg) }
                     ) {
                         Text(
                             text = "+ $sugg",
                             style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurface,
-                            modifier = Modifier.padding(horizontal = spacing.small, vertical = spacing.extraSmall)
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(horizontal = spacing.small, vertical = spacing.micro)
                         )
                     }
                 }

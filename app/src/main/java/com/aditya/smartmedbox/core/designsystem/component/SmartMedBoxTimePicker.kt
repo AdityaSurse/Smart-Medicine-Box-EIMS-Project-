@@ -7,11 +7,7 @@ import java.util.Locale
 
 object SmartMedBoxTimePickerHelper {
 
-    fun showTimePickerDialog(
-        context: Context,
-        initialTime: String? = null,
-        onTimeSelected: (String) -> Unit
-    ) {
+    fun showTimePickerDialog(context: Context, initialTime: String? = null, onTimeSelected: (String) -> Unit) {
         val (initialHour, initialMinute) = parseTime(initialTime)
 
         TimePickerDialog(

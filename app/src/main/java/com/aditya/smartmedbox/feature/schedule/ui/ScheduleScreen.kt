@@ -906,17 +906,29 @@ private fun NewRegimenFormCard(
 
             // Dispense Times
             Column(verticalArrangement = Arrangement.spacedBy(spacing.extraSmall)) {
-                Text(
-                    text = "DISPENSE TIMES",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    fontWeight = FontWeight.Bold
-                )
-
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(spacing.small),
+                    horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "DISPENSE TIMES",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = "${timesList.size} SCHEDULED",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+
+                FlowRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(spacing.small),
+                    verticalArrangement = Arrangement.spacedBy(spacing.small)
                 ) {
                     timesList.forEachIndexed { index, time ->
                         Box(
@@ -924,6 +936,11 @@ private fun NewRegimenFormCard(
                                 .clip(ControlShape)
                                 .background(MaterialTheme.colorScheme.surfaceContainer)
                                 .border(spacing.hairlineBorder, MaterialTheme.colorScheme.outlineVariant, ControlShape)
+                                .clickable {
+                                    SmartMedBoxTimePickerHelper.showTimePickerDialog(context, time) { newTime ->
+                                        timesList[index] = newTime
+                                    }
+                                }
                                 .padding(horizontal = spacing.medium, vertical = spacing.small)
                         ) {
                             Row(
@@ -933,7 +950,7 @@ private fun NewRegimenFormCard(
                                 Icon(
                                     imageVector = Icons.Default.Alarm,
                                     contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    tint = MaterialTheme.colorScheme.primary,
                                     modifier = Modifier.size(spacing.iconMedium)
                                 )
                                 Text(
@@ -960,20 +977,68 @@ private fun NewRegimenFormCard(
                     }
                 }
 
-                Text(
-                    text = "+ Add another time",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.primary,
-                    fontWeight = FontWeight.Medium,
-                    modifier = Modifier
-                        .clickable {
-                            if (timesList.size < 4) {
-                                val nextTime = if (timesList.size == 1) "08:00 AM" else "12:00 PM"
-                                timesList.add(nextTime)
+                // Action buttons for custom time & testing instant time
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(spacing.small)
+                ) {
+                    OutlinedButton(
+                        onClick = {
+                            SmartMedBoxTimePickerHelper.showTimePickerDialog(context, "12:00 PM") { newTime ->
+                                if (!timesList.contains(newTime)) {
+                                    timesList.add(newTime)
+                                }
                             }
-                        }
-                        .padding(vertical = spacing.extraSmall)
-                )
+                        },
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(spacing.buttonHeight),
+                        shape = ControlShape,
+                        border = BorderStroke(spacing.hairlineBorder, MaterialTheme.colorScheme.primary)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(spacing.iconSmall)
+                        )
+                        Spacer(modifier = Modifier.width(spacing.extraSmall))
+                        Text(
+                            text = "Add time",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.primary,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+
+                    OutlinedButton(
+                        onClick = {
+                            val now = SmartMedBoxTimePickerHelper.getCurrentFormattedTime()
+                            if (!timesList.contains(now)) {
+                                timesList.add(now)
+                            }
+                        },
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(spacing.buttonHeight),
+                        shape = ControlShape,
+                        border = BorderStroke(spacing.hairlineBorder, MaterialTheme.colorScheme.secondary)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Schedule,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.secondary,
+                            modifier = Modifier.size(spacing.iconSmall)
+                        )
+                        Spacer(modifier = Modifier.width(spacing.extraSmall))
+                        Text(
+                            text = "Now (testing)",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.secondary,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
             }
 
             // Recurrence Cycle
@@ -989,20 +1054,40 @@ private fun NewRegimenFormCard(
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontWeight = FontWeight.Bold
                     )
-                    Text(
-                        text = "DAILY SCHEDULE",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        fontWeight = FontWeight.Bold
-                    )
+                    Row(horizontalArrangement = Arrangement.spacedBy(spacing.small)) {
+                        Text(
+                            text = "ALL DAYS",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.primary,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier
+                                .clickable {
+                                    selectedDays.clear()
+                                    selectedDays.addAll(listOf("M", "T", "W", "TH", "F", "SA", "SU"))
+                                }
+                                .padding(spacing.micro)
+                        )
+                        Text(
+                            text = "WEEKDAYS",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.primary,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier
+                                .clickable {
+                                    selectedDays.clear()
+                                    selectedDays.addAll(listOf("M", "T", "W", "TH", "F"))
+                                }
+                                .padding(spacing.micro)
+                        )
+                    }
                 }
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(spacing.extraSmall)
                 ) {
-                    allDays.forEach { dayLetter ->
-                        val isDaySelected = repeatDays.contains(dayLetter)
+                    daysOptions.forEach { (code, displayLetter, dayName) ->
+                        val isDaySelected = selectedDays.contains(code)
                         val dayBg = if (isDaySelected) {
                             MaterialTheme.colorScheme.primary
                         } else {
@@ -1023,19 +1108,19 @@ private fun NewRegimenFormCard(
                                 .border(spacing.hairlineBorder, MaterialTheme.colorScheme.outlineVariant, CircleShape)
                                 .clickable {
                                     if (isDaySelected) {
-                                        if (repeatDays.size > 1) repeatDays.remove(dayLetter)
+                                        if (selectedDays.size > 1) selectedDays.remove(code)
                                     } else {
-                                        repeatDays.add(dayLetter)
+                                        selectedDays.add(code)
                                     }
                                 }
                                 .semantics {
                                     role = Role.Button
-                                    contentDescription = "Day $dayLetter, ${if (isDaySelected) "Selected" else "Not selected"}"
+                                    contentDescription = "$dayName, ${if (isDaySelected) "Selected" else "Not selected"}"
                                 },
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = dayLetter,
+                                text = displayLetter,
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = dayTextColor,
                                 fontWeight = FontWeight.Bold
@@ -1108,19 +1193,78 @@ private fun NewRegimenFormCard(
                 }
             }
 
+            // Quick Form Factor Chips
+            FlowRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(spacing.extraSmall)
+            ) {
+                commonFormFactors.forEach { factor ->
+                    val isSelected = formFactor.equals(factor, ignoreCase = true)
+                    Box(
+                        modifier = Modifier
+                            .clip(PillShape)
+                            .background(
+                                if (isSelected) {
+                                    MaterialTheme.colorScheme.secondaryContainer
+                                } else {
+                                    MaterialTheme.colorScheme.surfaceContainerLow
+                                }
+                            )
+                            .border(spacing.hairlineBorder, MaterialTheme.colorScheme.outlineVariant, PillShape)
+                            .clickable { formFactor = factor }
+                            .padding(horizontal = spacing.small, vertical = spacing.micro)
+                    ) {
+                        Text(
+                            text = factor,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = if (isSelected) {
+                                MaterialTheme.colorScheme.onSecondaryContainer
+                            } else {
+                                MaterialTheme.colorScheme.onSurfaceVariant
+                            },
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+            }
+
+            // Validation error banner if any
+            if (validationError != null) {
+                Text(
+                    text = validationError ?: "",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.error,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+
             // Save Schedule CTA
             Button(
                 onClick = {
+                    if (medicineName.isBlank()) {
+                        validationError = "Please enter medicine name"
+                        return@Button
+                    }
+                    if (timesList.isEmpty()) {
+                        validationError = "Please add at least one dispense time"
+                        return@Button
+                    }
+                    if (selectedDays.isEmpty()) {
+                        validationError = "Please select at least one recurrence day"
+                        return@Button
+                    }
+                    validationError = null
                     val count = totalSupply.toIntOrNull() ?: 30
                     onSave(
-                        medicineName,
+                        medicineName.trim(),
                         "$dosageMg mg",
                         selectedBay,
                         timesList.toList(),
-                        repeatDays.toList(),
+                        selectedDays.toList(),
                         count,
-                        formFactor
+                        formFactor.ifBlank { "Capsule" }
                     )
+                    medicineName = ""
                 },
                 modifier = Modifier
                     .fillMaxWidth()
