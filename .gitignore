@@ -49,6 +49,8 @@ proguard/
 
 # Google Services & Firebase secrets
 google-services.json
+secrets.h
+**/secrets.h
 
 # Environment / Secret configs
 .env

@@ -1,11 +1,14 @@
 package com.aditya.smartmedbox.feature.schedule.ui
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -39,9 +42,12 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
@@ -56,6 +62,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.role
@@ -64,6 +71,7 @@ import androidx.compose.ui.text.font.FontWeight
 import com.aditya.smartmedbox.core.designsystem.component.SmartMedBoxEmptyState
 import com.aditya.smartmedbox.core.designsystem.component.SmartMedBoxErrorState
 import com.aditya.smartmedbox.core.designsystem.component.SmartMedBoxLoadingState
+import com.aditya.smartmedbox.core.designsystem.component.SmartMedBoxTimePickerHelper
 import com.aditya.smartmedbox.core.designsystem.component.SmartMedBoxTopAppBar
 import com.aditya.smartmedbox.core.designsystem.theme.CardShape
 import com.aditya.smartmedbox.core.designsystem.theme.ControlShape
@@ -72,10 +80,28 @@ import com.aditya.smartmedbox.core.designsystem.theme.PillShape
 import com.aditya.smartmedbox.feature.schedule.domain.model.PrescriptionSchedule
 import com.aditya.smartmedbox.feature.schedule.domain.model.ScheduleDay
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.SharedFlow
 
 @Composable
-fun ScheduleScreen(uiState: ScheduleUiState, onEvent: (ScheduleUiEvent) -> Unit, modifier: Modifier = Modifier, onNavigateToAlerts: () -> Unit = {}) {
+fun ScheduleScreen(
+    uiState: ScheduleUiState,
+    onEvent: (ScheduleUiEvent) -> Unit,
+    modifier: Modifier = Modifier,
+    uiEffect: SharedFlow<ScheduleUiEffect>? = null,
+    onNavigateToAlerts: () -> Unit = {}
+) {
     val spacing = LocalSpacing.current
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(uiEffect) {
+        uiEffect?.collect { effect ->
+            when (effect) {
+                is ScheduleUiEffect.ShowSnackbar -> {
+                    snackbarHostState.showSnackbar(effect.message)
+                }
+            }
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -111,6 +137,7 @@ fun ScheduleScreen(uiState: ScheduleUiState, onEvent: (ScheduleUiEvent) -> Unit,
                 }
             )
         },
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         containerColor = MaterialTheme.colorScheme.background,
         modifier = modifier
     ) { innerPadding ->
@@ -209,6 +236,12 @@ private fun ScheduleContent(
         }
 
         item {
+            val selectedDayItem = days.firstOrNull { it.dayNumber == selectedDay }
+            val headerDayTitle = if (!selectedDayItem?.fullDayName.isNullOrBlank()) {
+                "ACTIVE FOR ${selectedDayItem?.fullDayName?.uppercase()}"
+            } else {
+                "ACTIVE FOR TODAY"
+            }
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -217,7 +250,7 @@ private fun ScheduleContent(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "ACTIVE FOR WEDNESDAY",
+                    text = headerDayTitle,
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontWeight = FontWeight.Bold
@@ -585,6 +618,7 @@ private fun ScheduleMedicationCard(schedule: PrescriptionSchedule, onToggleActiv
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun NewRegimenFormCard(
     isSaving: Boolean,
@@ -592,18 +626,31 @@ private fun NewRegimenFormCard(
     onSave: (String, String, String, List<String>, List<String>, Int, String) -> Unit,
     onClearFeedback: () -> Unit
 ) {
+    val context = LocalContext.current
     val spacing = LocalSpacing.current
 
-    var medicineName by remember { mutableStateOf("Atorvastatin") }
+    var medicineName by remember { mutableStateOf("") }
     var dosageMg by remember { mutableIntStateOf(20) }
-    var selectedBay by remember { mutableStateOf("Bay 02") }
-    val timesList = remember { mutableStateListOf("08:00 PM") }
-    val repeatDays = remember { mutableStateListOf("M", "T", "W", "T", "F") }
+    var selectedBay by remember { mutableStateOf("Bay 01") }
+    val timesList = remember { mutableStateListOf("08:00 AM") }
+    val selectedDays = remember { mutableStateListOf("M", "T", "W", "TH", "F") }
     var totalSupply by remember { mutableStateOf("30") }
-    var formFactor by remember { mutableStateOf("Coated Pill") }
+    var formFactor by remember { mutableStateOf("Capsule") }
+    var validationError by remember { mutableStateOf<String?>(null) }
 
-    val allDays = listOf("M", "T", "W", "T", "F", "S", "S")
     val allBays = listOf("Bay 01", "Bay 02", "Bay 03", "Bay 04")
+    val commonDosages = listOf(10, 20, 50, 100, 500, 650)
+    val commonFormFactors = listOf("Capsule", "Tablet", "Coated Pill", "Softgel")
+
+    val daysOptions = listOf(
+        Triple("M", "M", "Mon"),
+        Triple("T", "T", "Tue"),
+        Triple("W", "W", "Wed"),
+        Triple("TH", "T", "Thu"),
+        Triple("F", "F", "Fri"),
+        Triple("SA", "S", "Sat"),
+        Triple("SU", "S", "Sun")
+    )
 
     LaunchedEffect(feedbackMessage) {
         if (feedbackMessage != null) {
@@ -666,8 +713,11 @@ private fun NewRegimenFormCard(
                 )
                 OutlinedTextField(
                     value = medicineName,
-                    onValueChange = { medicineName = it },
-                    placeholder = { Text("e.g. Lisinopril") },
+                    onValueChange = {
+                        medicineName = it
+                        if (validationError != null) validationError = null
+                    },
+                    placeholder = { Text("e.g. Amoxicillin, Lisinopril, Metformin") },
                     trailingIcon = {
                         Icon(
                             imageVector = Icons.Default.Medication,
@@ -687,7 +737,7 @@ private fun NewRegimenFormCard(
                 )
             }
 
-            // Dosage Strength Stepper
+            // Dosage Strength Stepper & Quick Pills
             Column(verticalArrangement = Arrangement.spacedBy(spacing.extraSmall)) {
                 Text(
                     text = "DOSAGE STRENGTH",
@@ -728,7 +778,7 @@ private fun NewRegimenFormCard(
                     )
 
                     IconButton(
-                        onClick = { if (dosageMg < 1000) dosageMg += 5 },
+                        onClick = { if (dosageMg < 1500) dosageMg += 5 },
                         modifier = Modifier
                             .size(spacing.controlSize)
                             .clip(ControlShape)
@@ -739,6 +789,41 @@ private fun NewRegimenFormCard(
                             contentDescription = "Increase dosage",
                             tint = MaterialTheme.colorScheme.onSurface
                         )
+                    }
+                }
+
+                // Quick common dosage presets
+                FlowRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(spacing.extraSmall),
+                    verticalArrangement = Arrangement.spacedBy(spacing.extraSmall)
+                ) {
+                    commonDosages.forEach { dose ->
+                        Box(
+                            modifier = Modifier
+                                .clip(PillShape)
+                                .background(
+                                    if (dosageMg == dose) {
+                                        MaterialTheme.colorScheme.primary
+                                    } else {
+                                        MaterialTheme.colorScheme.surfaceContainerLow
+                                    }
+                                )
+                                .border(spacing.hairlineBorder, MaterialTheme.colorScheme.outlineVariant, PillShape)
+                                .clickable { dosageMg = dose }
+                                .padding(horizontal = spacing.small, vertical = spacing.micro)
+                        ) {
+                            Text(
+                                text = "$dose mg",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = if (dosageMg == dose) {
+                                    MaterialTheme.colorScheme.onPrimary
+                                } else {
+                                    MaterialTheme.colorScheme.onSurfaceVariant
+                                },
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
                     }
                 }
             }

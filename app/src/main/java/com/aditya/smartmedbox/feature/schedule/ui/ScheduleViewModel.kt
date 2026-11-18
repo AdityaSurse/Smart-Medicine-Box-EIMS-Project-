@@ -23,7 +23,7 @@ class ScheduleViewModel @Inject constructor(
     private val scheduleRepository: ScheduleRepository
 ) : ViewModel() {
 
-    private val selectedDayState = MutableStateFlow(16)
+    private val selectedDayState = MutableStateFlow<Int?>(null)
     private val feedbackMessageState = MutableStateFlow<String?>(null)
     private val isSavingState = MutableStateFlow(false)
 
@@ -46,10 +46,11 @@ class ScheduleViewModel @Inject constructor(
                 feedbackMessageState,
                 isSavingState
             ) { days, selectedDay, feedback, isSaving ->
+                val activeDay = selectedDay ?: days.firstOrNull { it.isToday }?.dayNumber ?: days.firstOrNull { it.isSelected }?.dayNumber ?: 16
                 val updatedDays = days.map { day ->
-                    day.copy(isSelected = day.dayNumber == selectedDay)
+                    day.copy(isSelected = day.dayNumber == activeDay)
                 }
-                Triple(updatedDays, selectedDay, Pair(feedback, isSaving))
+                Triple(updatedDays, activeDay, Pair(feedback, isSaving))
             }.flatMapLatest { (days, selectedDay, feedbackAndSaving) ->
                 val (feedback, isSaving) = feedbackAndSaving
                 scheduleRepository.getSchedulesForDay(selectedDay).map { schedules ->

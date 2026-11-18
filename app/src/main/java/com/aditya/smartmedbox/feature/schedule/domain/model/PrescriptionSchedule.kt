@@ -20,5 +20,6 @@ data class ScheduleDay(
     val dayLetter: String,
     val dayNumber: Int,
     val isToday: Boolean = false,
-    val isSelected: Boolean = false
+    val isSelected: Boolean = false,
+    val fullDayName: String = ""
 )
